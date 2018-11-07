@@ -10,7 +10,35 @@ import Foundation
 
 
 class MovieManager {
+    var shared = MovieManager()
+    
+    var movies:[Movie]?
     
     
+    init() {
+        
+    }
+    
+    func getMovies(searchParams:SearchObject, completionHandler: @escaping (Error?) -> ()) {
+        
+        let completionHandler = { (movies:[Movie]?, error:Error?) -> () in
+            if error != nil {
+                self.movies = movies!
+            }
+            completionHandler(error)
+        }
+        
+        if cachedMovies() {
+            TMDBCoreDataConnector.shared.getMovies(searchParams: searchParams, completion: completionHandler)
+        } else {
+            TMDBAPIConnector.shared.getMovies(searchParams: searchParams, completion: completionHandler)
+        }
+        
+        
+    }
+    
+    private func cachedMovies() -> Bool {
+        return false
+    }
     
 }
