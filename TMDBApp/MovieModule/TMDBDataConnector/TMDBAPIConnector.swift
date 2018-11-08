@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 let APIKey:String = "df2fffd5a0084a58bde8be99efd54ec0"
 let APIReadAccessToken:String = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZjJmZmZkNWEwMDg0YTU4YmRlOGJlOTllZmQ1NGVjMCIsInN1YiI6IjViZTJkYWRkMGUwYTI2MTRiNjAxMmNhZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dBKb9rKru20L3B5E5XM06xsWNMLED2fZynIZd_pH9-8"
 
@@ -18,8 +17,9 @@ class TMDBAPIConnector :DataConnector{
     
     static let shared = TMDBAPIConnector()
     
-    let baseURL = "https://itunes.apple.com/"
-    let searchURL = "search"
+    let baseURL = "https://api.themoviedb.org/3"
+    let discover = "/discover"
+    let movie = "/movie"
     let defaultSession:URLSession
     var dataTask: URLSessionDataTask?
     
@@ -29,8 +29,18 @@ class TMDBAPIConnector :DataConnector{
     
     func getMovies(searchParams: SearchObject, completion: @escaping ([Movie]?, Error?) -> ()) {
         
-        if var urlComponents = URLComponents(string: baseURL + searchURL) {
-    //        urlComponents.query = searchParams.urlString()
+        if var urlComponents = URLComponents(string: baseURL + discover + movie) {
+            urlComponents.query = "api_key=\(APIKey)" + searchParams.urlString()
+            
+            print(urlComponents)
+            guard let url = urlComponents.url else { return }
+            self.requestMedia(url: url, completionHandler: completion)
+        }
+    }
+    
+    func getMovieDetali(searchParams: SearchObject, completion: @escaping ([Movie]?, Error?) -> ()) {
+        if var urlComponents = URLComponents(string: baseURL + movie) {
+            //        urlComponents.query = searchParams.urlString()
             
             print(urlComponents)
             guard let url = urlComponents.url else { return }

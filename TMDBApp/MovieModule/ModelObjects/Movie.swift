@@ -11,5 +11,9 @@ import Foundation
 
 class Movie {
     
-    
+    let title:String
+    init(data:DecodedMovie) {
+        self.title = data.title
+        print(title)
+    }
 }

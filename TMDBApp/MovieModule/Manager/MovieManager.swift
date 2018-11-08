@@ -10,14 +10,10 @@ import Foundation
 
 
 class MovieManager {
-    var shared = MovieManager()
-    
+    var presenter:MoviesPresenter?
     var movies:[Movie]?
     
     
-    init() {
-        
-    }
     
     func getMovies(searchParams:SearchObject, completionHandler: @escaping (Error?) -> ()) {
         
@@ -33,8 +29,6 @@ class MovieManager {
         } else {
             TMDBAPIConnector.shared.getMovies(searchParams: searchParams, completion: completionHandler)
         }
-        
-        
     }
     
     private func cachedMovies() -> Bool {
