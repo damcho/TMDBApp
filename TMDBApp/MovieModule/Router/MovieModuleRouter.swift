@@ -40,4 +40,9 @@ class MovieModuleRouter {
         navigationController.pushViewController(movieDetailVC,animated: true)
         
     }
+    
+    func pushToMovieDetail(navController:UINavigationController) {
+        let movieDetailVC = MovieModuleRouter.mainstoryboard.instantiateViewController(withIdentifier: "MovieDetailViewController") as! MovieDetailViewController
+        navController.pushViewController(movieDetailVC,animated: true)
+    }
 }

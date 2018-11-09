@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import UIKit
 
 class MoviesPresenter {
     
@@ -38,5 +38,8 @@ class MoviesPresenter {
         return self.movieManager!.getMovieAtIndex(indexPath:indexPath)
     }
 
+    func showMoviesDetail(navController:UINavigationController) {
+        self.router!.pushToMovieDetail(navController:navController)
+    }
     
 }

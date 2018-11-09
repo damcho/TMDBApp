@@ -39,7 +39,7 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        self.presenter?.showMoviesDetail(navController:navigationController!)
     }
     
     func moviesFetchedWithSuccess() {
