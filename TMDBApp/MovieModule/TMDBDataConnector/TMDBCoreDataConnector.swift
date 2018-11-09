@@ -36,8 +36,6 @@ class TMDBCoreDataConnector: DataConnector {
                 movie.title = fetchedMovie.value(forKey: "title") as! String
                 movie.movieId = fetchedMovie.value(forKey:"id") as! Int
                 movies.append(movie)
-                print(movie.title)
-
             }
             completion(movies, nil)
             

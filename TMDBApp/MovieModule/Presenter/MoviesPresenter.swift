@@ -17,4 +17,26 @@ class MoviesPresenter {
     var movieDetailVC:MovieDetailViewController?
     
     
+    
+    func fetchMovies(searchParams:SearchObject) {
+        self.movieManager?.fetchMovies(searchParams: searchParams)
+    }
+    
+    func moviesFetchedWithSuccess(movies:[Movie]){
+        self.moviesListVC!.moviesFetchedWithSuccess()
+    }
+    
+    func moviesFetchFailed(error:Error){
+        self.moviesListVC!.moviesFetchWithError(error:error)
+    }
+    
+    func getMoviesCount() -> Int {
+        return self.movieManager!.getMoviesCount()
+    }
+    
+    func getMovieAtIndex(indexPath:Int) -> Movie? {
+        return self.movieManager!.getMovieAtIndex(indexPath:indexPath)
+    }
+
+    
 }

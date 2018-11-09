@@ -12,27 +12,21 @@ import UIKit
 class MovieModuleRouter {
     
     
-    static func createModule() -> MoviesListViewController? {
+    static func createModule() -> UIViewController {
         
-     //   let view = mainstoryboard.instantiateViewController(withIdentifier: "MoviesListViewController") as! MoviesListViewController
+        let moviesListVC = mainstoryboard.instantiateViewController(withIdentifier: "MoviesListViewController") as! MoviesListViewController
         
         let presenter = MoviesPresenter()
         let manager = MovieManager()
         let router = MovieModuleRouter()
-        
-        let completion = { (error:Error?) ->() in
-            
-            
-        }
-        manager.getMovies(searchParams: SearchObject(), completionHandler: completion)
-        
-   //     view.presenter = presenter
-    //    presenter.moviesListVC = view
+                
+        moviesListVC.presenter = presenter
+        presenter.moviesListVC = moviesListVC
         presenter.router = router
         presenter.movieManager = manager
         manager.presenter = presenter
         
-        return nil
+        return moviesListVC
         
     }
     

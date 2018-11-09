@@ -13,26 +13,39 @@ class MovieManager {
     var presenter:MoviesPresenter?
     var movies:[Movie]?
     
-    func getMovies(searchParams:SearchObject, completionHandler: @escaping (Error?) -> ()) {
+    func getMoviesCount() -> Int {
+        guard let moviesCOunt = self.movies?.count else {
+            return 0
+        }
+        return moviesCOunt
+    }
+    
+    func getMovieAtIndex(indexPath:Int) -> Movie? {
+        return self.movies![indexPath]
+    }
+    
+    func fetchMovies(searchParams:SearchObject) {
         
         if cachedMovies() {
-            self.requestMoviesFromDB(searchParams: searchParams, completionHandler: completionHandler)
+            self.requestMoviesFromDB(searchParams: searchParams)
         } else {
-          self.requestMoviesFromAPI(searchParams: searchParams, completionHandler: completionHandler)
+          self.requestMoviesFromAPI(searchParams: searchParams)
         }
     }
     
-    func requestMoviesFromDB(searchParams: SearchObject, completionHandler: @escaping (Error?) -> ()) {
+    func requestMoviesFromDB(searchParams: SearchObject) {
         let completionHandler = { (movies:[Movie]?, error:Error?) -> () in
             if error == nil {
                 self.movies = movies!
+                self.presenter?.moviesFetchedWithSuccess(movies: self.movies!)
+            } else {
+                self.presenter?.moviesFetchFailed(error:error!)
             }
-            completionHandler(error)
         }
         TMDBCoreDataConnector.shared.getMovies(searchParams: searchParams, completion: completionHandler)
     }
     
-    func requestMoviesFromAPI(searchParams: SearchObject, completionHandler: @escaping (Error?) -> ()) {
+    func requestMoviesFromAPI(searchParams: SearchObject) {
         let completionHandler = { (movies:[Movie]?, error:Error?) -> () in
             if error == nil {
                 self.movies = movies!
@@ -40,9 +53,12 @@ class MovieManager {
                     try TMDBCoreDataConnector.shared.storeMovies(movies:self.movies!)
                 } catch let error {
                     print("error al grbar \(error.localizedDescription)")
+                    self.presenter?.moviesFetchFailed(error:error)
                 }
+                self.presenter?.moviesFetchedWithSuccess(movies: self.movies!)
+            } else {
+                self.presenter?.moviesFetchFailed(error:error!)
             }
-            completionHandler(error)
         }
         TMDBAPIConnector.shared.getMovies(searchParams: searchParams, completion: completionHandler)
     }
