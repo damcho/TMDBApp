@@ -7,9 +7,10 @@
 //
 
 import Foundation
+import SystemConfiguration
 
 let APIKey:String = "df2fffd5a0084a58bde8be99efd54ec0"
-let APIReadAccessToken:String = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZjJmZmZkNWEwMDg0YTU4YmRlOGJlOTllZmQ1NGVjMCIsInN1YiI6IjViZTJkYWRkMGUwYTI2MTRiNjAxMmNhZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dBKb9rKru20L3B5E5XM06xsWNMLED2fZynIZd_pH9-8"
+//let APIReadAccessToken:String = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZjJmZmZkNWEwMDg0YTU4YmRlOGJlOTllZmQ1NGVjMCIsInN1YiI6IjViZTJkYWRkMGUwYTI2MTRiNjAxMmNhZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dBKb9rKru20L3B5E5XM06xsWNMLED2fZynIZd_pH9-8"
 
 
 class TMDBAPIConnector :DataConnector{
@@ -18,19 +19,20 @@ class TMDBAPIConnector :DataConnector{
     static let shared = TMDBAPIConnector()
     
     let baseURL = "https://api.themoviedb.org/3"
-    let discover = "/discover"
     let movie = "/movie"
     let defaultSession:URLSession
     var dataTask: URLSessionDataTask?
+    var searchParams: SearchObject?
+
     
     init() {
         defaultSession = URLSession(configuration: .default)
     }
     
     func getMovies(searchParams: SearchObject, completion: @escaping ([Movie]?, Error?) -> ()) {
-        
-        if var urlComponents = URLComponents(string: baseURL + discover + movie) {
-            urlComponents.query = "api_key=\(APIKey)" + searchParams.urlString()
+        self.searchParams = searchParams
+        if var urlComponents = URLComponents(string: baseURL + movie + searchParams.urlString()) {
+            urlComponents.query = "api_key=\(APIKey)"
             
             print(urlComponents)
             guard let url = urlComponents.url else { return }
@@ -64,6 +66,9 @@ class TMDBAPIConnector :DataConnector{
                 response.statusCode == 200 {
                 do {
                     let movies:[Movie] = try MovieObjectDecoder.decode(data: data)
+                    for movie in movies {
+                        movie.setCategory(category:self.searchParams!.filter)
+                    }
                     DispatchQueue.main.async {
                         completionHandler(movies, nil )
                     }
@@ -77,4 +82,34 @@ class TMDBAPIConnector :DataConnector{
         dataTask?.resume()
     }
     
+}
+
+
+public class Reachability {
+    
+    class func isConnectedToNetwork() -> Bool {
+        
+        var zeroAddress = sockaddr_in(sin_len: 0, sin_family: 0, sin_port: 0, sin_addr: in_addr(s_addr: 0), sin_zero: (0, 0, 0, 0, 0, 0, 0, 0))
+        zeroAddress.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
+        zeroAddress.sin_family = sa_family_t(AF_INET)
+        
+        guard let defaultRouteReachability = withUnsafePointer(to: &zeroAddress, {
+            $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+                SCNetworkReachabilityCreateWithAddress(nil, $0)
+            }
+        }) else {
+            return false
+        }
+        
+        var flags: SCNetworkReachabilityFlags = SCNetworkReachabilityFlags(rawValue: 0)
+        if SCNetworkReachabilityGetFlags(defaultRouteReachability, &flags) == false {
+            return false
+        }
+        
+        let isReachable = flags == .reachable
+        let needsConnection = flags == .connectionRequired
+        
+        return isReachable && !needsConnection
+        
+    }
 }

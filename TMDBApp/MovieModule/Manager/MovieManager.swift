@@ -25,12 +25,21 @@ class MovieManager {
     }
     
     func fetchMovies(searchParams:SearchObject) {
+        if Reachability.isConnectedToNetwork() {
+            self.requestMoviesFromAPI(searchParams: searchParams)
+        }
+
+/*
         
-        if cachedMovies() {
+        if self.movies != nil {
+            self.filterMovies(searchParams:searchParams)
+        } else if cachedMovies() {
             self.requestMoviesFromDB(searchParams: searchParams)
         } else {
           self.requestMoviesFromAPI(searchParams: searchParams)
         }
+ 
+ */
     }
     
     func requestMoviesFromDB(searchParams: SearchObject) {
@@ -63,8 +72,17 @@ class MovieManager {
         TMDBAPIConnector.shared.getMovies(searchParams: searchParams, completion: completionHandler)
     }
     
+    func filterMovies(searchParams:SearchObject) {
+        var filterMovies:[Movie] = Array()
+        for movie in self.movies! {
+            if movie.compliesFilter(searchParams:searchParams) {
+                filterMovies.append(movie)
+            }
+        }
+        self.presenter?.moviesFetchedWithSuccess(movies: filterMovies)
+    }
+    
     private func cachedMovies() -> Bool {
         return TMDBCoreDataConnector.shared.cachedMovies()
     }
-    
 }

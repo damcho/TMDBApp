@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8B0AB458219626D5009649CE /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B0AB457219626D5009649CE /* SystemConfiguration.framework */; };
 		8B3D78CB219318A3006BD797 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3D78CA219318A3006BD797 /* AppDelegate.swift */; };
 		8B3D78CD219318A3006BD797 /* MoviesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3D78CC219318A3006BD797 /* MoviesListViewController.swift */; };
 		8B3D78D0219318A3006BD797 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8B3D78CE219318A3006BD797 /* Main.storyboard */; };
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8B0AB457219626D5009649CE /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		8B3D78C7219318A3006BD797 /* TMDBApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TMDBApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B3D78CA219318A3006BD797 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8B3D78CC219318A3006BD797 /* MoviesListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesListViewController.swift; sourceTree = "<group>"; };
@@ -67,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8B0AB458219626D5009649CE /* SystemConfiguration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -80,12 +83,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8B0AB456219626D5009649CE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8B0AB457219626D5009649CE /* SystemConfiguration.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		8B3D78BE219318A3006BD797 = {
 			isa = PBXGroup;
 			children = (
 				8B3D78C9219318A3006BD797 /* TMDBApp */,
 				8B3D78E1219318A5006BD797 /* TMDBAppTests */,
 				8B3D78C8219318A3006BD797 /* Products */,
+				8B0AB456219626D5009649CE /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};

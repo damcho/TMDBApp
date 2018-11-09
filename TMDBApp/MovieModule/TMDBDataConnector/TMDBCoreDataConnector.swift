@@ -35,6 +35,9 @@ class TMDBCoreDataConnector: DataConnector {
                 let movie = Movie()
                 movie.title = fetchedMovie.value(forKey: "title") as! String
                 movie.movieId = fetchedMovie.value(forKey:"id") as! Int
+                movie.setCategory(category: MovieFilter( rawValue: fetchedMovie.value(forKey:"id") as! String)!)
+                movie.overview = fetchedMovie.value(forKey:"overview") as! String
+
                 movies.append(movie)
             }
             completion(movies, nil)
@@ -49,12 +52,16 @@ class TMDBCoreDataConnector: DataConnector {
     func storeMovies(movies:[Movie]) throws {
         
         let managedObjectContext = self.getManagedContext()
+        managedObjectContext!.mergePolicy = NSOverwriteMergePolicy
 
         for movie in movies {
             
             let newMovie = NSEntityDescription.insertNewObject(forEntityName: "Movies", into: managedObjectContext!)
             newMovie.setValue(movie.title, forKeyPath: "title")
             newMovie.setValue(movie.movieId, forKeyPath: "id")
+            newMovie.setValue(movie.category?.rawValue, forKeyPath: "category")
+            newMovie.setValue(movie.popularity, forKeyPath: "popularity")
+            newMovie.setValue(movie.overview, forKeyPath: "overview")
 
             do {
                 try managedObjectContext!.save()

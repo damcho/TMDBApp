@@ -9,9 +9,10 @@
 import Foundation
 
 enum MovieFilter :String{
-    case TOP_RATED
-    case POPULAR
-    case UPCOMING
+    case TOP_RATED = "top_rated"
+    case UPCOMING = "upcoming"
+    case POPULARITY = "popular"
+    case ANY = "any"
 }
 
 
@@ -20,12 +21,23 @@ class SearchObject {
     var filter:MovieFilter
     
     init() {
-        self.filter = MovieFilter.TOP_RATED
+        self.filter = .POPULARITY
     }
     
     func urlString() -> String{
-        return "&sort_by=popularity.desc"
+        return "/\(filter.rawValue)"
     }
     
-    
+    func filterValue(value:Int) {
+        switch value {
+        case 0:
+            self.filter = .TOP_RATED
+        case 1:
+            self.filter = .UPCOMING
+        case 2:
+            self.filter = .POPULARITY
+        default:
+            self.filter = .ANY
+        }        
+    }
 }

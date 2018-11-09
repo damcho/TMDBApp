@@ -33,11 +33,15 @@ struct DecodedMovie: Decodable {
     
     let title:String
     let id:Int
+    let overview:String
+    let popularity:Double
 
     enum CodingKeys : String, CodingKey {
         
         case title = "title"
         case id = "id"
+        case overview = "overview"
+        case popularity = "popularity"
 
     }
     
@@ -45,6 +49,8 @@ struct DecodedMovie: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.title = try container.decode(String.self, forKey: .title)
         self.id = try container.decode(Int.self, forKey: .id)
+        self.overview = try container.decode(String.self, forKey: .overview)
+        self.popularity = try container.decode(Double.self, forKey: .popularity)
 
     }
 }

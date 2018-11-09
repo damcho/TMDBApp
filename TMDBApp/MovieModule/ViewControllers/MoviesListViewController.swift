@@ -12,21 +12,32 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
 
     @IBOutlet weak var moviesListTableVIew: UITableView!
     var presenter:MoviesPresenter?
-    
+    var searchObject:SearchObject?
+    var movies:[Movie]?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "TMDB list"
-        self.presenter?.fetchMovies(searchParams: SearchObject())
+        self.searchObject = SearchObject()
+        self.presenter?.fetchMovies(searchParams: self.searchObject!)
         // Do any additional setup after loading the view, typically from a nib.
     }
     
+    @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
+        
+        self.searchObject!.filterValue(value: sender.selectedSegmentIndex)
+        self.presenter!.filterMovies(searchParams:self.searchObject!)
+    }
     
     func numberOfSectionsInTableView(tableView: UITableView?) -> Int {
         return 0
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.presenter!.getMoviesCount()
+        guard let moviesCount = self.movies?.count else {
+            return 0
+        }
+        return moviesCount
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell  {
@@ -42,7 +53,8 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
         self.presenter?.showMoviesDetail(navController:navigationController!)
     }
     
-    func moviesFetchedWithSuccess() {
+    func moviesFetchedWithSuccess(movies:[Movie]) {
+        self.movies = movies
         self.moviesListTableVIew.reloadData()
     }
 

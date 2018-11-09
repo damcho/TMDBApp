@@ -18,9 +18,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="3df-pU-mPk">
-                                <rect key="frame" x="0.0" y="233" width="320" height="335"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="3df-pU-mPk">
+                                <rect key="frame" x="0.0" y="121" width="320" height="447"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MovieTableViewCell" rowHeight="60" id="jb7-ed-cFB" customClass="MovieTableViewCell" customModule="TMDBApp" customModuleProvider="target">
@@ -49,8 +48,27 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="lA7-Kc-VfC"/>
                                 </connections>
                             </tableView>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="IQ3-Q7-C7e">
+                                <rect key="frame" x="45" y="64" width="230" height="29"/>
+                                <segments>
+                                    <segment title="Top Rated"/>
+                                    <segment title="Upcoming"/>
+                                    <segment title="Popular"/>
+                                </segments>
+                                <connections>
+                                    <action selector="segmentedControlValueChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="b2l-Nv-lI4"/>
+                                </connections>
+                            </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="IQ3-Q7-C7e" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="44" id="25r-bg-nTm"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="3df-pU-mPk" secondAttribute="trailing" id="6a5-h8-Sri"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="3df-pU-mPk" secondAttribute="bottom" id="FAe-VM-PK1"/>
+                            <constraint firstItem="IQ3-Q7-C7e" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="hoY-Qc-FfJ"/>
+                            <constraint firstItem="3df-pU-mPk" firstAttribute="top" secondItem="IQ3-Q7-C7e" secondAttribute="bottom" constant="29" id="pAW-s1-Pyh"/>
+                            <constraint firstItem="3df-pU-mPk" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="vql-nZ-V8r"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>

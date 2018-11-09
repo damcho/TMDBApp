@@ -23,7 +23,7 @@ class MoviesPresenter {
     }
     
     func moviesFetchedWithSuccess(movies:[Movie]){
-        self.moviesListVC!.moviesFetchedWithSuccess()
+        self.moviesListVC!.moviesFetchedWithSuccess(movies:movies)
     }
     
     func moviesFetchFailed(error:Error){
@@ -40,6 +40,10 @@ class MoviesPresenter {
 
     func showMoviesDetail(navController:UINavigationController) {
         self.router!.pushToMovieDetail(navController:navController)
+    }
+    
+    func filterMovies(searchParams:SearchObject){
+        self.movieManager?.fetchMovies(searchParams: searchParams)
     }
     
 }
