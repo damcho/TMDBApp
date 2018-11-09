@@ -11,9 +11,18 @@ import Foundation
 
 class Movie {
     
-    let title:String
+    var title:String
+    var movieId:Int
+    
+    init() {
+        self.title = ""
+        self.movieId = 0
+    }
+    
     init(data:DecodedMovie) {
         self.title = data.title
+        self.movieId = data.id
+
         print(title)
     }
 }
