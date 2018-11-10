@@ -43,7 +43,7 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell  {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MovieTableViewCell", for: indexPath as IndexPath) as! MovieTableViewCell
         
-        cell.setMovie(movie: self.presenter!.getMovieAtIndex(indexPath:indexPath.row)!)
+        cell.setMovie(movie: self.movies![indexPath.row])
         
         return cell
     }

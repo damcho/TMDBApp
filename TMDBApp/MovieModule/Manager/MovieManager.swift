@@ -11,42 +11,27 @@ import Foundation
 
 class MovieManager {
     var presenter:MoviesPresenter?
-    var movies:[Movie]?
-    
-    func getMoviesCount() -> Int {
-        guard let moviesCOunt = self.movies?.count else {
-            return 0
-        }
-        return moviesCOunt
-    }
-    
-    func getMovieAtIndex(indexPath:Int) -> Movie? {
-        return self.movies![indexPath]
-    }
+    var movies:Dictionary<String, [Movie]> = Dictionary()
     
     func fetchMovies(searchParams:SearchObject) {
-        if Reachability.isConnectedToNetwork() {
+        if moviesAreInMemory(searchParams: searchParams) {
+            self.presenter?.moviesFetchedWithSuccess(movies:self.movies[searchParams.filter.rawValue]! )
+        } else if Reachability.isConnectedToNetwork() {
             self.requestMoviesFromAPI(searchParams: searchParams)
-        }
-
-/*
-        
-        if self.movies != nil {
-            self.filterMovies(searchParams:searchParams)
-        } else if cachedMovies() {
-            self.requestMoviesFromDB(searchParams: searchParams)
         } else {
-          self.requestMoviesFromAPI(searchParams: searchParams)
+            self.requestMoviesFromDB(searchParams: searchParams)
         }
- 
- */
+    }
+    
+    func moviesAreInMemory(searchParams:SearchObject) -> Bool {
+        return self.movies.index(forKey: searchParams.filter.rawValue) != nil
     }
     
     func requestMoviesFromDB(searchParams: SearchObject) {
         let completionHandler = { (movies:[Movie]?, error:Error?) -> () in
             if error == nil {
-                self.movies = movies!
-                self.presenter?.moviesFetchedWithSuccess(movies: self.movies!)
+                self.movies.updateValue(movies!, forKey: searchParams.filter.rawValue)
+                self.presenter?.moviesFetchedWithSuccess(movies: self.movies[searchParams.filter.rawValue]!)
             } else {
                 self.presenter?.moviesFetchFailed(error:error!)
             }
@@ -57,14 +42,14 @@ class MovieManager {
     func requestMoviesFromAPI(searchParams: SearchObject) {
         let completionHandler = { (movies:[Movie]?, error:Error?) -> () in
             if error == nil {
-                self.movies = movies!
+                self.movies.updateValue(movies!, forKey: searchParams.filter.rawValue)
                 do {
-                    try TMDBCoreDataConnector.shared.storeMovies(movies:self.movies!)
+                    try TMDBCoreDataConnector.shared.storeMovies(movies:self.movies[searchParams.filter.rawValue]!)
                 } catch let error {
                     print("error al grbar \(error.localizedDescription)")
                     self.presenter?.moviesFetchFailed(error:error)
                 }
-                self.presenter?.moviesFetchedWithSuccess(movies: self.movies!)
+                self.presenter?.moviesFetchedWithSuccess(movies: self.movies[searchParams.filter.rawValue]!)
             } else {
                 self.presenter?.moviesFetchFailed(error:error!)
             }
@@ -73,13 +58,6 @@ class MovieManager {
     }
     
     func filterMovies(searchParams:SearchObject) {
-        var filterMovies:[Movie] = Array()
-        for movie in self.movies! {
-            if movie.compliesFilter(searchParams:searchParams) {
-                filterMovies.append(movie)
-            }
-        }
-        self.presenter?.moviesFetchedWithSuccess(movies: filterMovies)
     }
     
     private func cachedMovies() -> Bool {

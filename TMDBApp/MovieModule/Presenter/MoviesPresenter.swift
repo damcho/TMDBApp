@@ -29,14 +29,6 @@ class MoviesPresenter {
     func moviesFetchFailed(error:Error){
         self.moviesListVC!.moviesFetchWithError(error:error)
     }
-    
-    func getMoviesCount() -> Int {
-        return self.movieManager!.getMoviesCount()
-    }
-    
-    func getMovieAtIndex(indexPath:Int) -> Movie? {
-        return self.movieManager!.getMovieAtIndex(indexPath:indexPath)
-    }
 
     func showMoviesDetail(navController:UINavigationController) {
         self.router!.pushToMovieDetail(navController:navController)

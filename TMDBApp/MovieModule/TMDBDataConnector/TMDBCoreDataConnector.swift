@@ -26,8 +26,11 @@ class TMDBCoreDataConnector: DataConnector {
     func getMovies(searchParams: SearchObject, completion: @escaping QueryResut) {
       
         let managedObjectContext = self.getManagedContext()
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Movies")
+        fetchRequest.predicate = NSPredicate(format: "category == %@", searchParams.filter.rawValue)
+
         do {
-            let movieRecords = try managedObjectContext!.fetch(Movies.fetchRequest()) as! [NSManagedObject]
+            let movieRecords = try managedObjectContext!.fetch(fetchRequest) as! [NSManagedObject]
             var movies:[Movie] = Array()
             print("retrieved movies")
 
@@ -35,7 +38,7 @@ class TMDBCoreDataConnector: DataConnector {
                 let movie = Movie()
                 movie.title = fetchedMovie.value(forKey: "title") as! String
                 movie.movieId = fetchedMovie.value(forKey:"id") as! Int
-                movie.setCategory(category: MovieFilter( rawValue: fetchedMovie.value(forKey:"id") as! String)!)
+                movie.setCategory(category: MovieFilter( rawValue: fetchedMovie.value(forKey:"category") as! String)!)
                 movie.overview = fetchedMovie.value(forKey:"overview") as! String
 
                 movies.append(movie)
