@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import NVActivityIndicatorView
 
 class MoviesListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -15,19 +16,25 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     var presenter:MoviesPresenter?
     var searchObject:SearchObject?
     var movies:[Movie]?
+    var activityIndicatorView:NVActivityIndicatorPresenter?
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "TMDB list"
         self.searchObject = SearchObject()
         self.movieCategoryFilter.selectedSegmentIndex = 0
+        activityIndicatorView = NVActivityIndicatorPresenter.sharedInstance
+        let activityData = ActivityData()
+        activityIndicatorView?.startAnimating(activityData, nil)
         self.searchObject!.filterValue(value:self.movieCategoryFilter.selectedSegmentIndex)
         self.presenter?.fetchMovies(searchParams:self.searchObject!)
     }
     
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
-        
+        let activityData = ActivityData()
         self.searchObject!.filterValue(value: sender.selectedSegmentIndex)
+        activityIndicatorView?.startAnimating(activityData, nil)
         self.presenter!.filterMovies(searchParams:self.searchObject!)
     }
     
@@ -59,9 +66,11 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     func moviesFetchedWithSuccess(movies:[Movie]) {
         self.movies = movies
         self.moviesListTableVIew.reloadData()
+        activityIndicatorView?.stopAnimating(nil)
     }
 
     func moviesFetchWithError(error:Error) {
+        activityIndicatorView?.stopAnimating(nil)
         self.showAlertView(msg:error.localizedDescription)
     }
     
