@@ -30,8 +30,10 @@ class MovieManager {
     func requestMoviesFromDB(searchParams: SearchObject) {
         let completionHandler = { (movies:[Movie]?, error:Error?) -> () in
             if error == nil {
-                self.movies.updateValue(movies!, forKey: searchParams.filter.rawValue)
-                self.presenter?.moviesFetchedWithSuccess(movies: self.movies[searchParams.filter.rawValue]!)
+                if movies!.count > 0 {
+                    self.movies.updateValue(movies!, forKey: searchParams.filter.rawValue)
+                    self.presenter?.moviesFetchedWithSuccess(movies: self.movies[searchParams.filter.rawValue]!)
+                }
             } else {
                 self.presenter?.moviesFetchFailed(error:error!)
             }

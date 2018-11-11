@@ -12,7 +12,6 @@ enum MovieFilter :String{
     case TOP_RATED = "top_rated"
     case UPCOMING = "upcoming"
     case POPULARITY = "popular"
-    case ANY = "any"
 }
 
 
@@ -37,7 +36,7 @@ class SearchObject {
         case 2:
             self.filter = .POPULARITY
         default:
-            self.filter = .ANY
+            self.filter = .POPULARITY
         }        
     }
 }
