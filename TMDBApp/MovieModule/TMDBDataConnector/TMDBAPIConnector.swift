@@ -43,18 +43,6 @@ class TMDBAPIConnector :DataConnector{
         }
     }
     
-    func getMovieDetali(searchParams: SearchObject, completion: @escaping ([Movie]?, Error?) -> ()) {
-        if var urlComponents = URLComponents(string: baseURL + movie) {
-            //        urlComponents.query = searchParams.urlString()
-            
-            print(urlComponents)
-            guard let url = urlComponents.url else { return }
-            self.requestMedia(url: url, completionHandler: completion)
-        }
-    }
-    
-    
-    
     func requestMedia(url: URL, completionHandler: @escaping ([Movie]?, Error?) -> ()){
         dataTask = defaultSession.dataTask(with: url) { data, response, error in
             defer {

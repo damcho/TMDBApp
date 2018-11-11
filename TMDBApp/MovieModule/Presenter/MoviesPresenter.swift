@@ -30,8 +30,8 @@ class MoviesPresenter {
         self.moviesListVC!.moviesFetchWithError(error:error)
     }
 
-    func showMoviesDetail(navController:UINavigationController) {
-        self.router!.pushToMovieDetail(navController:navController)
+    func showMoviesDetail(navController:UINavigationController, movie:Movie) {
+        self.router!.pushToMovieDetail(navController:navController, movie:movie)
     }
     
     func filterMovies(searchParams:SearchObject){

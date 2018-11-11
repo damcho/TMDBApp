@@ -52,7 +52,8 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.presenter?.showMoviesDetail(navController:navigationController!)
+        let movie = self.movies![indexPath.row]
+        self.presenter?.showMoviesDetail(navController:navigationController!, movie:movie)
     }
     
     func moviesFetchedWithSuccess(movies:[Movie]) {

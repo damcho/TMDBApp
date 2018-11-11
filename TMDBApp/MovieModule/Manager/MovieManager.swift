@@ -46,7 +46,6 @@ class MovieManager {
                 do {
                     try TMDBCoreDataConnector.shared.storeMovies(movies:self.movies[searchParams.filter.rawValue]!)
                 } catch let error {
-                    print("error al grbar \(error.localizedDescription)")
                     self.presenter?.moviesFetchFailed(error:error)
                 }
                 self.presenter?.moviesFetchedWithSuccess(movies: self.movies[searchParams.filter.rawValue]!)
@@ -56,10 +55,6 @@ class MovieManager {
         }
         TMDBAPIConnector.shared.getMovies(searchParams: searchParams, completion: completionHandler)
     }
-    
-    func filterMovies(searchParams:SearchObject) {
-    }
-
     
     class func getImage(path:String, completion: @escaping (Data) -> ()){
         TMDBAPIConnector.downloadImage(from:path, completion:completion)

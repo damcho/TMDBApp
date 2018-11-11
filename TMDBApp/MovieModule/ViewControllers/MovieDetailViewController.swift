@@ -10,9 +10,23 @@ import UIKit
 
 class MovieDetailViewController: UIViewController {
 
+    @IBOutlet weak var movieOverviewLabel: UILabel!
+    @IBOutlet weak var movieImageView: UIImageView!
+    @IBOutlet weak var popularityLabel: UILabel!
+    @IBOutlet weak var voteAverageLabel: UILabel!
+    
+    var movie:Movie?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.title = self.movie!.title
+        if movie?.imageData != nil {
+            self.movieImageView.image = UIImage(data:self.movie!.imageData!)
+        }
+        self.movieOverviewLabel.text = movie!.overview
+        self.popularityLabel.text = String(movie!.popularity)
+        self.voteAverageLabel.text = String(movie!.voteAverage)
+        
         // Do any additional setup after loading the view.
     }
     

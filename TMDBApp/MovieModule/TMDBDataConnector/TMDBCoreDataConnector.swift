@@ -41,7 +41,9 @@ class TMDBCoreDataConnector: DataConnector {
                 movie.setCategory(category: MovieFilter( rawValue: fetchedMovie.value(forKey:"category") as! String)!)
                 movie.overview = fetchedMovie.value(forKey:"overview") as! String
                 movie.imageURLPath = fetchedMovie.value(forKey:"image") as? String
+                movie.voteAverage = (fetchedMovie.value(forKey:"vote_average") as? Float)!
                 movie.imageData = self.load(fileName: movie.imageURLPath!)
+
                 movies.append(movie)
             }
             completion(movies, nil)
@@ -67,7 +69,8 @@ class TMDBCoreDataConnector: DataConnector {
             newMovie.setValue(movie.popularity, forKeyPath: "popularity")
             newMovie.setValue(movie.overview, forKeyPath: "overview")
             newMovie.setValue(movie.imageURLPath, forKeyPath: "image")
-            
+            newMovie.setValue(movie.voteAverage, forKeyPath: "vote_average")
+
             do {
                 try managedObjectContext!.save()
             } catch let error as NSError {

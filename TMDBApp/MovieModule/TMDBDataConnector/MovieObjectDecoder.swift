@@ -34,6 +34,7 @@ struct DecodedMovie: Decodable {
     let overview:String
     let popularity:Double
     let imageURL:String
+    let voteAvg:Float
 
     enum CodingKeys : String, CodingKey {
         
@@ -42,6 +43,7 @@ struct DecodedMovie: Decodable {
         case overview = "overview"
         case popularity = "popularity"
         case imageURL = "poster_path"
+        case voteAvg = "vote_average"
     }
     
     init(from decoder: Decoder) throws {
@@ -51,5 +53,7 @@ struct DecodedMovie: Decodable {
         self.overview = try container.decode(String.self, forKey: .overview)
         self.popularity = try container.decode(Double.self, forKey: .popularity)
         self.imageURL = try container.decode(String.self, forKey: .imageURL)
+        self.voteAvg = try container.decode(Float.self, forKey: .voteAvg)
+
     }
 }

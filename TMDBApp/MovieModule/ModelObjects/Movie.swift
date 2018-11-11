@@ -16,6 +16,7 @@ class Movie {
     var category:MovieFilter?
     var overview:String
     var popularity:Double
+    var voteAverage:Float
     var imageURLPath:String?
     var imageData:Data?
 
@@ -25,6 +26,7 @@ class Movie {
         self.overview = ""
         self.movieId = 0
         self.popularity = 0
+        self.voteAverage = 0
     }
     
     init(data:DecodedMovie) {
@@ -33,12 +35,12 @@ class Movie {
         self.overview = data.overview
         self.popularity = data.popularity
         self.imageURLPath = data.imageURL
-        print(title)
+        self.voteAverage = data.voteAvg
+
     }
     
     func setCategory(category:MovieFilter) {
         self.category = category
-        print(self.category)
     }
     
     func getImage(completion: @escaping (Data) -> ()){
@@ -56,4 +58,5 @@ class Movie {
         } else {
             MovieManager.getImage(path: self.imageURLPath!, completion: handler)
         }
-    }}
+    }
+}
