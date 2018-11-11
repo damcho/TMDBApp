@@ -63,4 +63,5 @@ class MovieManager {
     
     class func getImage(path:String, completion: @escaping (Data) -> ()){
         TMDBAPIConnector.downloadImage(from:path, completion:completion)
-    }}
+    }
+}
