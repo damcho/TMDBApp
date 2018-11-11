@@ -24,9 +24,7 @@ class MovieObjectDecoder {
 
 
 private struct DecodedMovies:Decodable {
-    
     let results:[DecodedMovie]
-    
 }
 
 struct DecodedMovie: Decodable {
@@ -35,6 +33,7 @@ struct DecodedMovie: Decodable {
     let id:Int
     let overview:String
     let popularity:Double
+    let imageURL:String
 
     enum CodingKeys : String, CodingKey {
         
@@ -42,7 +41,7 @@ struct DecodedMovie: Decodable {
         case id = "id"
         case overview = "overview"
         case popularity = "popularity"
-
+        case imageURL = "poster_path"
     }
     
     init(from decoder: Decoder) throws {
@@ -51,6 +50,6 @@ struct DecodedMovie: Decodable {
         self.id = try container.decode(Int.self, forKey: .id)
         self.overview = try container.decode(String.self, forKey: .overview)
         self.popularity = try container.decode(Double.self, forKey: .popularity)
-
+        self.imageURL = try container.decode(String.self, forKey: .imageURL)
     }
 }

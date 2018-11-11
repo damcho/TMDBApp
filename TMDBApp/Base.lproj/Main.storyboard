@@ -29,16 +29,32 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5yD-6C-JUS">
-                                                    <rect key="frame" x="23" y="12" width="92" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FMH-uI-uUB">
+                                                    <rect key="frame" x="15" y="7.5" width="45" height="45"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="45" id="Kqj-wS-HWC"/>
+                                                        <constraint firstAttribute="height" constant="45" id="ppM-No-W1b"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5yD-6C-JUS">
+                                                    <rect key="frame" x="76" y="10.5" width="220" height="38.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="5yD-6C-JUS" secondAttribute="trailing" constant="24" id="8Lz-LP-lA1"/>
+                                                <constraint firstItem="5yD-6C-JUS" firstAttribute="leading" secondItem="FMH-uI-uUB" secondAttribute="trailing" constant="16" id="C5G-LD-7bz"/>
+                                                <constraint firstItem="FMH-uI-uUB" firstAttribute="centerY" secondItem="ZiV-Qm-sqo" secondAttribute="centerY" id="SEI-eZ-V5w"/>
+                                                <constraint firstAttribute="bottom" secondItem="5yD-6C-JUS" secondAttribute="bottom" constant="10.5" id="UIy-YO-JpS"/>
+                                                <constraint firstItem="5yD-6C-JUS" firstAttribute="top" secondItem="ZiV-Qm-sqo" secondAttribute="top" constant="10.5" id="ivb-J7-SbJ"/>
+                                                <constraint firstItem="5yD-6C-JUS" firstAttribute="centerY" secondItem="ZiV-Qm-sqo" secondAttribute="centerY" id="p2e-uO-JST"/>
+                                                <constraint firstItem="FMH-uI-uUB" firstAttribute="leading" secondItem="ZiV-Qm-sqo" secondAttribute="leading" constant="15" id="uZx-Zf-7s3"/>
+                                            </constraints>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="movieImageView" destination="FMH-uI-uUB" id="JT9-4G-VYE"/>
                                             <outlet property="movieTitleLabel" destination="5yD-6C-JUS" id="PId-Ur-JKw"/>
                                         </connections>
                                     </tableViewCell>
@@ -72,6 +88,7 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="movieCategoryFilter" destination="IQ3-Q7-C7e" id="PUW-MI-GNb"/>
                         <outlet property="moviesListTableVIew" destination="3df-pU-mPk" id="mAm-IL-fSD"/>
                     </connections>
                 </viewController>

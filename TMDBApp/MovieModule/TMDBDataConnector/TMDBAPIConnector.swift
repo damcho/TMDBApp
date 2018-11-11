@@ -10,6 +10,9 @@ import Foundation
 import SystemConfiguration
 
 let APIKey:String = "df2fffd5a0084a58bde8be99efd54ec0"
+
+let imageBaseURL:String = "https://image.tmdb.org/t/p/w500"
+
 //let APIReadAccessToken:String = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZjJmZmZkNWEwMDg0YTU4YmRlOGJlOTllZmQ1NGVjMCIsInN1YiI6IjViZTJkYWRkMGUwYTI2MTRiNjAxMmNhZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dBKb9rKru20L3B5E5XM06xsWNMLED2fZynIZd_pH9-8"
 
 
@@ -82,6 +85,22 @@ class TMDBAPIConnector :DataConnector{
         dataTask?.resume()
     }
     
+    static func downloadImage(from url: String, completion: @escaping (Data) -> ()) {
+        if let urlComponents = URLComponents(string: imageBaseURL + url) {
+
+            guard let url = urlComponents.url else { return }
+            print(url)
+            let completionHandler = { (data:Data?, response:URLResponse?, error:Error?) in
+                
+                guard let data = data, error == nil else { return }
+                DispatchQueue.main.async() {
+                    completion(data)
+                }
+            }
+            
+            URLSession.shared.dataTask(with: url, completionHandler: completionHandler).resume()
+        }
+    }
 }
 
 

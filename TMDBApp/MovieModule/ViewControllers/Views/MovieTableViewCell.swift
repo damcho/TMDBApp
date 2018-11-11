@@ -11,7 +11,10 @@ import UIKit
 class MovieTableViewCell: UITableViewCell {
 
     
+    @IBOutlet weak var movieImageView: UIImageView!
     @IBOutlet weak var movieTitleLabel: UILabel!
+    var Movie:Movie?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -24,7 +27,12 @@ class MovieTableViewCell: UITableViewCell {
     }
     
     func setMovie(movie:Movie) {
+        self.Movie = movie
         self.movieTitleLabel.text = movie.title
+        self.movieImageView.image = nil
+        movie.getImage(completion: {(data:Data) ->() in
+            self.movieImageView.image = UIImage(data: data)
+        })
     }
 
 }

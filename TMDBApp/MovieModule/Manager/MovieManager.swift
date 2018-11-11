@@ -59,8 +59,8 @@ class MovieManager {
     
     func filterMovies(searchParams:SearchObject) {
     }
+
     
-    private func cachedMovies() -> Bool {
-        return TMDBCoreDataConnector.shared.cachedMovies()
-    }
-}
+    class func getImage(path:String, completion: @escaping (Data) -> ()){
+        TMDBAPIConnector.downloadImage(from:path, completion:completion)
+    }}

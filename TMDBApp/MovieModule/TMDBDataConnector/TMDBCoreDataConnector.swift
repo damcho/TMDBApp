@@ -73,21 +73,4 @@ class TMDBCoreDataConnector: DataConnector {
             }
         }
     }
-    
-    func cachedMovies() -> Bool {
-        let managedObjectContext = self.getManagedContext()
-
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Movies")
-        var entitiesCount = 0
-        
-        do {
-            entitiesCount = try managedObjectContext!.count(for: fetchRequest)
-        }
-        catch {
-            print("error executing fetch request: \(error)")
-        }
-        
-        return entitiesCount > 0
-    }
-    
 }

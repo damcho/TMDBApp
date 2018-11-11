@@ -10,6 +10,7 @@ import UIKit
 
 class MoviesListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
+    @IBOutlet weak var movieCategoryFilter: UISegmentedControl!
     @IBOutlet weak var moviesListTableVIew: UITableView!
     var presenter:MoviesPresenter?
     var searchObject:SearchObject?
@@ -19,8 +20,9 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
         super.viewDidLoad()
         self.title = "TMDB list"
         self.searchObject = SearchObject()
-        self.presenter?.fetchMovies(searchParams: self.searchObject!)
-        // Do any additional setup after loading the view, typically from a nib.
+        self.movieCategoryFilter.selectedSegmentIndex = 0
+        self.searchObject!.filterValue(value:self.movieCategoryFilter.selectedSegmentIndex)
+        self.presenter?.fetchMovies(searchParams:self.searchObject!)
     }
     
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
