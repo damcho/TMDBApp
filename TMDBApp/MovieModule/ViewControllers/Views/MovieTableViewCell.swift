@@ -13,13 +13,13 @@ class MovieTableViewCell: UITableViewCell {
     
     @IBOutlet weak var movieImageView: UIImageView!
     @IBOutlet weak var movieTitleLabel: UILabel!
-    var Movie:Movie?
+    weak var Movie:Movie?
     
     func setMovie(movie:Movie) {
         self.Movie = movie
         self.movieTitleLabel.text = movie.title
         self.movieImageView.image = nil
-        movie.getImage(completion: {(data:Data) ->() in
+        movie.getImage(completion: {[unowned self] (data:Data) ->() in
             self.movieImageView.alpha = 0
             self.movieImageView.image = UIImage(data: data)
             UIView.animate(withDuration: 0.25,

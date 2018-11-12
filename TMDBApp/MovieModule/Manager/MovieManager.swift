@@ -28,7 +28,7 @@ class MovieManager {
     }
     
     func requestMoviesFromDB(searchParams: SearchObject) {
-        let completionHandler = { (movies:[Movie]?, error:Error?) -> () in
+        let completionHandler = { [unowned self] (movies:[Movie]?, error:Error?) -> () in
             if error == nil {
                 if movies!.count > 0 {
                     self.movies.updateValue(movies!, forKey: searchParams.filter.rawValue)
@@ -42,7 +42,7 @@ class MovieManager {
     }
     
     func requestMoviesFromAPI(searchParams: SearchObject) {
-        let completionHandler = { (movies:[Movie]?, error:Error?) -> () in
+        let completionHandler = {[unowned self] (movies:[Movie]?, error:Error?) -> () in
             if error == nil {
                 self.movies.updateValue(movies!, forKey: searchParams.filter.rawValue)
                 do {

@@ -45,7 +45,7 @@ class Movie {
     
     func getImage(completion: @escaping (Data) -> ()){
         
-        let handler = { (data:Data?) -> () in
+        let handler = { [unowned self] (data:Data?) -> () in
             self.imageData = data
             if data != nil {
                 TMDBCoreDataConnector.shared.save(imageData: self.imageData!, with: self.imageURLPath!, and: nil)
