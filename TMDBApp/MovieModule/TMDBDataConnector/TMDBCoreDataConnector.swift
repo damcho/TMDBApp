@@ -32,7 +32,6 @@ class TMDBCoreDataConnector: DataConnector {
         do {
             let movieRecords = try managedObjectContext!.fetch(fetchRequest) as! [NSManagedObject]
             var movies:[Movie] = Array()
-            print("retrieved movies")
             
             for fetchedMovie in movieRecords {
                 let movie = Movie()

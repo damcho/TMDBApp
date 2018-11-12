@@ -32,8 +32,8 @@ class MovieManager {
             if error == nil {
                 if movies!.count > 0 {
                     self.movies.updateValue(movies!, forKey: searchParams.filter.rawValue)
-                    self.presenter?.moviesFetchedWithSuccess(movies: self.movies[searchParams.filter.rawValue]!)
                 }
+                self.presenter?.moviesFetchedWithSuccess(movies: movies!)
             } else {
                 self.presenter?.moviesFetchFailed(error:error!)
             }

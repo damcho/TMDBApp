@@ -64,9 +64,14 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func moviesFetchedWithSuccess(movies:[Movie]) {
-        self.movies = movies
-        self.moviesListTableVIew.reloadData()
         activityIndicatorView?.stopAnimating(nil)
+
+        if movies.count > 0 {
+            self.movies = movies
+            self.moviesListTableVIew.reloadData()
+        } else {
+            self.showAlertView(msg:"No results")
+        }
     }
 
     func moviesFetchWithError(error:Error) {

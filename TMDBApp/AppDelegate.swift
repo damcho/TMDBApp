@@ -19,15 +19,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let movieVC = MovieModuleRouter.createModule()
         
-        /* Initiating instance of ui-navigation-controller with view-controller */
         let navigationController = UINavigationController()
         navigationController.viewControllers = [movieVC]
         
-        /* Setting up the root view-controller as ui-navigation-controller */
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
-        // Override point for customization after application launch.
         return true
     }
 
@@ -65,7 +62,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          error conditions that could cause the creation of the store to fail.
         */
         let container = NSPersistentContainer(name: "TMDBApp")
-        print(container.persistentStoreDescriptions.first?.url)
+   //     print(container.persistentStoreDescriptions.first?.url)
 
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
