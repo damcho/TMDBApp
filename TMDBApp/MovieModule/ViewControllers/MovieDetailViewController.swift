@@ -26,8 +26,6 @@ class MovieDetailViewController: UIViewController {
         self.movieOverviewLabel.text = movie!.overview
         self.popularityLabel.text = String(movie!.popularity)
         self.voteAverageLabel.text = String(movie!.voteAverage)
-        
-        // Do any additional setup after loading the view.
     }
     
 

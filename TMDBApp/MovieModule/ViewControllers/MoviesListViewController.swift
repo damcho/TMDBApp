@@ -21,12 +21,12 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "TMDB list"
+        self.title = "TMDB"
         self.searchObject = SearchObject()
         self.movieCategoryFilter.selectedSegmentIndex = 0
         activityIndicatorView = NVActivityIndicatorPresenter.sharedInstance
         let activityData = ActivityData()
-        activityIndicatorView?.startAnimating(activityData, nil)
+        activityIndicatorView?.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
         self.searchObject!.filterValue(value:self.movieCategoryFilter.selectedSegmentIndex)
         self.presenter?.fetchMovies(searchParams:self.searchObject!)
     }
@@ -34,7 +34,7 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
         let activityData = ActivityData()
         self.searchObject!.filterValue(value: sender.selectedSegmentIndex)
-        activityIndicatorView?.startAnimating(activityData, nil)
+        activityIndicatorView?.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
         self.presenter!.filterMovies(searchParams:self.searchObject!)
     }
     
@@ -64,7 +64,7 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func moviesFetchedWithSuccess(movies:[Movie]) {
-        activityIndicatorView?.stopAnimating(nil)
+        activityIndicatorView?.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
 
         if movies.count > 0 {
             self.movies = movies
@@ -75,7 +75,7 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     }
 
     func moviesFetchWithError(error:Error) {
-        activityIndicatorView?.stopAnimating(nil)
+        activityIndicatorView?.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
         self.showAlertView(msg:error.localizedDescription)
     }
     
