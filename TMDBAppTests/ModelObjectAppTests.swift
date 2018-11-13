@@ -29,7 +29,6 @@ class ModelObjectAppTests: XCTestCase {
         XCTAssertEqual(movie.imageURLPath, nil)
         XCTAssertEqual(movie.overview, "")
         XCTAssertEqual(movie.category, nil)
-
     }
 
 }

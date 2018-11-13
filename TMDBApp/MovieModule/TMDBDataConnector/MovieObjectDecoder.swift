@@ -17,8 +17,13 @@ class MovieObjectDecoder {
         for decodedMovie in decodedMovies.results {
             results.append(Movie(data:decodedMovie))
         }
-        
         return results
+    }
+    
+    static func decodeError(data:Data) throws -> Error {
+        let decodedError =  try  JSONDecoder().decode(DecodedError.self, from: data)
+        let error = NSError(domain: "", code: decodedError.errorCode, userInfo: [NSLocalizedDescriptionKey:decodedError.errorDescription ])
+        return error
     }
 }
 
@@ -35,7 +40,7 @@ struct DecodedMovie: Decodable {
     let popularity:Double
     let imageURL:String
     let voteAvg:Float
-
+    
     enum CodingKeys : String, CodingKey {
         
         case title = "title"
@@ -54,6 +59,22 @@ struct DecodedMovie: Decodable {
         self.popularity = try container.decode(Double.self, forKey: .popularity)
         self.imageURL = try container.decode(String.self, forKey: .imageURL)
         self.voteAvg = try container.decode(Float.self, forKey: .voteAvg)
-
     }
 }
+
+struct DecodedError: Decodable {
+    let errorCode:Int
+    let errorDescription:String
+    
+    enum CodingKeys : String, CodingKey {
+        
+        case errorcode = "status_code"
+        case errordesc = "status_message"
+    }
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.errorDescription = try container.decode(String.self, forKey: .errordesc)
+        self.errorCode = try container.decode(Int.self, forKey: .errorcode)
+    }
+}
+

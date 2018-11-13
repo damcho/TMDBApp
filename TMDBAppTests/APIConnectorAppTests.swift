@@ -32,17 +32,19 @@ class APIConnectorAppTests: XCTestCase {
         let data = NSData(contentsOfFile: path)!
         let body = data
         stubResponse!.body = body as Data
+        stubResponse!.statusCode = 404
         stubRequest!.response = stubResponse!
         Hippolyte.shared.add(stubbedRequest: stubRequest!)
         Hippolyte.shared.start()
-        
+
         let searchObj = SearchObject()
         searchObj.filter = MovieFilter.POPULARITY
         let completionExpectation = expectation(description: "completionExpectation")
 
         TMDBAPIConnector.shared.getMovies(searchParams:searchObj, completion: { (movies:[Movie]?, error:Error?) in
             XCTAssert(movies == nil)
-            XCTAssert(error != nil)
+            let nserror = error! as NSError
+            XCTAssertEqual(nserror.code, 34)
             completionExpectation.fulfill()
 
         })

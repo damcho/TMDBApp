@@ -15,6 +15,9 @@ let imageBaseURL:String = "https://image.tmdb.org/t/p/w500"
 
 //let APIReadAccessToken:String = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZjJmZmZkNWEwMDg0YTU4YmRlOGJlOTllZmQ1NGVjMCIsInN1YiI6IjViZTJkYWRkMGUwYTI2MTRiNjAxMmNhZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dBKb9rKru20L3B5E5XM06xsWNMLED2fZynIZd_pH9-8"
 
+enum StatusCode :Int{
+    case SUCCESS = 200
+}
 
 class TMDBAPIConnector :DataConnector{
     
@@ -26,7 +29,7 @@ class TMDBAPIConnector :DataConnector{
     let defaultSession:URLSession
     var dataTask: URLSessionDataTask?
     var searchParams: SearchObject?
-
+    
     
     init() {
         defaultSession = URLSession(configuration: .default)
@@ -51,15 +54,25 @@ class TMDBAPIConnector :DataConnector{
                     completionHandler(nil, error)
                 }
             } else if let data = data,
-                let response = response as? HTTPURLResponse,
-                response.statusCode == 200 {
+                let response = response as? HTTPURLResponse {
                 do {
-                    let movies:[Movie] = try MovieObjectDecoder.decode(data: data)
-                    for movie in movies {
-                        movie.setCategory(category:self.searchParams!.filter)
-                    }
-                    DispatchQueue.main.async {
-                        completionHandler(movies, nil )
+                    let status = StatusCode(rawValue: response.statusCode)
+                    switch status {
+                        case .SUCCESS?:
+                            let movies:[Movie] = try MovieObjectDecoder.decode(data: data)
+                            for movie in movies {
+                                movie.setCategory(category:self.searchParams!.filter)
+                            }
+                            DispatchQueue.main.async {
+                                completionHandler(movies, nil )
+                            }
+                        
+                        default:
+                            let decodedError:Error = try MovieObjectDecoder.decodeError(data: data)
+                            print(decodedError.localizedDescription)
+                            DispatchQueue.main.async {
+                                completionHandler(nil, decodedError )
+                            }
                     }
                 } catch let error {
                     DispatchQueue.main.async {
@@ -71,9 +84,10 @@ class TMDBAPIConnector :DataConnector{
         dataTask?.resume()
     }
     
+    
     static func downloadImage(from url: String, completion: @escaping (Data) -> ()) {
         if let urlComponents = URLComponents(string: imageBaseURL + url) {
-
+            
             guard let url = urlComponents.url else { return }
             let completionHandler = { (data:Data?, response:URLResponse?, error:Error?) in
                 
@@ -117,3 +131,4 @@ public class Reachability {
         
     }
 }
+
