@@ -9,7 +9,7 @@
 import XCTest
 @testable import TMDBApp
 
-class TMDBAppTests: XCTestCase {
+class ModelObjectAppTests: XCTestCase {
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.

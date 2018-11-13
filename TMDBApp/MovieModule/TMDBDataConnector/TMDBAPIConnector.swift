@@ -36,9 +36,9 @@ class TMDBAPIConnector :DataConnector{
         self.searchParams = searchParams
         if var urlComponents = URLComponents(string: baseURL + movie + searchParams.urlString()) {
             urlComponents.query = "api_key=\(APIKey)"
-            
          //   print(urlComponents)
             guard let url = urlComponents.url else { return }
+            print(url)
             self.requestMedia(url: url, completionHandler: completion)
         }
     }
