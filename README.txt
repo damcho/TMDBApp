@@ -21,18 +21,25 @@ Movie
 SearchObject
 
 
+Protocolos
+DataConnector:		Protocolo a ser implementado para adquirir los datos
+
 
 capa de persistencia:
 Clase: TMDBCoreDataConnector	implementa DataConnector protocol
-
 Core Data(SQLite) para almacenamiento de películas
 y fileSystem para almacenamiento de las imágenes
 
 Capa de red:
 clase: TMDBAPIConnector    	implementa DataConnector protocol
+(URLSession y URLSessionDataTask)	
 
-URLSession y URLSessionDataTask	
-
+Mejoras futuras:
+-Internacionalizacion
+-mayor cobertura de tests unitarios
+-Manejo exhaustivo de errores (códigos de error de la API)
+-buscador online
+-visualizacion de videos
 
 Principio de responsabilidad unica:
 Refiere a la segmentación de las funcionalidades de una aplicación. Es decir limitar una clase, estructura u objeto a una única responsabilidad y no a manejar demasiadas funciones
