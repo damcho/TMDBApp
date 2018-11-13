@@ -41,6 +41,7 @@ class TMDBCoreDataConnector: DataConnector {
                 movie.overview = fetchedMovie.value(forKey:"overview") as! String
                 movie.imageURLPath = fetchedMovie.value(forKey:"image") as? String
                 movie.voteAverage = (fetchedMovie.value(forKey:"vote_average") as? Float)!
+                movie.popularity = (fetchedMovie.value(forKey:"popularity") as? Double)!
                 movie.imageData = self.load(fileName: movie.imageURLPath!)
 
                 movies.append(movie)
