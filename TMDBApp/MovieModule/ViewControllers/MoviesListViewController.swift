@@ -14,28 +14,25 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     @IBOutlet weak var movieCategoryFilter: UISegmentedControl!
     @IBOutlet weak var moviesListTableVIew: UITableView!
     var presenter:MoviesPresenter?
-    var searchObject:SearchObject?
+    var searchObject:SearchObject = SearchObject()
+    let activityData = ActivityData()
     var movies:[Movie]?
-    var activityIndicatorView:NVActivityIndicatorPresenter?
+    var activityIndicatorView:NVActivityIndicatorPresenter = NVActivityIndicatorPresenter.sharedInstance
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "TMDB"
-        self.searchObject = SearchObject()
         self.movieCategoryFilter.selectedSegmentIndex = 0
-        activityIndicatorView = NVActivityIndicatorPresenter.sharedInstance
-        let activityData = ActivityData()
-        activityIndicatorView?.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
-        self.searchObject!.filterValue(value:self.movieCategoryFilter.selectedSegmentIndex)
-        self.presenter?.fetchMovies(searchParams:self.searchObject!)
+        activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
+        self.searchObject.filterValue(value:self.movieCategoryFilter.selectedSegmentIndex)
+        self.presenter?.fetchMovies(searchParams:self.searchObject)
     }
     
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
-        let activityData = ActivityData()
-        self.searchObject!.filterValue(value: sender.selectedSegmentIndex)
-        activityIndicatorView?.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
-        self.presenter!.filterMovies(searchParams:self.searchObject!)
+        self.searchObject.filterValue(value: sender.selectedSegmentIndex)
+        activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
+        self.presenter!.filterMovies(searchParams:self.searchObject)
     }
     
     func numberOfSectionsInTableView(tableView: UITableView?) -> Int {
@@ -64,7 +61,7 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func moviesFetchedWithSuccess(movies:[Movie]) {
-        activityIndicatorView?.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
+        activityIndicatorView.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
 
         if movies.count > 0 {
             self.movies = movies
@@ -75,7 +72,7 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     }
 
     func moviesFetchWithError(error:Error) {
-        activityIndicatorView?.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
+        activityIndicatorView.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
         self.showAlertView(msg:error.localizedDescription)
     }
     

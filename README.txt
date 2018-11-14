@@ -1,50 +1,86 @@
-TMDB
+//
+//  ViewController.swift
+//  TMDBApp
+//
+//  Created by Damian Modernell on 07/11/2018.
+//  Copyright © 2018 Damian Modernell. All rights reserved.
+//
 
-Arquitectura de la aplicación: VIPER
+import UIKit
+import NVActivityIndicatorView
 
-Vistas:
-MoviesListViewController
-MovieDetailViewController
-MovieTableViewCell
+class MoviesListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
-Presenter:		Pasamanos entre el interactor y las vistas
-MoviesPresenter
-
-Router:
-MoviesModuleRouter: 	Encargado del manejo de controladores de la app
-
-Interactor:
-MovieManager  		Encargado de la lógica de negocio de la app
-
-Entity:	      		Modelo de datos
-Movie
-SearchObject
-
-
-Protocolos
-DataConnector:		Protocolo a ser implementado para adquirir los datos
+    @IBOutlet weak var movieCategoryFilter: UISegmentedControl!
+    @IBOutlet weak var moviesListTableVIew: UITableView!
+    var presenter:MoviesPresenter?
+    var searchObject:SearchObject = SearchObject()
+    let activityData = ActivityData()
+    var movies:[Movie]?
+    var activityIndicatorView:NVActivityIndicatorPresenter = NVActivityIndicatorPresenter.sharedInstance
 
 
-capa de persistencia:
-Clase: TMDBCoreDataConnector	implementa DataConnector protocol
-Core Data(SQLite) para almacenamiento de películas
-y fileSystem para almacenamiento de las imágenes
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.title = "TMDB"
+        self.movieCategoryFilter.selectedSegmentIndex = 0
+        activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
+        self.searchObject.filterValue(value:self.movieCategoryFilter.selectedSegmentIndex)
+        self.presenter.fetchMovies(searchParams:self.searchObject!)
+    }
+    
+    @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
+        self.searchObject.filterValue(value: sender.selectedSegmentIndex)
+        activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
+        self.presenter!.filterMovies(searchParams:self.searchObject!)
+    }
+    
+    func numberOfSectionsInTableView(tableView: UITableView?) -> Int {
+        return 0
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard let moviesCount = self.movies?.count else {
+            return 0
+        }
+        return moviesCount
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell  {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "MovieTableViewCell", for: indexPath as IndexPath) as! MovieTableViewCell
+        
+        cell.setMovie(movie: self.movies![indexPath.row])
+        
+        return cell
+    }
+    
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let movie = self.movies![indexPath.row]
+        self.presenter?.showMoviesDetail(navController:navigationController!, movie:movie)
+    }
+    
+    func moviesFetchedWithSuccess(movies:[Movie]) {
+        activityIndicatorView?.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
 
-Capa de red:
-clase: TMDBAPIConnector    	implementa DataConnector protocol
-(URLSession y URLSessionDataTask)	
+        if movies.count > 0 {
+            self.movies = movies
+            self.moviesListTableVIew.reloadData()
+        } else {
+            self.showAlertView(msg:"No results")
+        }
+    }
 
-Mejoras futuras:
--Internacionalizacion
--mayor cobertura de tests unitarios
--Manejo exhaustivo de errores (códigos de error de la API)
--buscador online
--visualizacion de videos
+    func moviesFetchWithError(error:Error) {
+        activityIndicatorView.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
+        self.showAlertView(msg:error.localizedDescription)
+    }
+    
+    func showAlertView(msg:String) -> () {
+        let alert = UIAlertController(title: "Alert", message: msg, preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
 
-Principio de responsabilidad unica:
-Refiere a la segmentación de las funcionalidades de una aplicación. Es decir limitar una clase, estructura u objeto a una única responsabilidad y no a manejar demasiadas funciones
-Una clase debe poder describirse a si misma por su nombre. Si no puedo ponerle un nombre a una clase o a un método porque hace demasiadas cosas, quizás deba pensar en refactorizarlo en distintos objetos.
-
-Coding limpio:
-Desde mi punto de vista un código de calidad o limpio refiere a aquel que no solo hace lo que debe hacer, sino que es legible por otra persona y que la misma pueda agregar o corregir funcionalidad sin mayores problemas, es modularizado, reusable, testeable fácilmente, que no tenga código repetido por todas partes. 
+}
 

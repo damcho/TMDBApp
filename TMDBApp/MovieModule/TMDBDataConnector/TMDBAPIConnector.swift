@@ -69,7 +69,6 @@ class TMDBAPIConnector :DataConnector{
                         
                         default:
                             let decodedError:Error = try MovieObjectDecoder.decodeError(data: data)
-                            print(decodedError.localizedDescription)
                             DispatchQueue.main.async {
                                 completionHandler(nil, decodedError )
                             }
