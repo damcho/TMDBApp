@@ -40,7 +40,7 @@ class TMDBCoreDataConnector: DataConnector {
                 movie.setCategory(category: MovieFilter( rawValue: fetchedMovie.value(forKey:"category") as! String)!)
                 movie.overview = fetchedMovie.value(forKey:"overview") as! String
                 movie.imageURLPath = fetchedMovie.value(forKey:"image") as? String
-                movie.voteAverage = (fetchedMovie.value(forKey:"vote_average") as? Float)!
+                movie.voteAverage = (fetchedMovie.value(forKey:"vote_average") as? Double)!
                 movie.popularity = (fetchedMovie.value(forKey:"popularity") as? Double)!
 
                 movies.append(movie)

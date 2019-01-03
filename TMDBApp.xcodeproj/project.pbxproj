@@ -25,7 +25,6 @@
 		8BAB98B921938726006B310C /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BAB98B821938726006B310C /* Movie.swift */; };
 		8BAB98BC219388CC006B310C /* MovieModuleProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BAB98BB219388CC006B310C /* MovieModuleProtocols.swift */; };
 		8BAB98BE219388FE006B310C /* SearchObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BAB98BD219388FE006B310C /* SearchObject.swift */; };
-		8BAB98C121938EE0006B310C /* MovieObjectDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BAB98C021938EE0006B310C /* MovieObjectDecoder.swift */; };
 		8BAB98C3219396E2006B310C /* TMDBCoreDataConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BAB98C2219396E2006B310C /* TMDBCoreDataConnector.swift */; };
 		8BAB98C6219474CF006B310C /* MoviesPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BAB98C5219474CF006B310C /* MoviesPresenter.swift */; };
 		8BAB98C821947679006B310C /* MovieDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BAB98C721947679006B310C /* MovieDetailViewController.swift */; };
@@ -65,7 +64,6 @@
 		8BAB98B821938726006B310C /* Movie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movie.swift; sourceTree = "<group>"; };
 		8BAB98BB219388CC006B310C /* MovieModuleProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieModuleProtocols.swift; sourceTree = "<group>"; };
 		8BAB98BD219388FE006B310C /* SearchObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchObject.swift; sourceTree = "<group>"; };
-		8BAB98C021938EE0006B310C /* MovieObjectDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieObjectDecoder.swift; sourceTree = "<group>"; };
 		8BAB98C2219396E2006B310C /* TMDBCoreDataConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBCoreDataConnector.swift; sourceTree = "<group>"; };
 		8BAB98C5219474CF006B310C /* MoviesPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesPresenter.swift; sourceTree = "<group>"; };
 		8BAB98C721947679006B310C /* MovieDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailViewController.swift; sourceTree = "<group>"; };
@@ -252,7 +250,6 @@
 			children = (
 				8BCA9AFC21932736006233FA /* TMDBAPIConnector.swift */,
 				8BAB98C2219396E2006B310C /* TMDBCoreDataConnector.swift */,
-				8BAB98C021938EE0006B310C /* MovieObjectDecoder.swift */,
 			);
 			path = TMDBDataConnector;
 			sourceTree = "<group>";
@@ -465,7 +462,6 @@
 				8BAB98C821947679006B310C /* MovieDetailViewController.swift in Sources */,
 				8BAB98B5219386FE006B310C /* MovieManager.swift in Sources */,
 				8BAB98B721938714006B310C /* MovieModuleRouter.swift in Sources */,
-				8BAB98C121938EE0006B310C /* MovieObjectDecoder.swift in Sources */,
 				8BAB98C3219396E2006B310C /* TMDBCoreDataConnector.swift in Sources */,
 				8B3D78CD219318A3006BD797 /* MoviesListViewController.swift in Sources */,
 				8BAB98BE219388FE006B310C /* SearchObject.swift in Sources */,

@@ -16,11 +16,9 @@ class Movie {
     var category:MovieFilter?
     var overview:String
     var popularity:Double
-    var voteAverage:Float
+    var voteAverage:Double
     var imageURLPath:String?
-    var imageData:Data?
 
-    
     init() {
         self.title = ""
         self.overview = ""
@@ -29,15 +27,38 @@ class Movie {
         self.voteAverage = 0
     }
     
-    init(data:DecodedMovie) {
-        self.title = data.title
-        self.movieId = data.id
-        self.overview = data.overview
-        self.popularity = data.popularity
-        self.imageURLPath = data.imageURL
-        self.voteAverage = data.voteAvg
+    init?(data:Dictionary<String, Any>) {
+        guard let title = data["title"] as? String else {
+            return nil
+        }
+        self.title = title
+        
+        guard let overview = data["overview"] as? String else {
+            return nil
+        }
+        self.overview = overview
 
+        guard let nobieId = data["id"] as? Int else {
+            return nil
+        }
+        self.movieId = nobieId
+        
+        guard let popularity = data["popularity"] as? Double else {
+            return nil
+        }
+        self.popularity = popularity
+
+        guard let voteAverage = data["vote_average"] as? Double else {
+            return nil
+        }
+        self.voteAverage = voteAverage
+        
+        guard let imageUrl = data["poster_path"] as? String else {
+            return nil
+        }
+        self.imageURLPath = imageUrl
     }
+    
     
     func setCategory(category:MovieFilter) {
         self.category = category

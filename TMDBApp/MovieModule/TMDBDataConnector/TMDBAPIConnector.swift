@@ -46,47 +46,28 @@ class TMDBAPIConnector :DataConnector{
     }
     
     func requestMedia(url: URL, completionHandler: @escaping ([Movie]?, Error?) -> ()){
-        dataTask = defaultSession.dataTask(with: url) { data, response, error in
-            print(url)
-            defer {
-                self.dataTask = nil
-            }
-            if let error = error {
-                DispatchQueue.main.async {
-                    completionHandler(nil, error)
+    
+        AF.request(url, method: .get)
+            .validate()
+            .responseJSON { response in
+                guard response.result.isSuccess else {
+                    completionHandler(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Resource not found"]))
+                    return
                 }
-            } else if let data = data,
-                let response = response as? HTTPURLResponse {
-                do {
-                    let status = StatusCode(rawValue: response.statusCode)
-                    switch status {
-                        case .SUCCESS?:
-                            let movies:[Movie] = try MovieObjectDecoder.decode(data: data)
-                            for movie in movies {
-                                movie.setCategory(category:self.searchParams!.filter)
-                            }
-                            DispatchQueue.main.async {
-                                completionHandler(movies, nil )
-                            }
-                        
-                        default:
-                            let decodedError:Error = try MovieObjectDecoder.decodeError(data: data)
-                            DispatchQueue.main.async {
-                                completionHandler(nil, decodedError )
-                            }
-                    }
-                } catch let error {
-                    DispatchQueue.main.async {
-                        completionHandler(nil, error )
-                    }
+                guard let dataDictionary = response.result.value as? NSDictionary else {
+                    completionHandler(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Malformed data received from fetchAllRooms service"]))
+                    return
                 }
-            }
+                guard let moviesArray:Array<Dictionary<String, Any>> = (dataDictionary["results"] as? Array) else {
+                    completionHandler(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Parsing error"]))
+                    return
+                }
+                let movies:[Movie] = moviesArray.compactMap(Movie.init)
+                completionHandler(movies, nil)
         }
-        dataTask?.resume()
     }
     
     func saveImage(imageData: Data, with fileName: String, and imageName: String?) {
-        
         
     }
 
