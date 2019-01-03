@@ -7,11 +7,16 @@
 //
 
 import Foundation
-
+import UIKit
 
 class MovieManager {
     var presenter:MoviesPresenter?
     var movies:Dictionary<String, [Movie]> = Dictionary()
+    let apiConnector:DataConnector = TMDBAPIConnector.shared
+    let dbConnector:DataConnector = TMDBCoreDataConnector.shared
+
+    let imageCache = NSCache<NSString, UIImage>()
+    static let shared = MovieManager()
     
     func fetchMovies(searchParams:SearchObject) {
         if moviesAreInMemory(searchParams: searchParams) {
@@ -58,7 +63,32 @@ class MovieManager {
         TMDBAPIConnector.shared.getMovies(searchParams: searchParams, completion: completionHandler)
     }
     
-    class func getImage(path:String, completion: @escaping (Data) -> ()){
-        TMDBAPIConnector.downloadImage(from:path, completion:completion)
+    func getImage(path:String, completion: @escaping (UIImage?) -> ()){
+        
+        if let cachedImage = imageCache.object(forKey: path as NSString) {
+            completion(cachedImage)
+            return
+        }
+        
+        let apiDownloadedImageHandler = {[unowned self] (image:UIImage?) in
+            if image != nil {
+                self.imageCache.setObject(image!, forKey: path as NSString)
+                self.dbConnector.saveImage(imageData: image!.pngData()!, with: path, and: nil)
+            }
+            completion(image)
+        }
+        
+        let dbDownloadedImageHandler = { [unowned self] (image:UIImage?) in
+            if image != nil {
+                self.imageCache.setObject(image!, forKey: path as NSString)
+            }
+            completion(image)
+        }
+        
+        if Reachability.isConnectedToNetwork() {
+            self.apiConnector.loadImage(from:path, completion:apiDownloadedImageHandler)
+        } else {
+            self.dbConnector.loadImage(from: path, completion:dbDownloadedImageHandler)            
+        }
     }
 }

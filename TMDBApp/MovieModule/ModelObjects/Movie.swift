@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import UIKit
 
 class Movie {
     
@@ -43,20 +43,7 @@ class Movie {
         self.category = category
     }
     
-    func getImage(completion: @escaping (Data) -> ()){
-        
-        let handler = { [unowned self] (data:Data?) -> () in
-            self.imageData = data
-            if data != nil {
-                TMDBCoreDataConnector.shared.save(imageData: self.imageData!, with: self.imageURLPath!, and: nil)
-                completion(data!)
-            }
-        }
-        
-        if self.imageData != nil {
-            handler(self.imageData!)
-        } else {
-            MovieManager.getImage(path: self.imageURLPath!, completion: handler)
-        }
+    func getImage(completion: @escaping (UIImage?) -> ()){
+        MovieManager.shared.getImage(path: self.imageURLPath!, completion: completion)
     }
 }

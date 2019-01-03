@@ -8,6 +8,7 @@
 
 import Foundation
 import SystemConfiguration
+import Alamofire
 
 let APIKey:String = "df2fffd5a0084a58bde8be99efd54ec0"
 
@@ -46,6 +47,7 @@ class TMDBAPIConnector :DataConnector{
     
     func requestMedia(url: URL, completionHandler: @escaping ([Movie]?, Error?) -> ()){
         dataTask = defaultSession.dataTask(with: url) { data, response, error in
+            print(url)
             defer {
                 self.dataTask = nil
             }
@@ -83,51 +85,46 @@ class TMDBAPIConnector :DataConnector{
         dataTask?.resume()
     }
     
-    
-    static func downloadImage(from url: String, completion: @escaping (Data) -> ()) {
+    func saveImage(imageData: Data, with fileName: String, and imageName: String?) {
+        
+        
+    }
+
+    func loadImage(from url: String, completion: @escaping (UIImage?) -> ()) {
+        
         if let urlComponents = URLComponents(string: imageBaseURL + url) {
-            
             guard let url = urlComponents.url else { return }
-            let completionHandler = { (data:Data?, response:URLResponse?, error:Error?) in
-                
-                guard let data = data, error == nil else { return }
-                DispatchQueue.main.async() {
-                    completion(data)
-                }
-            }
             
-            URLSession.shared.dataTask(with: url, completionHandler: completionHandler).resume()
+            AF.request(url, method: .get)
+                .validate()
+                .responseData(completionHandler: { (responseData) in
+                    if responseData.result.isSuccess {
+                        
+                        guard responseData.data != nil, let image = UIImage(data:responseData.data!) else {
+                            completion(nil)
+                            return
+                        }
+                        completion(image)
+                        
+                    } else {
+                        completion(nil)
+                    }
+                })
         }
     }
 }
 
 
+
 public class Reachability {
     
-    class func isConnectedToNetwork() -> Bool {
-        
-        var zeroAddress = sockaddr_in(sin_len: 0, sin_family: 0, sin_port: 0, sin_addr: in_addr(s_addr: 0), sin_zero: (0, 0, 0, 0, 0, 0, 0, 0))
-        zeroAddress.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
-        zeroAddress.sin_family = sa_family_t(AF_INET)
-        
-        guard let defaultRouteReachability = withUnsafePointer(to: &zeroAddress, {
-            $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-                SCNetworkReachabilityCreateWithAddress(nil, $0)
-            }
-        }) else {
-            return false
-        }
-        
-        var flags: SCNetworkReachabilityFlags = SCNetworkReachabilityFlags(rawValue: 0)
-        if SCNetworkReachabilityGetFlags(defaultRouteReachability, &flags) == false {
-            return false
-        }
-        
-        let isReachable = flags == .reachable
-        let needsConnection = flags == .connectionRequired
-        
-        return isReachable && !needsConnection
-        
+    static let reachabilityManager = Alamofire.NetworkReachabilityManager (host: "www.apple.com")
+    static func listenForReachability() {
+        reachabilityManager!.startListening()
+    }
+    
+    static func isConnectedToNetwork() -> Bool{
+        return reachabilityManager!.isReachable
     }
 }
 

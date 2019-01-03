@@ -20,23 +20,12 @@ class MovieDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = self.movie!.title
-        if movie?.imageData != nil {
-            self.movieImageView.image = UIImage(data:self.movie!.imageData!)
-        }
+        movie!.getImage(completion: {[weak self] (image:UIImage?) ->() in
+            self?.movieImageView.image = image != nil ? image : UIImage(named: "contactdefault")
+        })
         self.movieOverviewLabel.text = movie!.overview
         self.popularityLabel.text = String(movie!.popularity)
         self.voteAverageLabel.text = String(movie!.voteAverage)
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

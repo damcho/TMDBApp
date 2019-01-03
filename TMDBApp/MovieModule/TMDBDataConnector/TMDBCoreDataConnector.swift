@@ -42,7 +42,6 @@ class TMDBCoreDataConnector: DataConnector {
                 movie.imageURLPath = fetchedMovie.value(forKey:"image") as? String
                 movie.voteAverage = (fetchedMovie.value(forKey:"vote_average") as? Float)!
                 movie.popularity = (fetchedMovie.value(forKey:"popularity") as? Double)!
-                movie.imageData = self.load(fileName: movie.imageURLPath!)
 
                 movies.append(movie)
             }
@@ -79,7 +78,7 @@ class TMDBCoreDataConnector: DataConnector {
         }
     }
     
-    func save(imageData: Data, with fileName: String, and imageName: String?) {
+    func saveImage(imageData: Data, with fileName: String, and imageName: String?) {
         
         let documentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first
         let imageStore = documentsDirectory?.appendingPathComponent(fileName)
@@ -91,16 +90,15 @@ class TMDBCoreDataConnector: DataConnector {
         }
     }
     
-    private func load(fileName: String) -> Data? {
+    func loadImage(from url: String, completion: @escaping (UIImage?) -> ()) {
         let documentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first
-        let fileURL = documentsDirectory!.appendingPathComponent(fileName)
+        let fileURL = documentsDirectory!.appendingPathComponent(url)
         do {
             let imageData = try Data(contentsOf: fileURL)
-            return imageData
+            completion(UIImage(data: imageData))
         } catch {
             print("Error loading image : \(error)")
         }
-        return nil
     }
     
 }
