@@ -11,7 +11,7 @@ import UIKit
 
 class MovieManager {
     var presenter:MoviesPresenter?
-    var movies:Dictionary<String, [Movie]> = Dictionary()
+    var movies:Dictionary<String, MoviePage> = Dictionary()
     let apiConnector:DataConnector = TMDBAPIConnector.shared
     let dbConnector:DataConnector = TMDBCoreDataConnector.shared
 
@@ -19,9 +19,7 @@ class MovieManager {
     static let shared = MovieManager()
     
     func fetchMovies(searchParams:SearchObject) {
-        if moviesAreInMemory(searchParams: searchParams) {
-            self.presenter?.moviesFetchedWithSuccess(movies:self.movies[searchParams.filter.rawValue]! )
-        } else if Reachability.isConnectedToNetwork() {
+        if Reachability.isConnectedToNetwork() {
             self.requestMoviesFromAPI(searchParams: searchParams)
         } else {
             self.requestMoviesFromDB(searchParams: searchParams)
@@ -33,12 +31,12 @@ class MovieManager {
     }
     
     func requestMoviesFromDB(searchParams: SearchObject) {
-        let completionHandler = { [unowned self] (movies:[Movie]?, error:Error?) -> () in
+        let completionHandler = { [unowned self] (moviePage:MoviePage?, error:Error?) -> () in
             if error == nil {
-                if movies!.count > 0 {
-                    self.movies.updateValue(movies!, forKey: searchParams.filter.rawValue)
+                if moviePage!.movies.count > 0 {
+                    self.movies.updateValue(moviePage!, forKey: searchParams.filter.rawValue)
                 }
-                self.presenter?.moviesFetchedWithSuccess(movies: movies!)
+                self.presenter?.moviesFetchedWithSuccess(moviePage: moviePage!)
             } else {
                 self.presenter?.moviesFetchFailed(error:error!)
             }
@@ -47,21 +45,23 @@ class MovieManager {
     }
     
     func requestMoviesFromAPI(searchParams: SearchObject) {
-        let completionHandler = {[unowned self] (movies:[Movie]?, error:Error?) -> () in
+        let completionHandler = {[unowned self] (moviePage:MoviePage?, error:Error?) -> () in
             if error == nil {
-                self.movies.updateValue(movies!, forKey: searchParams.filter.rawValue)
+                self.movies[searchParams.filter.rawValue] = moviePage!
+                
                 do {
-                    try TMDBCoreDataConnector.shared.storeMovies(movies:self.movies[searchParams.filter.rawValue]!)
+                    try TMDBCoreDataConnector.shared.storeMovies(movies:self.movies[searchParams.filter.rawValue]!.movies)
                 } catch let error {
                     self.presenter?.moviesFetchFailed(error:error)
                 }
-                self.presenter?.moviesFetchedWithSuccess(movies: self.movies[searchParams.filter.rawValue]!)
+                self.presenter?.moviesFetchedWithSuccess(moviePage: self.movies[searchParams.filter.rawValue]!)
             } else {
                 self.presenter?.moviesFetchFailed(error:error!)
             }
         }
         TMDBAPIConnector.shared.getMovies(searchParams: searchParams, completion: completionHandler)
     }
+    
     
     func getImage(path:String, completion: @escaping (UIImage?) -> ()){
         

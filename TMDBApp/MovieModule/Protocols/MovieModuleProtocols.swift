@@ -8,7 +8,7 @@
 
 import Foundation
 import UIKit
-typealias QueryResut = ([Movie]?, Error?) -> ()
+typealias QueryResut = (MoviePage?, Error?) -> ()
 
 
 protocol DataConnector {

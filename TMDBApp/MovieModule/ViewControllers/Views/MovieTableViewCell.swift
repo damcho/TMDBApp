@@ -21,12 +21,12 @@ class MovieTableViewCell: UITableViewCell {
         self.movieImageView.image = nil
         self.movieImageView.alpha = 0
 
-        movie.getImage(completion: {[unowned self] (image:UIImage?) ->() in
-            self.movieImageView.image = image != nil ? image : UIImage(named: "contactdefault")
+        movie.getImage(completion: {[weak self] (image:UIImage?) ->() in
+            self?.movieImageView.image = image != nil ? image : UIImage(named: "contactdefault")
             
             UIView.animate(withDuration: 0.25,
                            animations: {
-                            self.movieImageView.alpha = 1
+                            self?.movieImageView.alpha = 1
             },
                            completion:nil
             )

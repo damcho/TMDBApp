@@ -27,25 +27,19 @@ class TMDBAPIConnector :DataConnector{
     
     let baseURL = "https://api.themoviedb.org/3"
     let movie = "/movie"
-    let defaultSession:URLSession
-    var dataTask: URLSessionDataTask?
     var searchParams: SearchObject?
     
     
-    init() {
-        defaultSession = URLSession(configuration: .default)
-    }
-    
-    func getMovies(searchParams: SearchObject, completion: @escaping ([Movie]?, Error?) -> ()) {
+    func getMovies(searchParams: SearchObject, completion: @escaping (MoviePage?, Error?) -> ()) {
         self.searchParams = searchParams
         if var urlComponents = URLComponents(string: baseURL + movie + searchParams.urlString()) {
-            urlComponents.query = "api_key=\(APIKey)"
+            urlComponents.query = "api_key=\(APIKey)&page=\(searchParams.page)"
             guard let url = urlComponents.url else { return }
             self.requestMedia(url: url, completionHandler: completion)
         }
     }
     
-    func requestMedia(url: URL, completionHandler: @escaping ([Movie]?, Error?) -> ()){
+    func requestMedia(url: URL, completionHandler: @escaping (MoviePage?, Error?) -> ()){
     
         AF.request(url, method: .get)
             .validate()
@@ -58,12 +52,16 @@ class TMDBAPIConnector :DataConnector{
                     completionHandler(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Malformed data received from fetchAllRooms service"]))
                     return
                 }
-                guard let moviesArray:Array<Dictionary<String, Any>> = (dataDictionary["results"] as? Array) else {
-                    completionHandler(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Parsing error"]))
+                
+                guard let moviesPage = MoviePage(data:dataDictionary) else {
+                      completionHandler(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Malformed data received from fetchAllRooms service"]))
                     return
                 }
-                let movies:[Movie] = moviesArray.compactMap(Movie.init)
-                completionHandler(movies, nil)
+               
+                for movie in moviesPage.movies {
+                    movie.category = self.searchParams?.filter
+                }
+                completionHandler(moviesPage, nil)
         }
     }
     

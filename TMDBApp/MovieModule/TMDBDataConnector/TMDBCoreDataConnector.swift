@@ -45,7 +45,8 @@ class TMDBCoreDataConnector: DataConnector {
 
                 movies.append(movie)
             }
-            completion(movies, nil)
+            let moviePage = MoviePage(movies:movies)
+            completion(moviePage, nil)
             
         } catch let error {
             print("Could not save. \(error), \(error.localizedDescription)")

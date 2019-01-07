@@ -16,7 +16,9 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     var presenter:MoviesPresenter?
     var searchObject:SearchObject = SearchObject()
     let activityData = ActivityData()
-    var movies:[Movie]?
+    var movies:[Movie] = []
+    var currentPage = 1
+    private var shouldShowLoadingCell = false
     var activityIndicatorView:NVActivityIndicatorPresenter = NVActivityIndicatorPresenter.sharedInstance
 
 
@@ -27,12 +29,29 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
         activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
         self.searchObject.filterValue(value:self.movieCategoryFilter.selectedSegmentIndex)
         self.presenter?.fetchMovies(searchParams:self.searchObject)
+        
+        moviesListTableVIew.refreshControl = UIRefreshControl()
+        moviesListTableVIew.refreshControl?.addTarget(self, action: #selector(refreshMovies), for: .valueChanged)
+    }
+    
+    func fetchNextPage() {
+        self.searchObject.page += 1
+        self.presenter?.fetchMovies(searchParams:self.searchObject)
+    }
+    
+    @objc func refreshMovies() {
+        self.searchObject.page = 1
+        self.presenter?.fetchMovies(searchParams:self.searchObject)
     }
     
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
         self.searchObject.filterValue(value: sender.selectedSegmentIndex)
         activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
-        self.presenter!.filterMovies(searchParams:self.searchObject)
+        let indexPath = NSIndexPath(row: 0, section: 0)
+        self.shouldShowLoadingCell = false
+        self.moviesListTableVIew.scrollToRow(at: indexPath as IndexPath, at: .top, animated: true)
+        self.refreshMovies()
+
     }
     
     func numberOfSectionsInTableView(tableView: UITableView?) -> Int {
@@ -40,31 +59,46 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let moviesCount = self.movies?.count else {
-            return 0
-        }
-        return moviesCount
+        return shouldShowLoadingCell ? self.movies.count + 1 : self.movies.count
+    }
+    
+    private func isLoadingIndexPath(_ indexPath: IndexPath) -> Bool {
+        guard shouldShowLoadingCell else { return false }
+        return indexPath.row == self.movies.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell  {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "MovieTableViewCell", for: indexPath as IndexPath) as! MovieTableViewCell
         
-        cell.setMovie(movie: self.movies![indexPath.row])
-        
-        return cell
+        if isLoadingIndexPath(indexPath) {
+            return tableView.dequeueReusableCell(withIdentifier: "loadingCell", for: indexPath as IndexPath)
+
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "MovieTableViewCell", for: indexPath as IndexPath) as! MovieTableViewCell
+            cell.setMovie(movie: self.movies[indexPath.row])
+            
+            return cell
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard isLoadingIndexPath(indexPath) else { return }
+        fetchNextPage()
     }
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let movie = self.movies![indexPath.row]
+        let movie = self.movies[indexPath.row]
         self.presenter?.showMoviesDetail(navController:navigationController!, movie:movie)
     }
     
-    func moviesFetchedWithSuccess(movies:[Movie]) {
+    func moviesFetchedWithSuccess(moviePage:MoviePage) {
         activityIndicatorView.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
-
-        if movies.count > 0 {
-            self.movies = movies
+        self.moviesListTableVIew.refreshControl?.endRefreshing()
+        self.shouldShowLoadingCell = moviePage.currentPage < moviePage.totalPages
+        self.movies = moviePage.currentPage == 1 ? [] : self.movies
+        self.movies.append(contentsOf: moviePage.movies )
+        
+        if self.movies.count > 0 {
             self.moviesListTableVIew.reloadData()
         } else {
             self.showAlertView(msg:"No results")

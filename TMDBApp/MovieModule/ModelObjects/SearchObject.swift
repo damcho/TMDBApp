@@ -18,6 +18,7 @@ enum MovieFilter :String{
 class SearchObject {
     
     var filter:MovieFilter
+    var page = 1
     
     init() {
         self.filter = .POPULARITY
