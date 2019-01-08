@@ -58,15 +58,8 @@ class TMDBAPIConnector :DataConnector{
                     return
                 }
                
-                for movie in moviesPage.movies {
-                    movie.category = self.searchParams?.category
-                }
                 completion(moviesPage, nil)
         }
-    }
-    
-    func saveImage(imageData: Data, with fileName: String, and imageName: String?) {
-        
     }
 
     func loadImage(from url: String, completion: @escaping (UIImage?) -> ()) {

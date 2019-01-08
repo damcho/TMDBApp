@@ -9,12 +9,11 @@
 import Foundation
 import UIKit
 
-class Movie : Equatable, Hashable{
+class Movie : Equatable{
     
     
     var title:String
     var movieId:Int
-    var category:MovieFilter?
     var overview:String
     var popularity:Double
     var voteAverage:Double
@@ -63,16 +62,6 @@ class Movie : Equatable, Hashable{
     static func == (lhs: Movie, rhs: Movie) -> Bool {
         return lhs.movieId == rhs.movieId
     }
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(self.movieId)
-    }
-    
-    func setCategory(category:MovieFilter) {
-        self.category = category
-    }
-    
-    
     
     func getImage(completion: @escaping (UIImage?) -> ()){
         MovieManager.shared.getImage(path: self.imageURLPath!, completion: completion)

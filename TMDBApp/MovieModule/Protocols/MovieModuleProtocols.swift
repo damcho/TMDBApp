@@ -15,6 +15,5 @@ protocol DataConnector {
     
     func getMovies(searchParams: SearchObject, completion: @escaping completionHandler )
     func loadImage(from url: String, completion: @escaping (UIImage?) -> ())
-    func saveImage(imageData: Data, with fileName: String, and imageName: String?)
 
 }
