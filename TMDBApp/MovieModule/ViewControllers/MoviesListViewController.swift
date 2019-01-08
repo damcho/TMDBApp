@@ -10,7 +10,7 @@ import UIKit
 import NVActivityIndicatorView
 
 class MoviesListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-
+    
     @IBOutlet weak var movieCategoryFilter: UISegmentedControl!
     @IBOutlet weak var moviesListTableVIew: UITableView!
     var presenter:MoviesPresenter?
@@ -20,8 +20,8 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     var currentPage = 1
     private var shouldShowLoadingCell = false
     var activityIndicatorView:NVActivityIndicatorPresenter = NVActivityIndicatorPresenter.sharedInstance
-
-
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "TMDB"
@@ -34,7 +34,7 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
         moviesListTableVIew.refreshControl?.addTarget(self, action: #selector(refreshMovies), for: .valueChanged)
     }
     
-    func fetchNextPage() {
+    func fetchMovies() {
         self.searchObject.page += 1
         self.presenter?.fetchMovies(searchParams:self.searchObject)
     }
@@ -51,7 +51,7 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
         self.shouldShowLoadingCell = false
         self.moviesListTableVIew.scrollToRow(at: indexPath as IndexPath, at: .top, animated: true)
         self.refreshMovies()
-
+        
     }
     
     func numberOfSectionsInTableView(tableView: UITableView?) -> Int {
@@ -68,13 +68,17 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell  {
-        
         if isLoadingIndexPath(indexPath) {
             return tableView.dequeueReusableCell(withIdentifier: "loadingCell", for: indexPath as IndexPath)
-
+            
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "MovieTableViewCell", for: indexPath as IndexPath) as! MovieTableViewCell
-            cell.setMovie(movie: self.movies[indexPath.row])
+            cell.tag = indexPath.row
+            cell.setMovie(movie: self.movies[indexPath.row],mewIndexPath:indexPath, imageCompletion: { (image:UIImage, mewIndexPath:IndexPath) -> () in
+                if cell.tag == indexPath.row {
+                    cell.movieImageView.image = image
+                }
+            } )
             
             return cell
         }
@@ -82,7 +86,7 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         guard isLoadingIndexPath(indexPath) else { return }
-        fetchNextPage()
+        fetchMovies()
     }
     
     
@@ -91,12 +95,13 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
         self.presenter?.showMoviesDetail(navController:navigationController!, movie:movie)
     }
     
-    func moviesFetchedWithSuccess(moviePage:MoviePage) {
+    func moviesFetchedWithSuccess(movieContainer:MoviesContainer) {
+        print("moviesFetched")
         activityIndicatorView.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
         self.moviesListTableVIew.refreshControl?.endRefreshing()
-        self.shouldShowLoadingCell = moviePage.currentPage < moviePage.totalPages
-        self.movies = moviePage.currentPage == 1 ? [] : self.movies
-        self.movies.append(contentsOf: moviePage.movies )
+        self.shouldShowLoadingCell = movieContainer.currentPage < movieContainer.totalPages
+        self.movies = movieContainer.currentPage == 1 ? [] : self.movies
+        self.movies = movieContainer.getMovies()
         
         if self.movies.count > 0 {
             self.moviesListTableVIew.reloadData()
@@ -104,7 +109,7 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
             self.showAlertView(msg:"No results")
         }
     }
-
+    
     func moviesFetchWithError(error:Error) {
         activityIndicatorView.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
         self.showAlertView(msg:error.localizedDescription)
@@ -115,6 +120,6 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
-
+    
 }
 

@@ -8,12 +8,12 @@
 
 import Foundation
 import UIKit
-typealias QueryResut = (MoviePage?, Error?) -> ()
+typealias completionHandler = (MoviesContainer?, Error?) -> ()
 
 
 protocol DataConnector {
     
-    func getMovies(searchParams: SearchObject, completion: @escaping QueryResut )
+    func getMovies(searchParams: SearchObject, completion: @escaping completionHandler )
     func loadImage(from url: String, completion: @escaping (UIImage?) -> ())
     func saveImage(imageData: Data, with fileName: String, and imageName: String?)
 

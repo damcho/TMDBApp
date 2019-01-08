@@ -9,7 +9,8 @@
 import Foundation
 import UIKit
 
-class Movie {
+class Movie : Equatable, Hashable{
+    
     
     var title:String
     var movieId:Int
@@ -59,10 +60,19 @@ class Movie {
         self.imageURLPath = imageUrl
     }
     
+    static func == (lhs: Movie, rhs: Movie) -> Bool {
+        return lhs.movieId == rhs.movieId
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(self.movieId)
+    }
     
     func setCategory(category:MovieFilter) {
         self.category = category
     }
+    
+    
     
     func getImage(completion: @escaping (UIImage?) -> ()){
         MovieManager.shared.getImage(path: self.imageURLPath!, completion: completion)

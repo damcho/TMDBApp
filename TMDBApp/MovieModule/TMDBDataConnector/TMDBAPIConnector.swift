@@ -30,38 +30,38 @@ class TMDBAPIConnector :DataConnector{
     var searchParams: SearchObject?
     
     
-    func getMovies(searchParams: SearchObject, completion: @escaping (MoviePage?, Error?) -> ()) {
+    func getMovies(searchParams: SearchObject, completion: @escaping (completionHandler)) -> () {
         self.searchParams = searchParams
         if var urlComponents = URLComponents(string: baseURL + movie + searchParams.urlString()) {
             urlComponents.query = "api_key=\(APIKey)&page=\(searchParams.page)"
             guard let url = urlComponents.url else { return }
-            self.requestMedia(url: url, completionHandler: completion)
+            self.requestMedia(url: url, completion: completion)
         }
     }
     
-    func requestMedia(url: URL, completionHandler: @escaping (MoviePage?, Error?) -> ()){
+    func requestMedia(url: URL, completion: @escaping (completionHandler)) -> (){
     
         AF.request(url, method: .get)
             .validate()
             .responseJSON { response in
                 guard response.result.isSuccess else {
-                    completionHandler(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Resource not found"]))
+                    completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Resource not found"]))
                     return
                 }
                 guard let dataDictionary = response.result.value as? NSDictionary else {
-                    completionHandler(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Malformed data received from fetchAllRooms service"]))
+                    completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Malformed data received from fetchAllRooms service"]))
                     return
                 }
                 
-                guard let moviesPage = MoviePage(data:dataDictionary) else {
-                      completionHandler(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Malformed data received from fetchAllRooms service"]))
+                guard let moviesPage = MoviesContainer(data:dataDictionary) else {
+                      completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Malformed data received from fetchAllRooms service"]))
                     return
                 }
                
                 for movie in moviesPage.movies {
-                    movie.category = self.searchParams?.filter
+                    movie.category = self.searchParams?.category
                 }
-                completionHandler(moviesPage, nil)
+                completion(moviesPage, nil)
         }
     }
     

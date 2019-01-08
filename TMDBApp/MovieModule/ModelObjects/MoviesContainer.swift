@@ -8,22 +8,14 @@
 
 import Foundation
 
-struct MoviePage {
+struct MoviesContainer {
     
-    let currentPage:Int
-    let totalPages:Int
-    let totalResults:Int
-    var movies:[Movie]
-    
-    init(movies:[Movie]) {
-        self.movies = movies
-        currentPage = 1
-        totalResults = movies.count
-        totalPages = 1
-    }
+    var currentPage:Int = 0
+    var totalPages:Int = 0
+    var totalResults:Int = 0
+    var movies:[Movie] = []
     
     init?(data:NSDictionary){
-        
         guard let currentPage = data["page"] as? Int else {
             return nil
         }
@@ -42,11 +34,23 @@ struct MoviePage {
         guard let moviesArray:Array<Dictionary<String, Any>> = (data["results"] as? Array) else {
             return nil
         }
-        let movies:[Movie] = moviesArray.compactMap(Movie.init)
-
-        self.movies = movies
-        
-        
+        self.movies = moviesArray.compactMap(Movie.init)
     }
+    
+    mutating func update(page:MoviesContainer) {
+        self.currentPage = page.currentPage
+        self.totalPages = page.totalPages
+        self.totalResults = page.totalResults
+        for movie in page.movies {
+            if !self.movies.contains(movie) {
+                movies.append(movie)
+            }
+        }
+    }
+    
+    func getMovies() -> [Movie] {
+        return movies
+    }
+    
     
 }

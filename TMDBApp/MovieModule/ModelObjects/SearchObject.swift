@@ -17,27 +17,27 @@ enum MovieFilter :String{
 
 class SearchObject {
     
-    var filter:MovieFilter
+    var category:MovieFilter
     var page = 1
     
     init() {
-        self.filter = .POPULARITY
+        self.category = .POPULARITY
     }
     
     func urlString() -> String{
-        return "/\(filter.rawValue)"
+        return "/\(category.rawValue)"
     }
     
     func filterValue(value:Int) {
         switch value {
         case 0:
-            self.filter = .TOP_RATED
+            self.category = .TOP_RATED
         case 1:
-            self.filter = .UPCOMING
+            self.category = .UPCOMING
         case 2:
-            self.filter = .POPULARITY
+            self.category = .POPULARITY
         default:
-            self.filter = .POPULARITY
+            self.category = .POPULARITY
         }        
     }
 }

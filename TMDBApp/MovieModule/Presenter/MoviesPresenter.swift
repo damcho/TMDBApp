@@ -22,8 +22,8 @@ class MoviesPresenter {
         self.movieManager?.fetchMovies(searchParams: searchParams)
     }
     
-    func moviesFetchedWithSuccess(moviePage:MoviePage){
-        self.moviesListVC!.moviesFetchedWithSuccess(moviePage:moviePage)
+    func moviesFetchedWithSuccess(movieContainer:MoviesContainer){
+        self.moviesListVC!.moviesFetchedWithSuccess(movieContainer:movieContainer)
     }
     
     func moviesFetchFailed(error:Error){

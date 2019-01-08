@@ -23,11 +23,11 @@ class TMDBCoreDataConnector: DataConnector {
         return appDelegate.persistentContainer.viewContext
     }
     
-    func getMovies(searchParams: SearchObject, completion: @escaping QueryResut) {
+    func getMovies(searchParams: SearchObject, completion: @escaping completionHandler) {
         
         let managedObjectContext = self.getManagedContext()
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Movies")
-        fetchRequest.predicate = NSPredicate(format: "category == %@", searchParams.filter.rawValue)
+        fetchRequest.predicate = NSPredicate(format: "category == %@", searchParams.category.rawValue)
         
         do {
             let movieRecords = try managedObjectContext!.fetch(fetchRequest) as! [NSManagedObject]
@@ -45,8 +45,8 @@ class TMDBCoreDataConnector: DataConnector {
 
                 movies.append(movie)
             }
-            let moviePage = MoviePage(movies:movies)
-            completion(moviePage, nil)
+      //      let moviePage = MoviesContainer(movies:movies)
+     //       completion(moviePage, nil)
             
         } catch let error {
             print("Could not save. \(error), \(error.localizedDescription)")
