@@ -16,10 +16,6 @@ let imageBaseURL:String = "https://image.tmdb.org/t/p/w500"
 
 //let APIReadAccessToken:String = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZjJmZmZkNWEwMDg0YTU4YmRlOGJlOTllZmQ1NGVjMCIsInN1YiI6IjViZTJkYWRkMGUwYTI2MTRiNjAxMmNhZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dBKb9rKru20L3B5E5XM06xsWNMLED2fZynIZd_pH9-8"
 
-enum StatusCode :Int{
-    case SUCCESS = 200
-}
-
 class TMDBAPIConnector :DataConnector{
     
     
@@ -27,62 +23,102 @@ class TMDBAPIConnector :DataConnector{
     
     let baseURL = "https://api.themoviedb.org/3"
     let movie = "/movie"
-    var searchParams: SearchObject?
     
-    
-    func getMovies(searchParams: SearchObject, completion: @escaping (completionHandler)) -> () {
-        self.searchParams = searchParams
-        if var urlComponents = URLComponents(string: baseURL + movie + searchParams.urlString()) {
-            urlComponents.query = "api_key=\(APIKey)&page=\(searchParams.page)"
-            guard let url = urlComponents.url else { return }
-            self.requestMedia(url: url, completion: completion)
-        }
-    }
-    
-    func requestMedia(url: URL, completion: @escaping (completionHandler)) -> (){
-    
+    func performRequest(url: URL, completion: @escaping (Data?, Error?) -> ()){
         AF.request(url, method: .get)
             .validate()
-            .responseJSON { response in
+            .responseData{ response in
                 guard response.result.isSuccess else {
                     completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Resource not found"]))
                     return
                 }
-                guard let dataDictionary = response.result.value as? NSDictionary else {
-                    completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Malformed data received from fetchAllRooms service"]))
-                    return
-                }
-                
-                guard let moviesPage = MoviesContainer(data:dataDictionary) else {
-                      completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Malformed data received from fetchAllRooms service"]))
-                    return
-                }
-               
-                completion(moviesPage, nil)
+                completion(response.data, nil)
         }
     }
-
-    func loadImage(from url: String, completion: @escaping (UIImage?) -> ()) {
-        
-        if let urlComponents = URLComponents(string: imageBaseURL + url) {
-            guard let url = urlComponents.url else { return }
-            
-            AF.request(url, method: .get)
-                .validate()
-                .responseData(completionHandler: { (responseData) in
-                    if responseData.result.isSuccess {
-                        
-                        guard responseData.data != nil, let image = UIImage(data:responseData.data!) else {
-                            completion(nil)
-                            return
-                        }
-                        completion(image)
-                        
-                    } else {
-                        completion(nil)
-                    }
-                })
+    
+    func createMoviesSearchUrl(searchParams:SearchObject) -> URL? {
+        if var urlComponents = URLComponents(string: baseURL + movie + searchParams.moviesSearchUrl()) {
+            urlComponents.query = "api_key=\(APIKey)&page=\(searchParams.page)"
+            guard let url = urlComponents.url else { return nil }
+            return url
         }
+        return nil
+    }
+    
+    func getMovies(searchParams: SearchObject, completion: @escaping (completionHandler)) -> () {
+        guard let url = createMoviesSearchUrl(searchParams: searchParams) else {
+            return
+        }
+        
+        let completionHandler = { (data:Data?, error:Error?) in
+            if error == nil {
+                do {
+                    let json = try JSONSerialization.jsonObject(with: data!, options: []) as! NSDictionary
+                    guard let moviesContainer = MoviesContainer(data:json) else {
+                        completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Malformed data received from getMovies service"]))
+                        return
+                    }
+                    completion(moviesContainer, nil)
+                } catch  {
+                    completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Malformed data received from getMovies service"]))
+                }
+            }
+        }
+        
+        self.performRequest(url: url, completion: completionHandler)
+    }
+    
+    func createMovieDetailURL(searchParams:SearchObject) -> URL? {
+        if var urlComponents = URLComponents(string: baseURL + movie + searchParams.movieDetailUrl()) {
+            urlComponents.query = "api_key=\(APIKey)&append_to_response=videos"
+            guard let url = urlComponents.url else { return nil }
+            return url
+        }
+        return nil
+    }
+    
+    func getMovieDetail(searchParams: SearchObject, completion: @escaping (Movie?, Error?) -> ()) {
+        guard let url = createMovieDetailURL(searchParams: searchParams) else {
+            return
+        }
+        
+        let completionHandler = { (data:Data?, error:Error?) in
+            if error == nil {
+                do {
+                    let json = try JSONSerialization.jsonObject(with: data!, options: []) as! Dictionary<String, Any>
+                    guard let movie = Movie(data: json) else {
+                        completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Malformed data received from fetchAllRooms service"]))
+                        return
+                    }
+                    completion(movie, nil)
+                } catch  {
+                    completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Malformed data received from getMovies service"]))
+                }
+            }
+        }
+        
+        self.performRequest(url: url, completion: completionHandler)
+    }
+    
+    func createImageURL(urlString:String) -> URL? {
+        if let urlComponents = URLComponents(string: imageBaseURL + urlString) {
+            guard let url = urlComponents.url else { return nil }
+            return url
+        }
+        return nil
+    }
+    
+    func loadImage(from url: String, completion: @escaping (UIImage?) -> ()) {
+        guard let url = createImageURL(urlString: url) else {
+            return
+        }
+        let completionHandler = { (data:Data?, error:Error?) in
+            if error == nil {
+                let image = UIImage(data:data!)
+                completion(image)
+            }
+        }
+        self.performRequest(url: url, completion: completionHandler)
     }
 }
 

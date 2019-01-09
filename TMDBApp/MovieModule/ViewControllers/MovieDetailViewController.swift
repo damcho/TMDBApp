@@ -19,6 +19,17 @@ class MovieDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let completionHandler = { (movie:Movie?, error:Error?) -> () in
+        
+            print(movie)
+        
+        }
+        
+        let searchObj = SearchObject()
+        searchObj.movieId = movie?.movieId
+        TMDBAPIConnector.shared.getMovieDetail(searchParams: searchObj, completion:completionHandler )
+        
         self.title = self.movie!.title
         movie!.getImage(completion: {[weak self] (image:UIImage?) ->() in
             self?.movieImageView.image = image != nil ? image : UIImage(named: "contactdefault")

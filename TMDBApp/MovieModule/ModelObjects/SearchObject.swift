@@ -17,15 +17,19 @@ enum MovieFilter :String{
 
 class SearchObject {
     
-    var category:MovieFilter
+    var category:MovieFilter = .POPULARITY
     var page = 1
+    var movieId:Int?
     
-    init() {
-        self.category = .POPULARITY
+    func moviesSearchUrl() -> String{
+        return "/\(category.rawValue)"
     }
     
-    func urlString() -> String{
-        return "/\(category.rawValue)"
+    func movieDetailUrl() -> String {
+        guard let movieId = self.movieId else {
+            return ""
+        }
+        return "/\( movieId )"
     }
     
     func filterValue(value:Int) {
