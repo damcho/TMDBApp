@@ -32,7 +32,7 @@ class MovieDetailViewController: UIViewController {
         
         self.title = self.movie!.title
         movie!.getImage(completion: {[weak self] (image:UIImage?) ->() in
-            self?.movieImageView.image = image != nil ? image : UIImage(named: "contactdefault")
+            self?.movieImageView.image = image != nil ? image : UIImage(named: "default")
         })
         self.movieOverviewLabel.text = movie!.overview
         self.popularityLabel.text = String(movie!.popularity)

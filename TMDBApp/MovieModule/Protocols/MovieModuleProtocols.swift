@@ -8,12 +8,14 @@
 
 import Foundation
 import UIKit
-typealias completionHandler = (MoviesContainer?, Error?) -> ()
+
+typealias moviesContainerCompletionHandler = (MoviesContainer?, Error?) -> ()
+typealias movieDetailCompletionHandler = (Movie?, Error?) -> ()
 
 
 protocol DataConnector {
     
-    func getMovies(searchParams: SearchObject, completion: @escaping completionHandler )
+    func getMovies(searchParams: SearchObject, completion: @escaping moviesContainerCompletionHandler )
     func loadImage(from url: String, completion: @escaping (UIImage?) -> ())
 
 }

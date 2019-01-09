@@ -45,7 +45,7 @@ class TMDBAPIConnector :DataConnector{
         return nil
     }
     
-    func getMovies(searchParams: SearchObject, completion: @escaping (completionHandler)) -> () {
+    func getMovies(searchParams: SearchObject, completion: @escaping (moviesContainerCompletionHandler)) -> () {
         guard let url = createMoviesSearchUrl(searchParams: searchParams) else {
             return
         }
@@ -77,7 +77,7 @@ class TMDBAPIConnector :DataConnector{
         return nil
     }
     
-    func getMovieDetail(searchParams: SearchObject, completion: @escaping (Movie?, Error?) -> ()) {
+    func getMovieDetail(searchParams: SearchObject, completion: @escaping movieDetailCompletionHandler) {
         guard let url = createMovieDetailURL(searchParams: searchParams) else {
             return
         }

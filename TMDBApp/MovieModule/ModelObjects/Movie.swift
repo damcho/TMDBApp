@@ -17,15 +17,9 @@ class Movie : Equatable{
     var overview:String
     var popularity:Double
     var voteAverage:Double
-    var imageURLPath:String?
+    var imageURLPath:String
+    var videos:[Video]?
 
-    init() {
-        self.title = ""
-        self.overview = ""
-        self.movieId = 0
-        self.popularity = 0
-        self.voteAverage = 0
-    }
     
     init?(data:Dictionary<String, Any>) {
         guard let title = data["title"] as? String else {
@@ -57,6 +51,15 @@ class Movie : Equatable{
             return nil
         }
         self.imageURLPath = imageUrl
+        
+        if let videosDictionary = data["videos"] as? Dictionary<String, Any> {
+            var videosArray:[Video] = []
+            for videoData in videosDictionary["results"]! as! Array<Dictionary<String, Any>> {
+                videosArray.append(Video(data: videoData))
+            }
+            self.videos = videosArray
+        }
+       
     }
     
     static func == (lhs: Movie, rhs: Movie) -> Bool {
@@ -64,6 +67,6 @@ class Movie : Equatable{
     }
     
     func getImage(completion: @escaping (UIImage?) -> ()){
-        MovieManager.shared.getImage(path: self.imageURLPath!, completion: completion)
+        MovieManager.shared.getImage(path: self.imageURLPath, completion: completion)
     }
 }
