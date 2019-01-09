@@ -11,15 +11,15 @@ import UIKit
 
 class MovieModuleRouter {
     
-    
+    static let presenter = MoviesPresenter()
+
     static func createModule() -> UIViewController {
         
         let moviesListVC = mainstoryboard.instantiateViewController(withIdentifier: "MoviesListViewController") as! MoviesListViewController
         
-        let presenter = MoviesPresenter()
         let manager = MovieManager()
         let router = MovieModuleRouter()
-                
+
         moviesListVC.presenter = presenter
         presenter.moviesListVC = moviesListVC
         presenter.router = router
@@ -44,6 +44,8 @@ class MovieModuleRouter {
     func pushToMovieDetail(navController:UINavigationController, movie:Movie) {
         let movieDetailVC = MovieModuleRouter.mainstoryboard.instantiateViewController(withIdentifier: "MovieDetailViewController") as! MovieDetailViewController
         movieDetailVC.movie = movie
+        movieDetailVC.presenter = MovieModuleRouter.presenter
+        MovieModuleRouter.presenter.movieDetailVC = movieDetailVC
         navController.pushViewController(movieDetailVC,animated: true)
     }
 }

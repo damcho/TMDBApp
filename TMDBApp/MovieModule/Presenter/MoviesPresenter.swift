@@ -13,13 +13,17 @@ class MoviesPresenter {
     
     var router:MovieModuleRouter?
     var movieManager:MovieManager?
-    var moviesListVC:MoviesListViewController?
-    var movieDetailVC:MovieDetailViewController?
+    var moviesListVC:MovieListDelegate?
+    var movieDetailVC:MovieDetailDelegate?
     
     
     
     func fetchMovies(searchParams:SearchObject) {
         self.movieManager?.fetchMovies(searchParams: searchParams)
+    }
+    
+    func getMovieDetail(searchParams:SearchObject) {
+        self.movieManager?.requestMovieDetail(searchParams: searchParams)
     }
     
     func moviesFetchedWithSuccess(movieContainer:MoviesContainer){
@@ -31,11 +35,20 @@ class MoviesPresenter {
     }
 
     func showMoviesDetail(navController:UINavigationController, movie:Movie) {
-        self.router!.pushToMovieDetail(navController:navController, movie:movie)
+        self.router?.pushToMovieDetail(navController:navController, movie:movie)
     }
     
     func filterMovies(searchParams:SearchObject){
         self.movieManager?.fetchMovies(searchParams: searchParams)
+    }
+    
+    func movieDetailFetchedWithSuccess(movie:Movie) {
+        self.movieDetailVC?.movieDetailFetchedWithSuccess(movie:movie)
+    }
+    
+    func movieDetailFetchedWithError(error:Error) {
+        self.movieDetailVC?.movieDetailFetchedWithError(error:error)
+
     }
     
 }

@@ -9,7 +9,7 @@
 import UIKit
 import NVActivityIndicatorView
 
-class MoviesListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class MoviesListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MovieListDelegate {
     
     @IBOutlet weak var movieCategoryFilter: UISegmentedControl!
     @IBOutlet weak var moviesListTableVIew: UITableView!

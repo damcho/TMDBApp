@@ -6,8 +6,9 @@ target 'TMDBApp' do
   use_frameworks!
 
   # Pods for TMDBApp
-  pod 'NVActivityIndicatorView'
+  	pod 'NVActivityIndicatorView'
 	pod 'Alamofire', '~> 5.0.0.beta.1'
+	pod 'YoutubeKit'
 
 
   target 'TMDBAppTests' do

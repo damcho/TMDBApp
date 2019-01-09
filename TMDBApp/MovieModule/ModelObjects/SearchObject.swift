@@ -19,17 +19,17 @@ class SearchObject {
     
     var category:MovieFilter = .POPULARITY
     var page = 1
-    var movieId:Int?
+    var movie:Movie?
     
     func moviesSearchUrl() -> String{
         return "/\(category.rawValue)"
     }
     
     func movieDetailUrl() -> String {
-        guard let movieId = self.movieId else {
+        guard let movie = self.movie else {
             return ""
         }
-        return "/\( movieId )"
+        return "/\( movie.movieId )"
     }
     
     func filterValue(value:Int) {

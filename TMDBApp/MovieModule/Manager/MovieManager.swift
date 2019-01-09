@@ -49,6 +49,17 @@ class MovieManager {
         apiConnector.getMovies(searchParams: searchParams, completion: completionHandler)
     }
     
+    func requestMovieDetail(searchParams:SearchObject) {
+        let completionHandler = {[unowned self] (movie:Movie?, error:Error?) -> () in
+            if error == nil {
+                self.presenter?.movieDetailFetchedWithSuccess(movie:movie!)
+            } else {
+                self.presenter?.movieDetailFetchedWithError(error: error!)
+            }
+        }
+        apiConnector.getMovieDetail (searchParams: searchParams, completion: completionHandler)
+    }
+    
     
     func getImage(path:String, completion: @escaping (UIImage?) -> ()){
         
