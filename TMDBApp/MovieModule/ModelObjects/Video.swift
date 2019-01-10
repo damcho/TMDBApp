@@ -14,7 +14,7 @@ class Video {
     let title:String
     
     init(data:Dictionary<String, Any>) {
-        id = data["id"]! as! String
+        id = data["key"]! as! String
         title = data["name"]! as! String
     }
 }

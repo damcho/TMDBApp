@@ -9,8 +9,9 @@
 import UIKit
 import YoutubeKit
 
-class MovieDetailViewController: UIViewController,YTSwiftyPlayerDelegate, MovieDetailDelegate {
+class MovieDetailViewController: UIViewController,UITableViewDelegate, UITableViewDataSource, YTSwiftyPlayerDelegate, MovieDetailDelegate {
 
+    @IBOutlet weak var videosTableView: UITableView!
     @IBOutlet weak var movieOverviewLabel: UILabel!
     @IBOutlet weak var movieImageView: UIImageView!
     @IBOutlet weak var popularityLabel: UILabel!
@@ -41,27 +42,55 @@ class MovieDetailViewController: UIViewController,YTSwiftyPlayerDelegate, MovieD
         
     }
     
+    func numberOfSectionsInTableView(tableView: UITableView?) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return "Videos"
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.movie?.videos?.count ?? 0
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell  {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "videoCell", for: indexPath as IndexPath) as! VideoTableViewCell
+        cell.videoTitleLabel.text = movie?.videos![indexPath.row].title
+        return cell
+    }
+    
     func movieDetailFetchedWithSuccess(movie:Movie) {
-        player = YTSwiftyPlayer(
-            frame: CGRect(x: 0, y: 0, width: 640, height: 480),
-            playerVars: [.videoID("V4XWq_sRDw")])
-        print( movie.videos![0].id)
-        // Enable auto playback when video is loaded
-        player.autoplay = true
-        
-        // Set player view.
-        view.addSubview(player)
-        
-        // Set delegate for detect callback information from the player.
-        player.delegate = self
-        
-        // Load the video.
-        player.loadPlayer()
+        self.movie = movie
+        self.videosTableView.isHidden = self.movie!.videos?.count == 0
+        self.videosTableView.reloadData()
     }
     
     func player(_ player: YTSwiftyPlayer, didReceiveError error: YTSwiftyPlayerError) {
         
-        
+        print(error)
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        player = YTSwiftyPlayer(
+            frame: self.view.bounds,
+            playerVars: [.videoID(movie!.videos![indexPath.row].id)])
+        player.autoplay = true
+        player.delegate = self
+        player.loadPlayer()
+    }
+
+    func player(_ player: YTSwiftyPlayer, didChangeState state: YTSwiftyPlayerState) {
+        print(state)
+
+        switch state {
+        case .paused:
+            player.removeFromSuperview()
+        case .buffering:
+            view.addSubview(player)
+        default:
+            return
+        }
     }
 
 

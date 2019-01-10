@@ -170,21 +170,62 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="gXc-gN-S6i">
+                                <rect key="frame" x="0.0" y="282.5" width="320" height="285.5"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="150" id="Hde-eX-qfE"/>
+                                </constraints>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="videoCell" id="e4w-7f-XRe" customClass="VideoTableViewCell" customModule="TMDBApp" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="e4w-7f-XRe" id="bWU-Vs-Svw">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4vt-bl-AG9">
+                                                    <rect key="frame" x="10" y="14" width="300" height="16"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="4vt-bl-AG9" secondAttribute="trailing" constant="10" id="JBN-SR-y7R"/>
+                                                <constraint firstItem="4vt-bl-AG9" firstAttribute="centerY" secondItem="bWU-Vs-Svw" secondAttribute="centerY" id="WCN-kS-s9Z"/>
+                                                <constraint firstItem="4vt-bl-AG9" firstAttribute="centerX" secondItem="bWU-Vs-Svw" secondAttribute="centerX" id="a6b-2t-VJs"/>
+                                                <constraint firstItem="4vt-bl-AG9" firstAttribute="leading" secondItem="bWU-Vs-Svw" secondAttribute="leading" constant="10" id="itH-z2-CT7"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="videoTitleLabel" destination="4vt-bl-AG9" id="rfK-a5-5g0"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="Hu7-RQ-JsD" id="wcc-fR-YMS"/>
+                                    <outlet property="delegate" destination="Hu7-RQ-JsD" id="Jci-bv-t0G"/>
+                                </connections>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="gXc-gN-S6i" firstAttribute="top" secondItem="TGK-VM-NYK" secondAttribute="bottom" constant="10" id="BJC-qV-ZRm"/>
                             <constraint firstItem="OcB-6n-VM6" firstAttribute="leading" secondItem="YAm-5u-Fc1" secondAttribute="leading" constant="20" id="CjI-06-s4K"/>
                             <constraint firstItem="S4i-dW-B1X" firstAttribute="leading" secondItem="OcB-6n-VM6" secondAttribute="leading" id="DLH-88-XtT"/>
                             <constraint firstItem="n9Y-2d-DGR" firstAttribute="centerY" secondItem="TGK-VM-NYK" secondAttribute="centerY" id="EXI-Vc-AyZ"/>
+                            <constraint firstItem="YAm-5u-Fc1" firstAttribute="trailing" secondItem="gXc-gN-S6i" secondAttribute="trailing" id="HGL-2t-aOp"/>
                             <constraint firstItem="JoT-qW-5ca" firstAttribute="top" secondItem="YAm-5u-Fc1" secondAttribute="top" constant="20" id="HQg-ys-MbN"/>
                             <constraint firstItem="YAm-5u-Fc1" firstAttribute="trailing" secondItem="OcB-6n-VM6" secondAttribute="trailing" constant="16" id="LG9-T8-hTa"/>
                             <constraint firstItem="n9Y-2d-DGR" firstAttribute="leading" secondItem="TGK-VM-NYK" secondAttribute="trailing" constant="20" id="LXK-Sw-6aT"/>
                             <constraint firstItem="TGK-VM-NYK" firstAttribute="top" secondItem="S4i-dW-B1X" secondAttribute="bottom" constant="10" id="NoO-TN-qh4"/>
+                            <constraint firstItem="YAm-5u-Fc1" firstAttribute="bottom" secondItem="gXc-gN-S6i" secondAttribute="bottom" id="QbG-mQ-9dD"/>
                             <constraint firstItem="bi1-ae-j9z" firstAttribute="centerY" secondItem="S4i-dW-B1X" secondAttribute="centerY" id="RsQ-Tv-10c"/>
                             <constraint firstItem="bi1-ae-j9z" firstAttribute="leading" secondItem="S4i-dW-B1X" secondAttribute="trailing" constant="20" id="WaG-aU-VpB"/>
                             <constraint firstItem="S4i-dW-B1X" firstAttribute="top" secondItem="OcB-6n-VM6" secondAttribute="bottom" constant="10" id="Z8i-Xo-8BD"/>
                             <constraint firstItem="OcB-6n-VM6" firstAttribute="top" secondItem="JoT-qW-5ca" secondAttribute="bottom" constant="10" id="fCR-Ao-EYc"/>
-                            <constraint firstItem="YAm-5u-Fc1" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="TGK-VM-NYK" secondAttribute="bottom" constant="20" id="pij-RW-cB7"/>
+                            <constraint firstItem="gXc-gN-S6i" firstAttribute="leading" secondItem="YAm-5u-Fc1" secondAttribute="leading" id="gz1-Qy-mli"/>
                             <constraint firstItem="TGK-VM-NYK" firstAttribute="leading" secondItem="S4i-dW-B1X" secondAttribute="leading" id="r87-Q8-eah"/>
                             <constraint firstItem="YAm-5u-Fc1" firstAttribute="trailing" secondItem="n9Y-2d-DGR" secondAttribute="trailing" constant="20" id="x1a-pH-6zZ"/>
                             <constraint firstItem="JoT-qW-5ca" firstAttribute="leading" secondItem="YAm-5u-Fc1" secondAttribute="leading" constant="20" id="xcM-Ct-ddS"/>
@@ -196,6 +237,7 @@
                         <outlet property="movieImageView" destination="JoT-qW-5ca" id="cAu-PA-cq3"/>
                         <outlet property="movieOverviewLabel" destination="OcB-6n-VM6" id="I98-qL-OIF"/>
                         <outlet property="popularityLabel" destination="bi1-ae-j9z" id="eFc-kH-l55"/>
+                        <outlet property="videosTableView" destination="gXc-gN-S6i" id="jJH-Mz-eDX"/>
                         <outlet property="voteAverageLabel" destination="n9Y-2d-DGR" id="R04-kA-fOZ"/>
                     </connections>
                 </viewController>
