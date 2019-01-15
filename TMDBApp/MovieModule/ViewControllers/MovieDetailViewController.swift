@@ -11,8 +11,8 @@ import YoutubeKit
 
 class MovieDetailViewController: UIViewController,UITableViewDelegate, UITableViewDataSource, YTSwiftyPlayerDelegate, MovieDetailDelegate {
 
+    @IBOutlet weak var movieOverViewTextView: UITextView!
     @IBOutlet weak var videosTableView: UITableView!
-    @IBOutlet weak var movieOverviewLabel: UILabel!
     @IBOutlet weak var movieImageView: UIImageView!
     @IBOutlet weak var popularityLabel: UILabel!
     @IBOutlet weak var voteAverageLabel: UILabel!
@@ -33,13 +33,14 @@ class MovieDetailViewController: UIViewController,UITableViewDelegate, UITableVi
         movie!.getImage(completion: {[weak self] (image:UIImage?) ->() in
             self?.movieImageView.image = image != nil ? image : UIImage(named: "default")
         })
-        self.movieOverviewLabel.text = movie!.overview
+        self.movieOverViewTextView.text = movie!.overview
         self.popularityLabel.text = String(movie!.popularity)
         self.voteAverageLabel.text = String(movie!.voteAverage)
     }
     
     func movieDetailFetchedWithError(error:Error){
-        
+        self.showAlertView(msg:"There was an error obtaining the videos")
+        self.videosTableView.isHidden = true
     }
     
     func numberOfSectionsInTableView(tableView: UITableView?) -> Int {
@@ -67,8 +68,7 @@ class MovieDetailViewController: UIViewController,UITableViewDelegate, UITableVi
     }
     
     func player(_ player: YTSwiftyPlayer, didReceiveError error: YTSwiftyPlayerError) {
-        
-        print(error)
+        self.showAlertView(msg:"There was an error loading the video")
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

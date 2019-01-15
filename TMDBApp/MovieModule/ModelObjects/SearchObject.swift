@@ -18,8 +18,12 @@ enum MovieFilter :String{
 class SearchObject {
     
     var category:MovieFilter = .POPULARITY
-    var page = 1
+    var page:Int = 1
     var movie:Movie?
+    
+    func refreshSearch () {
+        self.page = 1
+    }
     
     func moviesSearchUrl() -> String{
         return "/\(category.rawValue)"

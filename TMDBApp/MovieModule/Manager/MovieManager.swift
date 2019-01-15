@@ -40,6 +40,7 @@ class MovieManager {
                 } else {
                     self.movies[searchParams.category.rawValue]?.update(page: movieContainer!)
                 }
+                searchParams.page += 1
 
                 self.presenter?.moviesFetchedWithSuccess(movieContainer: self.movies[searchParams.category.rawValue]!)
             } else {

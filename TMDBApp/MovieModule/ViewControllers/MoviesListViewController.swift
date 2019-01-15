@@ -9,17 +9,16 @@
 import UIKit
 import NVActivityIndicatorView
 
-class MoviesListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MovieListDelegate {
+class MoviesListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITableViewDataSourcePrefetching, MovieListDelegate {
     
     @IBOutlet weak var movieCategoryFilter: UISegmentedControl!
     @IBOutlet weak var moviesListTableVIew: UITableView!
     var presenter:MoviesPresenter?
     var searchObject:SearchObject = SearchObject()
     let activityData = ActivityData()
-    var movies:[Movie] = []
-    var currentPage = 1
-    private var shouldShowLoadingCell = false
     var activityIndicatorView:NVActivityIndicatorPresenter = NVActivityIndicatorPresenter.sharedInstance
+    var movies:[Movie] = []
+    private var shouldShowLoadingCell = false
     
     
     override func viewDidLoad() {
@@ -35,23 +34,33 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func fetchMovies() {
-        self.searchObject.page += 1
         self.presenter?.fetchMovies(searchParams:self.searchObject)
     }
     
     @objc func refreshMovies() {
-        self.searchObject.page = 1
-        self.presenter?.fetchMovies(searchParams:self.searchObject)
+        self.searchObject.refreshSearch()
+        self.fetchMovies()
     }
     
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
         self.searchObject.filterValue(value: sender.selectedSegmentIndex)
         activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
-        let indexPath = NSIndexPath(row: 0, section: 0)
         self.shouldShowLoadingCell = false
-        self.moviesListTableVIew.scrollToRow(at: indexPath as IndexPath, at: .top, animated: true)
+        if movies.count > 0 {
+            let indexPath = NSIndexPath(row: 0, section: 0)
+            self.moviesListTableVIew.scrollToRow(at: indexPath as IndexPath, at: .top, animated: true)
+        }
+       
         self.refreshMovies()
-        
+    }
+    
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+
+        for index in indexPaths {
+            if index.row >= self.movies.count {
+                fetchMovies()
+            }
+        }
     }
     
     func numberOfSectionsInTableView(tableView: UITableView?) -> Int {
@@ -84,25 +93,19 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
         }
     }
     
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        guard isLoadingIndexPath(indexPath) else { return }
-        fetchMovies()
-    }
-    
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let movie = self.movies[indexPath.row]
         self.presenter?.showMoviesDetail(navController:navigationController!, movie:movie)
     }
     
     func moviesFetchedWithSuccess(movieContainer:MoviesContainer) {
-        print("moviesFetched")
         activityIndicatorView.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
-        self.moviesListTableVIew.refreshControl?.endRefreshing()
+        if self.moviesListTableVIew.refreshControl!.isRefreshing {
+            self.moviesListTableVIew.refreshControl?.endRefreshing()
+        }
         self.shouldShowLoadingCell = movieContainer.currentPage < movieContainer.totalPages
-        self.movies = movieContainer.currentPage == 1 ? [] : self.movies
         self.movies = movieContainer.getMovies()
-        
+
         if self.movies.count > 0 {
             self.moviesListTableVIew.reloadData()
         } else {
@@ -114,12 +117,6 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
         activityIndicatorView.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
         self.showAlertView(msg:error.localizedDescription)
     }
-    
-    func showAlertView(msg:String) -> () {
-        let alert = UIAlertController(title: "Alert", message: msg, preferredStyle: UIAlertController.Style.alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        self.present(alert, animated: true, completion: nil)
-    }
-    
+
 }
 

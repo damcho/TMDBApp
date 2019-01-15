@@ -13,6 +13,7 @@ import Alamofire
 let APIKey:String = "df2fffd5a0084a58bde8be99efd54ec0"
 
 let imageBaseURL:String = "https://image.tmdb.org/t/p/w500"
+var isFetchingMovies = false
 
 //let APIReadAccessToken:String = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZjJmZmZkNWEwMDg0YTU4YmRlOGJlOTllZmQ1NGVjMCIsInN1YiI6IjViZTJkYWRkMGUwYTI2MTRiNjAxMmNhZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dBKb9rKru20L3B5E5XM06xsWNMLED2fZynIZd_pH9-8"
 
@@ -51,6 +52,7 @@ class TMDBAPIConnector :DataConnector{
         }
         
         let completionHandler = { (data:Data?, error:Error?) in
+            isFetchingMovies = false
             if error == nil {
                 do {
                     let json = try JSONSerialization.jsonObject(with: data!, options: []) as! NSDictionary
@@ -62,10 +64,15 @@ class TMDBAPIConnector :DataConnector{
                 } catch  {
                     completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Malformed data received from getMovies service"]))
                 }
+            } else {
+                completion(nil, error)
             }
         }
         
-        self.performRequest(url: url, completion: completionHandler)
+        if !isFetchingMovies {
+            isFetchingMovies = true
+            self.performRequest(url: url, completion: completionHandler)
+        }
     }
     
     func createMovieDetailURL(searchParams:SearchObject) -> URL? {
@@ -94,6 +101,8 @@ class TMDBAPIConnector :DataConnector{
                 } catch  {
                     completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Malformed data received from getMovies service"]))
                 }
+            } else {
+                completion(nil, error)
             }
         }
         
