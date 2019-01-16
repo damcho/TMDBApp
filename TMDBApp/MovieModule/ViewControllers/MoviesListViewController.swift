@@ -38,6 +38,10 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     @objc func refreshMovies() {
+        self.movies = []
+        self.shouldShowLoadingCell = false
+        self.moviesListTableVIew.reloadData()
+        self.moviesListTableVIew.refreshControl?.endRefreshing()
         self.searchObject.refreshSearch()
         self.fetchMovies()
     }
@@ -45,17 +49,10 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
         self.searchObject.filterValue(value: sender.selectedSegmentIndex)
         activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
-        self.shouldShowLoadingCell = false
-        if movies.count > 0 {
-            let indexPath = NSIndexPath(row: 0, section: 0)
-            self.moviesListTableVIew.scrollToRow(at: indexPath as IndexPath, at: .top, animated: true)
-        }
-       
         self.refreshMovies()
     }
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-
         for index in indexPaths {
             if index.row >= self.movies.count {
                 fetchMovies()

@@ -27,14 +27,13 @@ class MovieManager {
     }
     
     func moviesAreInMemory(searchParams:SearchObject) -> Bool {
-        return self.movies.index(forKey: searchParams.category.rawValue) != nil &&
-        searchParams.page <=  self.movies[searchParams.category.rawValue]!.currentPage
+        return self.movies.index(forKey: searchParams.category.rawValue) != nil
     }
    
     
     func requestMoviesFromAPI(searchParams: SearchObject) {
         let completionHandler = {[unowned self] (movieContainer:MoviesContainer?, error:Error?) -> () in
-            if error == nil {
+            if movieContainer != nil {
                 if  movieContainer!.currentPage == 1 {
                     self.movies[searchParams.category.rawValue] = movieContainer
                 } else {
@@ -52,7 +51,7 @@ class MovieManager {
     
     func requestMovieDetail(searchParams:SearchObject) {
         let completionHandler = {[unowned self] (movie:Movie?, error:Error?) -> () in
-            if error == nil {
+            if movie != nil {
                 self.presenter?.movieDetailFetchedWithSuccess(movie:movie!)
             } else {
                 self.presenter?.movieDetailFetchedWithError(error: error!)
