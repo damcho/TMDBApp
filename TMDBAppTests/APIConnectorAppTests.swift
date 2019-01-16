@@ -47,7 +47,6 @@ class APIConnectorAppTests: XCTestCase {
             let error = error! as NSError
             XCTAssert(error.code == 34)
 
-            print(error)
             completionExpectation.fulfill()
 
         })

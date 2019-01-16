@@ -26,7 +26,6 @@ class TMDBAPIConnector :DataConnector{
     let movie = "/movie"
     
     func performRequest(url: URL, completion: @escaping (Data?, Error?) -> ()){
-        print(url    )
         AF.request(url, method: .get)
             .validate()
             .responseData{ response in

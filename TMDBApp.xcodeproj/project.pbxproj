@@ -17,6 +17,7 @@
 		8B10B636219A39730036FCB9 /* moviesSuccessResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = 8B10B635219A39730036FCB9 /* moviesSuccessResponse.json */; };
 		8B10B638219A55830036FCB9 /* resourceNotFound.json in Resources */ = {isa = PBXBuildFile; fileRef = 8B10B637219A55830036FCB9 /* resourceNotFound.json */; };
 		8B27060E21EE196A00936D2E /* ViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B27060D21EE196A00936D2E /* ViewControllerExtensions.swift */; };
+		8B27061221EF7B5C00936D2E /* movieMock.json in Resources */ = {isa = PBXBuildFile; fileRef = 8B27061121EF7B5C00936D2E /* movieMock.json */; };
 		8B3D78CB219318A3006BD797 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3D78CA219318A3006BD797 /* AppDelegate.swift */; };
 		8B3D78CD219318A3006BD797 /* MoviesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3D78CC219318A3006BD797 /* MoviesListViewController.swift */; };
 		8B3D78D0219318A3006BD797 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8B3D78CE219318A3006BD797 /* Main.storyboard */; };
@@ -54,6 +55,7 @@
 		8B10B635219A39730036FCB9 /* moviesSuccessResponse.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = moviesSuccessResponse.json; sourceTree = "<group>"; };
 		8B10B637219A55830036FCB9 /* resourceNotFound.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = resourceNotFound.json; sourceTree = "<group>"; };
 		8B27060D21EE196A00936D2E /* ViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerExtensions.swift; sourceTree = "<group>"; };
+		8B27061121EF7B5C00936D2E /* movieMock.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = movieMock.json; sourceTree = "<group>"; };
 		8B3D78C7219318A3006BD797 /* TMDBApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TMDBApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B3D78CA219318A3006BD797 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8B3D78CC219318A3006BD797 /* MoviesListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesListViewController.swift; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 		8B10B634219A37030036FCB9 /* JSONMocks */ = {
 			isa = PBXGroup;
 			children = (
+				8B27061121EF7B5C00936D2E /* movieMock.json */,
 				8B10B637219A55830036FCB9 /* resourceNotFound.json */,
 				8B10B635219A39730036FCB9 /* moviesSuccessResponse.json */,
 			);
@@ -365,6 +368,7 @@
 			files = (
 				8B10B638219A55830036FCB9 /* resourceNotFound.json in Resources */,
 				8B10B636219A39730036FCB9 /* moviesSuccessResponse.json in Resources */,
+				8B27061221EF7B5C00936D2E /* movieMock.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
