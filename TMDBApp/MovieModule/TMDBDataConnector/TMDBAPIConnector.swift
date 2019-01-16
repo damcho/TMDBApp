@@ -26,11 +26,18 @@ class TMDBAPIConnector :DataConnector{
     let movie = "/movie"
     
     func performRequest(url: URL, completion: @escaping (Data?, Error?) -> ()){
+        print(url    )
         AF.request(url, method: .get)
             .validate()
             .responseData{ response in
                 guard response.result.isSuccess else {
-                    completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Resource not found"]))
+                    
+                    if let data = response.data , let jsonError = try? JSONSerialization.jsonObject(with: data, options: []) as! NSDictionary  {
+                        let error = NSError(domain: "", code:jsonError["status_code"] as! Int, userInfo: [NSLocalizedDescriptionKey:jsonError["status_message"]!])
+                        completion(nil, error)
+                    } else {
+                        completion(nil, response.error)
+                    }
                     return
                 }
                 completion(response.data, nil)

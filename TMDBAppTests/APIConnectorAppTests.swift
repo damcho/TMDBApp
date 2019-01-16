@@ -15,11 +15,14 @@ class APIConnectorAppTests: XCTestCase {
 
     var stubResponse:StubResponse?
     var stubRequest:StubRequest?
-
+    var searchObject:SearchObject?
+    
     override func setUp() {
-        guard let tmdbbURL = URL(string: "https://api.themoviedb.org/3/movie/popular?api_key=df2fffd5a0084a58bde8be99efd54ec0") else { return }
+        guard let tmdbbURL = URL(string: "https://api.themoviedb.org/3/movie/popular?api_key=df2fffd5a0084a58bde8be99efd54ec0&page=1") else { return }
         stubRequest = StubRequest(method: .GET, url: tmdbbURL)
         stubResponse = StubResponse()
+        searchObject = SearchObject()
+        searchObject!.category = MovieFilter.POPULARITY
     }
 
     override func tearDown() {
@@ -30,21 +33,21 @@ class APIConnectorAppTests: XCTestCase {
     func testMoviesResourceNotFound() {
         let path = Bundle(for: type(of: self)).path(forResource: "resourceNotFound", ofType: "json")!
         let data = NSData(contentsOfFile: path)!
-        let body = data
-        stubResponse!.body = body as Data
+        stubResponse!.body = data as Data
         stubResponse!.statusCode = 404
         stubRequest!.response = stubResponse!
         Hippolyte.shared.add(stubbedRequest: stubRequest!)
         Hippolyte.shared.start()
 
-        let searchObj = SearchObject()
-        searchObj.filter = MovieFilter.POPULARITY
         let completionExpectation = expectation(description: "completionExpectation")
 
-        TMDBAPIConnector.shared.getMovies(searchParams:searchObj, completion: { (movies:[Movie]?, error:Error?) in
+        TMDBAPIConnector.shared.getMovies(searchParams:searchObject!, completion: { (movies:MoviesContainer?, error:Error?) in
             XCTAssert(movies == nil)
-            let nserror = error! as NSError
-            XCTAssertEqual(nserror.code, 34)
+            XCTAssert(error != nil)
+            let error = error! as NSError
+            XCTAssert(error.code == 34)
+
+            print(error)
             completionExpectation.fulfill()
 
         })
@@ -57,21 +60,18 @@ class APIConnectorAppTests: XCTestCase {
       
         let path = Bundle(for: type(of: self)).path(forResource: "moviesSuccessResponse", ofType: "json")!
         let data = NSData(contentsOfFile: path)!
-        let body = data
         
         let completionExpectation = expectation(description: "completionExpectation")
-        
-        stubResponse!.body = body as Data
+
+        stubResponse!.body = data as Data
+        stubResponse!.statusCode = 200
         stubRequest!.response = stubResponse!
         Hippolyte.shared.add(stubbedRequest: stubRequest!)
         Hippolyte.shared.start()
         
-        let searchObj = SearchObject()
-        searchObj.filter = MovieFilter.POPULARITY
-        
-        TMDBAPIConnector.shared.getMovies(searchParams:searchObj, completion: { (movies:[Movie]?, error:Error?) in
-            XCTAssert(movies?.count == 20)
-            XCTAssert(movies![0].title == "Venom")
+        TMDBAPIConnector.shared.getMovies(searchParams:searchObject!, completion: { (movieContainer:MoviesContainer?, error:Error?) in
+            XCTAssert(movieContainer?.movies.count == 20)
+            XCTAssert(movieContainer?.movies[0].title == "Venom")
             completionExpectation.fulfill()
 
             })
