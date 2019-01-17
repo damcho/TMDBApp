@@ -15,12 +15,13 @@ import Alamofire
 class TMDBAPIConnector :DataConnector{
     
     static let shared = TMDBAPIConnector()
-    
+    private let host = "api.themoviedb.org"
+    private let scheme = "https"
+
     private let APIKey:String = "df2fffd5a0084a58bde8be99efd54ec0"
     private let imageBaseURL:String = "https://image.tmdb.org/t/p/w300"
     private var isFetchingMovies = false
-    private let baseURLPath = "https://api.themoviedb.org/3"
-    private let moviePath = "/movie"
+
     
     func performRequest(url: URL, completion: @escaping (Data?, Error?) -> ()){
         AF.request(url, method: .get)
@@ -40,20 +41,25 @@ class TMDBAPIConnector :DataConnector{
         }
     }
     
-    func createMoviesSearchUrl(searchParams:SearchObject) -> URL? {
-        if var urlComponents = URLComponents(string: baseURLPath + moviePath + searchParams.moviesSearchUrl()) {
-            urlComponents.query = "api_key=\(APIKey)&page=\(searchParams.page)"
-            guard let url = urlComponents.url else { return nil }
-            return url
+    func createURL(searchPath:String, queryItems:[URLQueryItem]?) -> URL? {
+        var urlComponents = URLComponents()
+        urlComponents.scheme = scheme
+        urlComponents.host = host
+        urlComponents.path = searchPath
+        urlComponents.queryItems = [URLQueryItem(name: "api_key", value: APIKey)]
+        if queryItems != nil {
+            urlComponents.queryItems!.append(contentsOf: queryItems!)
         }
-        return nil
+
+        guard let url = urlComponents.url else { return nil }
+        return url
     }
     
     func getMovies(searchParams: SearchObject, completion: @escaping (moviesContainerCompletionHandler)) -> () {
-        guard let url = createMoviesSearchUrl(searchParams: searchParams) else {
+        guard let url = createURL(searchPath: searchParams.searchMoviesUrlPath() , queryItems:searchParams.searchMoviesQueryItems() ) else {
             return
         }
-        
+                
         let completionHandler = {[unowned self] (data:Data?, error:Error?) in
             self.isFetchingMovies = false
             if data != nil {
@@ -75,17 +81,9 @@ class TMDBAPIConnector :DataConnector{
         }
     }
     
-    func createMovieDetailURL(searchParams:SearchObject) -> URL? {
-        if var urlComponents = URLComponents(string: baseURLPath + moviePath + searchParams.movieDetailUrl()) {
-            urlComponents.query = "api_key=\(APIKey)&append_to_response=videos"
-            guard let url = urlComponents.url else { return nil }
-            return url
-        }
-        return nil
-    }
     
     func getMovieDetail(searchParams: SearchObject, completion: @escaping movieDetailCompletionHandler) {
-        guard let url = createMovieDetailURL(searchParams: searchParams) else {
+        guard let url = createURL(searchPath: searchParams.movieDetailUrlPath(), queryItems:searchParams.movieDetailQueryItems() ) else {
             return
         }
         

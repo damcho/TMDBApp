@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="3df-pU-mPk">
-                                <rect key="frame" x="0.0" y="121" width="320" height="447"/>
+                                <rect key="frame" x="0.0" y="124" width="320" height="444"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MovieTableViewCell" rowHeight="60" id="jb7-ed-cFB" customClass="MovieTableViewCell" customModule="TMDBApp" customModuleProvider="target">
@@ -83,7 +83,7 @@
                                 </connections>
                             </tableView>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="IQ3-Q7-C7e">
-                                <rect key="frame" x="45" y="64" width="230" height="29"/>
+                                <rect key="frame" x="45" y="86" width="230" height="29"/>
                                 <segments>
                                     <segment title="Top Rated"/>
                                     <segment title="Upcoming"/>
@@ -93,20 +93,31 @@
                                     <action selector="segmentedControlValueChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="b2l-Nv-lI4"/>
                                 </connections>
                             </segmentedControl>
+                            <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="3fB-tg-H5m">
+                                <rect key="frame" x="0.0" y="20" width="320" height="56"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="20i-hm-87c"/>
+                                </connections>
+                            </searchBar>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="IQ3-Q7-C7e" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="44" id="25r-bg-nTm"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="3df-pU-mPk" secondAttribute="trailing" id="6a5-h8-Sri"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="3df-pU-mPk" secondAttribute="bottom" id="FAe-VM-PK1"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="3fB-tg-H5m" secondAttribute="trailing" id="Vr5-0d-YHW"/>
+                            <constraint firstItem="IQ3-Q7-C7e" firstAttribute="top" secondItem="3fB-tg-H5m" secondAttribute="bottom" constant="10" id="arw-ip-DbB"/>
+                            <constraint firstItem="3fB-tg-H5m" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="cbi-yv-Njm"/>
                             <constraint firstItem="IQ3-Q7-C7e" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="hoY-Qc-FfJ"/>
-                            <constraint firstItem="3df-pU-mPk" firstAttribute="top" secondItem="IQ3-Q7-C7e" secondAttribute="bottom" constant="29" id="pAW-s1-Pyh"/>
+                            <constraint firstItem="3fB-tg-H5m" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="kF0-9v-x3F"/>
+                            <constraint firstItem="3df-pU-mPk" firstAttribute="top" secondItem="IQ3-Q7-C7e" secondAttribute="bottom" constant="10" id="pAW-s1-Pyh"/>
                             <constraint firstItem="3df-pU-mPk" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="vql-nZ-V8r"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
                         <outlet property="movieCategoryFilter" destination="IQ3-Q7-C7e" id="PUW-MI-GNb"/>
+                        <outlet property="movieSearchBar" destination="3fB-tg-H5m" id="5Zw-J1-y7j"/>
                         <outlet property="moviesListTableVIew" destination="3df-pU-mPk" id="mAm-IL-fSD"/>
                     </connections>
                 </viewController>

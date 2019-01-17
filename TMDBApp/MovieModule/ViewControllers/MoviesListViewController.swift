@@ -9,8 +9,9 @@
 import UIKit
 import NVActivityIndicatorView
 
-class MoviesListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITableViewDataSourcePrefetching, MovieListDelegate {
+class MoviesListViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource, UITableViewDataSourcePrefetching, MovieListDelegate {
     
+    @IBOutlet weak var movieSearchBar: UISearchBar!
     @IBOutlet weak var movieCategoryFilter: UISegmentedControl!
     @IBOutlet weak var moviesListTableVIew: UITableView!
     var presenter:MoviesPresenter?
@@ -24,6 +25,7 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "TMDB"
+        self.movieSearchBar.placeholder = "search a movie"
         self.movieCategoryFilter.selectedSegmentIndex = 0
         activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
         self.searchObject.filterValue(value:self.movieCategoryFilter.selectedSegmentIndex)
@@ -102,6 +104,7 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
         }
         self.shouldShowLoadingCell = movieContainer.currentPage < movieContainer.totalPages
         self.movies = movieContainer.getMovies()
+        self.moviesListTableVIew.isHidden = self.movies.count == 0
 
         if self.movies.count > 0 {
             self.moviesListTableVIew.reloadData()
@@ -115,5 +118,17 @@ class MoviesListViewController: UIViewController, UITableViewDelegate, UITableVi
         self.showAlertView(msg:error.localizedDescription)
     }
 
+    public func searchBarSearchButtonClicked(_ searchBar: UISearchBar)  {
+        
+        self.movieCategoryFilter.selectedSegmentIndex = UISegmentedControl.noSegment
+
+    }
+    
+    public func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        return true
+    }
+
+
+    
 }
 
