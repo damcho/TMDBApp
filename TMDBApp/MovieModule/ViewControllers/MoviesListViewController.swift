@@ -9,9 +9,8 @@
 import UIKit
 import NVActivityIndicatorView
 
-class MoviesListViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource, UITableViewDataSourcePrefetching, MovieListDelegate {
+class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableViewDelegate, UISearchResultsUpdating, UISearchControllerDelegate, UITableViewDataSource, UITableViewDataSourcePrefetching, MovieListDelegate {
     
-    @IBOutlet weak var movieSearchBar: UISearchBar!
     @IBOutlet weak var movieCategoryFilter: UISegmentedControl!
     @IBOutlet weak var moviesListTableVIew: UITableView!
     var presenter:MoviesPresenter?
@@ -24,8 +23,17 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let searchController =  UISearchController(searchResultsController: nil)
+        self.navigationItem.searchController = searchController
+        searchController.delegate = self
+        definesPresentationContext = true
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.autocapitalizationType = .none
+        searchController.searchBar.delegate = self
+        searchController.dimsBackgroundDuringPresentation = false
+
         self.title = "TMDB"
-        self.movieSearchBar.placeholder = "search a movie"
         self.movieCategoryFilter.selectedSegmentIndex = 0
         activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
         self.searchObject.filterValue(value:self.movieCategoryFilter.selectedSegmentIndex)
@@ -49,15 +57,20 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate, UITableVi
     }
     
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
+        self.navigationItem.searchController!.isActive = false
         self.searchObject.filterValue(value: sender.selectedSegmentIndex)
         activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
         self.refreshMovies()
     }
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+
         for index in indexPaths {
-            if index.row >= self.movies.count {
+       //     print("\(index.row)      \(self.movies.count)")
+
+            if index.row >= self.movies.count, self.shouldShowLoadingCell{
                 fetchMovies()
+                return
             }
         }
     }
@@ -102,6 +115,7 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate, UITableVi
         if self.moviesListTableVIew.refreshControl!.isRefreshing {
             self.moviesListTableVIew.refreshControl?.endRefreshing()
         }
+
         self.shouldShowLoadingCell = movieContainer.currentPage < movieContainer.totalPages
         self.movies = movieContainer.getMovies()
         self.moviesListTableVIew.isHidden = self.movies.count == 0
@@ -117,18 +131,22 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate, UITableVi
         activityIndicatorView.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
         self.showAlertView(msg:error.localizedDescription)
     }
-
-    public func searchBarSearchButtonClicked(_ searchBar: UISearchBar)  {
-        
-        self.movieCategoryFilter.selectedSegmentIndex = UISegmentedControl.noSegment
-
-    }
     
     public func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         return true
     }
-
-
     
+    func updateSearchResults(for searchController: UISearchController) {
+        let whitespaceCharacterSet = CharacterSet.whitespaces
+        let strippedString =
+            searchController.searchBar.text!.trimmingCharacters(in: whitespaceCharacterSet)
+        if strippedString.count >= 3 {
+            self.searchObject.category = .QUERY
+            self.movieCategoryFilter.selectedSegmentIndex = UISegmentedControl.noSegment
+            self.searchObject.movieQuery = strippedString
+            self.refreshMovies()
+            print(strippedString)
+        }
+    }
 }
 

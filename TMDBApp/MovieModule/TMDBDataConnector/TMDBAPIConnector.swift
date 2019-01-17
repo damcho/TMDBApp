@@ -59,7 +59,9 @@ class TMDBAPIConnector :DataConnector{
         guard let url = createURL(searchPath: searchParams.searchMoviesUrlPath() , queryItems:searchParams.searchMoviesQueryItems() ) else {
             return
         }
-                
+        
+        print(url)
+        
         let completionHandler = {[unowned self] (data:Data?, error:Error?) in
             self.isFetchingMovies = false
             if data != nil {

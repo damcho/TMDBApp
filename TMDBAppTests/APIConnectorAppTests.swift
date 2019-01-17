@@ -22,7 +22,7 @@ class APIConnectorAppTests: XCTestCase {
         stubRequest = StubRequest(method: .GET, url: tmdbbURL)
         stubResponse = StubResponse()
         searchObject = SearchObject()
-        searchObject!.category = MovieFilter.POPULARITY
+        searchObject!.category = MovieFilterType.POPULARITY
     }
 
     override func tearDown() {

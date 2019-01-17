@@ -8,23 +8,21 @@
 
 import Foundation
 
-enum MovieFilter :String{
+enum MovieFilterType :String{
     case TOP_RATED = "top_rated"
     case UPCOMING = "upcoming"
     case POPULARITY = "popular"
+    case QUERY = "query"
+
 }
 
 
 class SearchObject {
     
     private let moviePath = "/3/movie"
-    private let searchPath = "/search/movie"
+    private let searchPath = "/3/search/movie"
 
-    var category:MovieFilter = .POPULARITY {
-        didSet {
-            self.movieQuery = nil
-        }
-    }
+    var category:MovieFilterType = .QUERY
     var page:Int = 1
     var movie:Movie?
     var movieQuery:String?
@@ -34,13 +32,24 @@ class SearchObject {
     }
     
     func searchMoviesUrlPath() -> String {
-        return self.movieQuery != nil ? searchPath : moviePath + "/\(self.category.rawValue)"
+        switch self.category {
+        case .POPULARITY, .UPCOMING, .TOP_RATED:
+            return moviePath + "/\(self.category.rawValue)"
+        case .QUERY:
+            return searchPath
+        }
     }
     
     func searchMoviesQueryItems() -> [URLQueryItem] {
-        return self.movieQuery != nil ?
-            [URLQueryItem(name: "query", value: movieQuery)] :
-            [URLQueryItem(name: "page", value: "\(self.page)")]
+        switch self.category {
+        case .POPULARITY, .UPCOMING, .TOP_RATED:
+            return [URLQueryItem(name: "page", value: "\(self.page)")]
+        case .QUERY:
+            guard let movieQuery = self.movieQuery, movieQuery.count > 0 else {
+                return []
+            }
+            return [URLQueryItem(name: "query", value: movieQuery),URLQueryItem(name: "page", value: "\(self.page)") ]
+        }
     }
     
     func movieDetailUrlPath() -> String {
@@ -63,7 +72,7 @@ class SearchObject {
         case 2:
             self.category = .POPULARITY
         default:
-            self.category = .POPULARITY
+            self.category = .QUERY
         }        
     }
 }
