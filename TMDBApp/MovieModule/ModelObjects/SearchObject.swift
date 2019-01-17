@@ -18,9 +18,13 @@ enum MovieFilter :String{
 class SearchObject {
     
     private let moviePath = "/3/movie"
-    private let searchPath = "/search/movie?"
+    private let searchPath = "/search/movie"
 
-    var category:MovieFilter = .POPULARITY
+    var category:MovieFilter = .POPULARITY {
+        didSet {
+            self.movieQuery = nil
+        }
+    }
     var page:Int = 1
     var movie:Movie?
     var movieQuery:String?
@@ -30,11 +34,13 @@ class SearchObject {
     }
     
     func searchMoviesUrlPath() -> String {
-        return moviePath + "/\(self.category.rawValue)"
+        return self.movieQuery != nil ? searchPath : moviePath + "/\(self.category.rawValue)"
     }
     
     func searchMoviesQueryItems() -> [URLQueryItem] {
-        return [URLQueryItem(name: "page", value: "\(self.page)")]
+        return self.movieQuery != nil ?
+            [URLQueryItem(name: "query", value: movieQuery)] :
+            [URLQueryItem(name: "page", value: "\(self.page)")]
     }
     
     func movieDetailUrlPath() -> String {
@@ -46,13 +52,6 @@ class SearchObject {
     
     func movieDetailQueryItems() -> [URLQueryItem] {
         return [URLQueryItem(name: "append_to_response", value: "videos")]
-    }
-    
-    func moviesQueryUrl() -> String {
-        guard let movieQuery = self.movieQuery else {
-            return ""
-        }
-        return searchPath+"?query="+movieQuery
     }
     
     func filterValue(value:Int) {
