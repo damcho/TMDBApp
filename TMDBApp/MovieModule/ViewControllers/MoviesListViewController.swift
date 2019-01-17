@@ -66,8 +66,6 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
 
         for index in indexPaths {
-       //     print("\(index.row)      \(self.movies.count)")
-
             if index.row >= self.movies.count, self.shouldShowLoadingCell{
                 fetchMovies()
                 return
@@ -145,7 +143,6 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
             self.movieCategoryFilter.selectedSegmentIndex = UISegmentedControl.noSegment
             self.searchObject.movieQuery = strippedString
             self.refreshMovies()
-            print(strippedString)
         }
     }
 }
