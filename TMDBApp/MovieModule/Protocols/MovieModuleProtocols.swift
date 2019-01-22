@@ -9,8 +9,8 @@
 import Foundation
 import UIKit
 
-typealias moviesContainerCompletionHandler = (MoviesContainer?, Error?) -> ()
-typealias movieDetailCompletionHandler = (Movie?, Error?) -> ()
+typealias moviesContainerCompletionHandler = (MoviesContainer?, TMDBError?) -> ()
+typealias movieDetailCompletionHandler = (Movie?, TMDBError?) -> ()
 
 
 protocol DataConnector {
@@ -23,11 +23,11 @@ protocol DataConnector {
 
 protocol MovieListDelegate {
     func moviesFetchedWithSuccess(movieContainer:MoviesContainer)
-    func moviesFetchWithError(error:Error)
+    func moviesFetchWithError(error:TMDBError)
 
 }
 
 protocol MovieDetailDelegate {
     func movieDetailFetchedWithSuccess(movie:Movie)
-    func movieDetailFetchedWithError(error:Error)
+    func movieDetailFetchedWithError(error:TMDBError)
 }

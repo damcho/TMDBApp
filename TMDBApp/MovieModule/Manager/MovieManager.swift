@@ -22,7 +22,7 @@ class MovieManager {
         } else if moviesAreInMemory(searchParams: searchParams){
             self.presenter?.moviesFetchedWithSuccess(movieContainer: self.movies[searchParams.category.rawValue]!)
         } else {
-            self.presenter?.moviesFetchFailed(error: NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Resource not found"]))
+            self.presenter?.moviesFetchFailed(error:TMDBError.NOT_FOUND)
         }
     }
     
@@ -32,7 +32,7 @@ class MovieManager {
    
     
     func requestMoviesFromAPI(searchParams: SearchObject) {
-        let completionHandler = {[unowned self] (movieContainer:MoviesContainer?, error:Error?) -> () in
+        let completionHandler = {[unowned self] (movieContainer:MoviesContainer?, error:TMDBError?) -> () in
             if movieContainer != nil {
                 if  movieContainer!.currentPage == 1 {
                     self.movies[searchParams.category.rawValue] = movieContainer
@@ -43,14 +43,20 @@ class MovieManager {
 
                 self.presenter?.moviesFetchedWithSuccess(movieContainer: self.movies[searchParams.category.rawValue]!)
             } else {
-                self.presenter?.moviesFetchFailed(error:error!)
+                switch error! {
+                case .API_ERROR, .MALFORMED_DATA:
+                    self.presenter?.moviesFetchFailed(error:error!)
+                default:
+                    return
+                }
             }
         }
+        
         apiConnector.getMovies(searchParams: searchParams, completion: completionHandler)
     }
     
     func requestMovieDetail(searchParams:SearchObject) {
-        let completionHandler = {[unowned self] (movie:Movie?, error:Error?) -> () in
+        let completionHandler = {[unowned self] (movie:Movie?, error:TMDBError?) -> () in
             if movie != nil {
                 self.presenter?.movieDetailFetchedWithSuccess(movie:movie!)
             } else {

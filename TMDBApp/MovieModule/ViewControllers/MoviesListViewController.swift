@@ -125,7 +125,12 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
         }
     }
     
-    func moviesFetchWithError(error:Error) {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        self.movieCategoryFilter.selectedSegmentIndex = 0
+        self.segmentedControlValueChanged(self.movieCategoryFilter)
+    }
+    
+    func moviesFetchWithError(error:TMDBError) {
         activityIndicatorView.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
         self.showAlertView(msg:error.localizedDescription)
     }

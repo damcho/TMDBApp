@@ -30,7 +30,7 @@ class MoviesPresenter {
         self.moviesListVC!.moviesFetchedWithSuccess(movieContainer:movieContainer)
     }
     
-    func moviesFetchFailed(error:Error){
+    func moviesFetchFailed(error:TMDBError){
         self.moviesListVC!.moviesFetchWithError(error:error)
     }
 
@@ -46,7 +46,7 @@ class MoviesPresenter {
         self.movieDetailVC?.movieDetailFetchedWithSuccess(movie:movie)
     }
     
-    func movieDetailFetchedWithError(error:Error) {
+    func movieDetailFetchedWithError(error:TMDBError) {
         self.movieDetailVC?.movieDetailFetchedWithError(error:error)
 
     }

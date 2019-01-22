@@ -10,6 +10,14 @@ import Foundation
 import SystemConfiguration
 import Alamofire
 
+
+enum TMDBError: Error {
+    case API_ERROR(reason:String)
+    case NOT_FOUND
+    case MALFORMED_DATA
+    
+}
+
 //let APIReadAccessToken:String = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZjJmZmZkNWEwMDg0YTU4YmRlOGJlOTllZmQ1NGVjMCIsInN1YiI6IjViZTJkYWRkMGUwYTI2MTRiNjAxMmNhZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dBKb9rKru20L3B5E5XM06xsWNMLED2fZynIZd_pH9-8"
 
 class TMDBAPIConnector :DataConnector{
@@ -20,20 +28,23 @@ class TMDBAPIConnector :DataConnector{
 
     private let APIKey:String = "df2fffd5a0084a58bde8be99efd54ec0"
     private let imageBaseURL:String = "https://image.tmdb.org/t/p/w300"
-    private var isFetchingMovies = false
-
     
-    func performRequest(url: URL, completion: @escaping (Data?, Error?) -> ()){
-        AF.request(url, method: .get)
+    func stopAllTasks() {
+            Alamofire.Session.default.session.getTasksWithCompletionHandler { (sessionDataTask, uploadData, downloadData) in
+            sessionDataTask.forEach { $0.cancel() }
+        }
+    }
+    
+    func performRequest(url: URL, completion: @escaping (Data?, TMDBError?) -> ()) {
+       AF.request(url, method: .get)
             .validate()
             .responseData{ response in
                 guard response.result.isSuccess else {
                     
-                    if let data = response.data , let jsonError = try? JSONSerialization.jsonObject(with: data, options: []) as! NSDictionary  {
-                        let error = NSError(domain: "", code:jsonError["status_code"] as! Int, userInfo: [NSLocalizedDescriptionKey:jsonError["status_message"]!])
-                        completion(nil, error)
+                    if let data = response.data , let jsonError = try? JSONSerialization.jsonObject(with: data, options: []) as! Dictionary<String, String>  {
+                        completion(nil, TMDBError.API_ERROR(reason: jsonError["status_message"] ?? ""))
                     } else {
-                        completion(nil, response.error)
+                        completion(nil, TMDBError.NOT_FOUND)
                     }
                     return
                 }
@@ -56,18 +67,19 @@ class TMDBAPIConnector :DataConnector{
     }
     
     func getMovies(searchParams: SearchObject, completion: @escaping (moviesContainerCompletionHandler)) -> () {
+       self.stopAllTasks()
+        
         guard let url = createURL(searchPath: searchParams.searchMoviesUrlPath() , queryItems:searchParams.searchMoviesQueryItems() ) else {
             return
         }
         
         print(url)
         
-        let completionHandler = {[unowned self] (data:Data?, error:Error?) in
-            self.isFetchingMovies = false
+        let completionHandler = { (data:Data?, error:TMDBError?) in
             if data != nil {
                 let json = try? JSONSerialization.jsonObject(with: data!, options: []) as! NSDictionary
                 guard let jsonDictionary = json, let moviesContainer = MoviesContainer(data:jsonDictionary) else {
-                    completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Malformed data received from getMovies service"]))
+                    completion(nil,TMDBError.MALFORMED_DATA)
                     return
                 }
                 completion(moviesContainer, nil)
@@ -77,10 +89,7 @@ class TMDBAPIConnector :DataConnector{
             }
         }
         
-        if !isFetchingMovies {
-            isFetchingMovies = true
-            self.performRequest(url: url, completion: completionHandler)
-        }
+        self.performRequest(url: url, completion: completionHandler)
     }
     
     
@@ -89,11 +98,11 @@ class TMDBAPIConnector :DataConnector{
             return
         }
         
-        let completionHandler = { (data:Data?, error:Error?) in
+        let completionHandler = { (data:Data?, error:TMDBError?) in
             if data != nil {
                 let json = try? JSONSerialization.jsonObject(with: data!, options: []) as! Dictionary<String, Any>
                 guard let jsonDictionary = json ,let movie = Movie(data: jsonDictionary) else {
-                    completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey:"Malformed data received from getMovieDetail service"]))
+                    completion(nil,TMDBError.MALFORMED_DATA)
                     return
                 }
                 completion(movie, nil)

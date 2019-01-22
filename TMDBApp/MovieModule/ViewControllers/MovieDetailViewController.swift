@@ -38,7 +38,7 @@ class MovieDetailViewController: UIViewController,UITableViewDelegate, UITableVi
         self.voteAverageLabel.text = String(movie!.voteAverage)
     }
     
-    func movieDetailFetchedWithError(error:Error){
+    func movieDetailFetchedWithError(error:TMDBError){
         self.showAlertView(msg:"There was an error obtaining the videos")
         self.videosTableView.isHidden = true
     }
