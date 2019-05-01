@@ -39,16 +39,18 @@ class TMDBAPIConnector :DataConnector{
        AF.request(url, method: .get)
             .validate()
             .responseData{ response in
-                guard response.result.isSuccess else {
-                    
-                    if let data = response.data , let jsonError = try? JSONSerialization.jsonObject(with: data, options: []) as! Dictionary<String, String>  {
+                switch response.result {
+                case .success(_):
+                    completion(response.data, nil)
+
+                case let .failure(error):
+                    print(error)
+                    if let data = response.data , let jsonError = try? JSONSerialization.jsonObject(with: data, options: []) as? Dictionary<String, String>  {
                         completion(nil, TMDBError.API_ERROR(reason: jsonError["status_message"] ?? ""))
                     } else {
                         completion(nil, TMDBError.NOT_FOUND)
                     }
-                    return
                 }
-                completion(response.data, nil)
         }
     }
     
@@ -77,7 +79,7 @@ class TMDBAPIConnector :DataConnector{
         
         let completionHandler = { (data:Data?, error:TMDBError?) in
             if data != nil {
-                let json = try? JSONSerialization.jsonObject(with: data!, options: []) as! NSDictionary
+                let json = try? JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary
                 guard let jsonDictionary = json, let moviesContainer = MoviesContainer(data:jsonDictionary) else {
                     completion(nil,TMDBError.MALFORMED_DATA)
                     return
@@ -100,7 +102,7 @@ class TMDBAPIConnector :DataConnector{
         
         let completionHandler = { (data:Data?, error:TMDBError?) in
             if data != nil {
-                let json = try? JSONSerialization.jsonObject(with: data!, options: []) as! Dictionary<String, Any>
+                let json = try? JSONSerialization.jsonObject(with: data!, options: []) as? Dictionary<String, Any>
                 guard let jsonDictionary = json ,let movie = Movie(data: jsonDictionary) else {
                     completion(nil,TMDBError.MALFORMED_DATA)
                     return
