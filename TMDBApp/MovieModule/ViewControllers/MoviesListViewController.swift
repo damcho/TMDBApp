@@ -139,6 +139,8 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
         return true
     }
     
+
+    
     func updateSearchResults(for searchController: UISearchController) {
         let whitespaceCharacterSet = CharacterSet.whitespaces
         let strippedString =

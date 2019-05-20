@@ -11,7 +11,7 @@ import YoutubeKit
 
 class MovieDetailViewController: UIViewController,UITableViewDelegate, UITableViewDataSource, YTSwiftyPlayerDelegate, MovieDetailDelegate {
 
-    @IBOutlet weak var movieOverViewTextView: UITextView!
+    @IBOutlet weak var movieOverViewTextView: UILabel!
     @IBOutlet weak var videosTableView: UITableView!
     @IBOutlet weak var movieImageView: UIImageView!
     @IBOutlet weak var popularityLabel: UILabel!
