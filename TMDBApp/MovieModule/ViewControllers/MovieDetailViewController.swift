@@ -81,8 +81,6 @@ class MovieDetailViewController: UIViewController,UITableViewDelegate, UITableVi
     }
 
     func player(_ player: YTSwiftyPlayer, didChangeState state: YTSwiftyPlayerState) {
-        print(state)
-
         switch state {
         case .paused:
             player.removeFromSuperview()
