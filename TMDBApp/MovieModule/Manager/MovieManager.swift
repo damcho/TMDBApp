@@ -29,27 +29,29 @@ class MovieManager {
     func moviesAreInMemory(searchParams:SearchObject) -> Bool {
         return self.movies.index(forKey: searchParams.category.rawValue) != nil
     }
-   
+    
     
     func requestMoviesFromAPI(searchParams: SearchObject) {
         let completionHandler = {[unowned self] (movieContainer:MoviesContainer?, error:TMDBError?) -> () in
-            if movieContainer != nil {
-                if  movieContainer!.currentPage == 1 {
-                    self.movies[searchParams.category.rawValue] = movieContainer
-                } else {
-                    self.movies[searchParams.category.rawValue]?.update(page: movieContainer!)
-                }
-                searchParams.page += 1
-
-                self.presenter?.moviesFetchedWithSuccess(movieContainer: self.movies[searchParams.category.rawValue]!)
-            } else {
+            
+            guard let movieContainer = movieContainer else {
                 switch error! {
                 case .API_ERROR, .MALFORMED_DATA:
                     self.presenter?.moviesFetchFailed(error:error!)
+                    return
                 default:
                     return
                 }
             }
+            
+            if movieContainer.currentPage == 1 {
+                self.movies[searchParams.category.rawValue] = movieContainer
+            } else {
+                self.movies[searchParams.category.rawValue]?.update(page: movieContainer)
+            }
+            searchParams.page += 1
+            
+            self.presenter?.moviesFetchedWithSuccess(movieContainer: self.movies[searchParams.category.rawValue]!)
         }
         
         apiConnector.getMovies(searchParams: searchParams, completion: completionHandler)
@@ -57,12 +59,13 @@ class MovieManager {
     
     func requestMovieDetail(searchParams:SearchObject) {
         let completionHandler = {[unowned self] (movie:Movie?, error:TMDBError?) -> () in
-            if movie != nil {
-                self.presenter?.movieDetailFetchedWithSuccess(movie:movie!)
-            } else {
+            guard let movie = movie else {
                 self.presenter?.movieDetailFetchedWithError(error: error!)
+                return
             }
+            self.presenter?.movieDetailFetchedWithSuccess(movie:movie)
         }
+        
         apiConnector.getMovieDetail (searchParams: searchParams, completion: completionHandler)
     }
     
