@@ -18,21 +18,12 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
     let activityData = ActivityData()
     var activityIndicatorView:NVActivityIndicatorPresenter = NVActivityIndicatorPresenter.sharedInstance
     var movies:[Movie] = []
-    private var shouldShowLoadingCell = false
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let searchController =  UISearchController(searchResultsController: nil)
-        self.navigationItem.searchController = searchController
-        searchController.delegate = self
-        definesPresentationContext = true
-        searchController.searchResultsUpdater = self
-        searchController.searchBar.autocapitalizationType = .none
-        searchController.searchBar.delegate = self
-        searchController.dimsBackgroundDuringPresentation = false
-
+        self.setupSearchController()
+        
         self.title = "TMDB"
         self.movieCategoryFilter.selectedSegmentIndex = 0
         activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
@@ -43,13 +34,23 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
         moviesListTableVIew.refreshControl?.addTarget(self, action: #selector(refreshMovies), for: .valueChanged)
     }
     
+    private func setupSearchController() {
+        let searchController =  UISearchController(searchResultsController: nil)
+        self.navigationItem.searchController = searchController
+        searchController.delegate = self
+        definesPresentationContext = true
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.autocapitalizationType = .none
+        searchController.searchBar.delegate = self
+        searchController.dimsBackgroundDuringPresentation = false
+    }
+    
     func fetchMovies() {
         self.presenter?.fetchMovies(searchParams:self.searchObject)
     }
     
     @objc func refreshMovies() {
         self.movies = []
-        self.shouldShowLoadingCell = false
         self.moviesListTableVIew.reloadData()
         self.moviesListTableVIew.refreshControl?.endRefreshing()
         self.searchObject.refreshSearch()
@@ -64,9 +65,8 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
     }
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-
         for index in indexPaths {
-            if index.row >= self.movies.count, self.shouldShowLoadingCell{
+            if index.row == self.movies.count - 1{
                 fetchMovies()
                 return
             }
@@ -78,29 +78,13 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return shouldShowLoadingCell ? self.movies.count + 1 : self.movies.count
-    }
-    
-    private func isLoadingIndexPath(_ indexPath: IndexPath) -> Bool {
-        guard shouldShowLoadingCell else { return false }
-        return indexPath.row == self.movies.count
+        return self.movies.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell  {
-        if isLoadingIndexPath(indexPath) {
-            return tableView.dequeueReusableCell(withIdentifier: "loadingCell", for: indexPath as IndexPath)
-            
-        } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "MovieTableViewCell", for: indexPath as IndexPath) as! MovieTableViewCell
-            cell.tag = indexPath.row
-            cell.setMovie(movie: self.movies[indexPath.row],mewIndexPath:indexPath, imageCompletion: { (image:UIImage, mewIndexPath:IndexPath) -> () in
-                if cell.tag == indexPath.row {
-                    cell.movieImageView.image = image
-                }
-            } )
-            
-            return cell
-        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: "MovieTableViewCell", for: indexPath as IndexPath) as! MovieTableViewCell
+        cell.setMovie(movie: self.movies[indexPath.row])
+        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -108,18 +92,30 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
         self.presenter?.showMoviesDetail(navController:navigationController!, movie:movie)
     }
     
-    func moviesFetchedWithSuccess(movieContainer:MoviesContainer) {
+    private func stopLoadingActivity() {
         activityIndicatorView.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
         if self.moviesListTableVIew.refreshControl!.isRefreshing {
             self.moviesListTableVIew.refreshControl?.endRefreshing()
         }
-
-        self.shouldShowLoadingCell = movieContainer.currentPage < movieContainer.totalPages
-        self.movies = movieContainer.getMovies()
+    }
+    
+    func moviesFetchedWithSuccess(movieContainer:MoviesContainer) {
+       
+        self.stopLoadingActivity()
+        let retrievedMovies = movieContainer.getMovies()
+        
+        var IndexPathsArray:[IndexPath] = []
+        for index in self.movies.count..<retrievedMovies.count {
+            IndexPathsArray.append(IndexPath(row: index, section: 0))
+        }
+        
+        self.movies = retrievedMovies
         self.moviesListTableVIew.isHidden = self.movies.count == 0
 
         if self.movies.count > 0 {
-            self.moviesListTableVIew.reloadData()
+            self.moviesListTableVIew.beginUpdates()
+            self.moviesListTableVIew.insertRows(at: IndexPathsArray, with: .none)
+            self.moviesListTableVIew.endUpdates()
         } else {
             self.showAlertView(msg:"No results")
         }
@@ -131,15 +127,13 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
     }
     
     func moviesFetchWithError(error:TMDBError) {
-        activityIndicatorView.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
+        self.stopLoadingActivity()
         self.showAlertView(msg:error.localizedDescription)
     }
     
     public func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         return true
     }
-    
-
     
     func updateSearchResults(for searchController: UISearchController) {
         let whitespaceCharacterSet = CharacterSet.whitespaces

@@ -18,8 +18,6 @@ enum TMDBError: Error {
     
 }
 
-//let APIReadAccessToken:String = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZjJmZmZkNWEwMDg0YTU4YmRlOGJlOTllZmQ1NGVjMCIsInN1YiI6IjViZTJkYWRkMGUwYTI2MTRiNjAxMmNhZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dBKb9rKru20L3B5E5XM06xsWNMLED2fZynIZd_pH9-8"
-
 class TMDBAPIConnector :DataConnector{
     
     static let shared = TMDBAPIConnector()
@@ -28,12 +26,6 @@ class TMDBAPIConnector :DataConnector{
 
     private let APIKey:String = "df2fffd5a0084a58bde8be99efd54ec0"
     private let imageBaseURL:String = "https://image.tmdb.org/t/p/w300"
-    
-    func stopAllTasks() {
-            Alamofire.Session.default.session.getTasksWithCompletionHandler { (sessionDataTask, uploadData, downloadData) in
-            sessionDataTask.forEach { $0.cancel() }
-        }
-    }
     
     func performRequest(url: URL, completion: @escaping (Data?, TMDBError?) -> ()) {
        AF.request(url, method: .get)
@@ -69,13 +61,10 @@ class TMDBAPIConnector :DataConnector{
     }
     
     func getMovies(searchParams: SearchObject, completion: @escaping (moviesContainerCompletionHandler)) -> () {
-       self.stopAllTasks()
-        
         guard let url = createURL(searchPath: searchParams.searchMoviesUrlPath() , queryItems:searchParams.searchMoviesQueryItems() ) else {
             return
         }
         
-        print(url)
         
         let completionHandler = { (data:Data?, error:TMDBError?) in
             if data != nil {
