@@ -1,10 +1,10 @@
 PODS:
-  - Alamofire (5.0.0-beta.6)
-  - Hippolyte (0.7.1)
-  - NVActivityIndicatorView (4.7.0):
-    - NVActivityIndicatorView/Presenter (= 4.7.0)
-  - NVActivityIndicatorView/Presenter (4.7.0)
-  - YoutubeKit (0.3.0)
+  - Alamofire (5.0.0-rc.3)
+  - Hippolyte (1.1.0)
+  - NVActivityIndicatorView (4.8.0):
+    - NVActivityIndicatorView/Presenter (= 4.8.0)
+  - NVActivityIndicatorView/Presenter (4.8.0)
+  - YoutubeKit (0.4.0)
 
 DEPENDENCIES:
   - Alamofire (~> 5.0.0.beta.1)
@@ -13,18 +13,18 @@ DEPENDENCIES:
   - YoutubeKit
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - Alamofire
     - Hippolyte
     - NVActivityIndicatorView
     - YoutubeKit
 
 SPEC CHECKSUMS:
-  Alamofire: cd08a4402bd12cacd0c66f23fb12fec8d6b965e4
-  Hippolyte: 811df5756a74ff55b2b1313d4663f93b916f85b1
-  NVActivityIndicatorView: b19ddab2576f805cbe0fb2306cba3476e09a1dea
-  YoutubeKit: a00e9eebcb3cfe26d7e233c5f8591dfd0b08f7a0
+  Alamofire: ca8c0de6906873be89d6deec5c8de279e00bf872
+  Hippolyte: a295da386260477d164529b7b18a07adc6175240
+  NVActivityIndicatorView: d24b7ebcf80af5dcd994adb650e2b6c93379270f
+  YoutubeKit: 10c74151790b570001b19403d2c60b2fb540a1fe
 
 PODFILE CHECKSUM: 69368cabcd98c843da3893faad7057fbd8fd9ef6
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.8.4

@@ -42,7 +42,6 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
         searchController.searchResultsUpdater = self
         searchController.searchBar.autocapitalizationType = .none
         searchController.searchBar.delegate = self
-        searchController.dimsBackgroundDuringPresentation = false
     }
     
     func fetchMovies() {
@@ -94,7 +93,7 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
     
     private func stopLoadingActivity() {
         activityIndicatorView.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
-        if self.moviesListTableVIew.refreshControl!.isRefreshing {
+        if self.moviesListTableVIew.refreshControl?.isRefreshing ?? false {
             self.moviesListTableVIew.refreshControl?.endRefreshing()
         }
     }
