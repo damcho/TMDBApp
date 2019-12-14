@@ -82,7 +82,7 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell  {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MovieTableViewCell", for: indexPath as IndexPath) as! MovieTableViewCell
-        cell.setMovie(movie: self.movies[indexPath.row])
+        cell.movie = self.movies[indexPath.row]
         return cell
     }
     
@@ -99,24 +99,26 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
     }
     
     func moviesFetchedWithSuccess(movieContainer:MoviesContainer) {
-       
+        
         self.stopLoadingActivity()
         let retrievedMovies = movieContainer.getMovies()
-        
-        var IndexPathsArray:[IndexPath] = []
-        for index in self.movies.count..<retrievedMovies.count {
-            IndexPathsArray.append(IndexPath(row: index, section: 0))
+        if retrievedMovies.isEmpty {
+            self.showAlertView(msg:"No results")
+            self.moviesListTableVIew.isHidden = self.movies.count == 0
+            return
         }
-        
-        self.movies = retrievedMovies
-        self.moviesListTableVIew.isHidden = self.movies.count == 0
-
-        if self.movies.count > 0 {
+        var IndexPathsArray:[IndexPath] = []
+        if self.movies.count < retrievedMovies.count {
+            for index in self.movies.count..<retrievedMovies.count {
+                IndexPathsArray.append(IndexPath(row: index, section: 0))
+            }
+            self.movies = retrievedMovies
             self.moviesListTableVIew.beginUpdates()
             self.moviesListTableVIew.insertRows(at: IndexPathsArray, with: .none)
             self.moviesListTableVIew.endUpdates()
         } else {
-            self.showAlertView(msg:"No results")
+            self.movies = retrievedMovies
+            self.moviesListTableVIew.reloadData()
         }
     }
     

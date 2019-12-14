@@ -119,9 +119,13 @@ class TMDBAPIConnector :DataConnector{
             return
         }
         let completionHandler = { (data:Data?, error:Error?) in
-            if error == nil {
-                let image = UIImage(data:data!)
+            if let imagedata = data {
+                let image = UIImage(data:imagedata)
                 completion(image)
+                return
+            }
+            if error != nil {
+                completion(nil)
             }
         }
         self.performRequest(url: url, completion: completionHandler)

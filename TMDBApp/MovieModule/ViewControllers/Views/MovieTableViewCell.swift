@@ -13,11 +13,22 @@ class MovieTableViewCell: UITableViewCell {
     @IBOutlet weak var movieImageView: UIImageView!
     @IBOutlet weak var movieTitleLabel: UILabel!
     
-    func setMovie(movie:Movie) {
-        self.movieTitleLabel.text = movie.title
-        self.movieImageView.image = nil
+    var movie: Movie? {
+        didSet {
+            self.setMovie()
+        }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        movieImageView.image = UIImage(named: "default")
+        movieTitleLabel.text = nil
+    }
+    
+    func setMovie() {
+        self.movieTitleLabel.text = movie?.title
         self.movieImageView.alpha = 0
-        movie.getImage(completion: {[weak self] (image:UIImage?) ->() in
+        movie?.getImage(completion: {[weak self] (image:UIImage?) ->() in
             let cellImage = image != nil ? image : UIImage(named: "default")
             self?.movieImageView.image = cellImage
             UIView.animate(withDuration: 1,

@@ -84,10 +84,6 @@ class MovieManager {
             completion(image)
         }
         
-        if Reachability.isConnectedToNetwork() {
-            self.apiConnector.loadImage(from:path, completion:apiDownloadedImageHandler)
-        } else {
-            completion(nil)
-        }
+        self.apiConnector.loadImage(from:path, completion:apiDownloadedImageHandler)
     }
 }

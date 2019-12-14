@@ -7,7 +7,7 @@ target 'TMDBApp' do
 
   # Pods for TMDBApp
   	pod 'NVActivityIndicatorView'
-	pod 'Alamofire', '~> 5.0.0.beta.1'
+	pod 'Alamofire', '~> 5.0.0-rc.3'
 	pod 'YoutubeKit'
 
 
