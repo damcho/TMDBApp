@@ -98,7 +98,7 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
         }
     }
     
-    func moviesFetchedWithSuccess(movieContainer:MoviesContainer) {
+    func moviesFetchedWithSuccess(movieContainer: MovieContainer) {
         
         self.stopLoadingActivity()
         let retrievedMovies = movieContainer.getMovies()

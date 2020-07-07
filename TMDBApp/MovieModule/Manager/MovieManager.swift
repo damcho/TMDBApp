@@ -11,9 +11,8 @@ import UIKit
 
 class MovieManager {
     var presenter:MoviesPresenter?
-    var movies:Dictionary<String, MoviesContainer> = Dictionary()
+    var movies:Dictionary<String, MovieContainer> = Dictionary()
     let apiConnector:DataConnector = TMDBAPIConnector.shared
-    let imageCache = NSCache<NSString, UIImage>()
     static let shared = MovieManager()
     
     func fetchMovies(searchParams:SearchObject) {
@@ -32,58 +31,49 @@ class MovieManager {
     
     
     func requestMoviesFromAPI(searchParams: SearchObject) {
-        let completionHandler = {[unowned self] (movieContainer:MoviesContainer?, error:TMDBError?) -> () in
+        let completionHandler: MoviesFetchCompletion = {[unowned self] (result) in
             
-            guard let movieContainer = movieContainer else {
-                switch error! {
-                case .API_ERROR, .MALFORMED_DATA:
-                    self.presenter?.moviesFetchFailed(error:error!)
-                    return
-                default:
-                    return
+            switch result {
+            case .success(let movieContainer):
+                if movieContainer.currentPage == 1 {
+                    self.movies[searchParams.category.rawValue] = movieContainer
+                } else {
+                    self.movies[searchParams.category.rawValue]?.update(page: MovieContainer(currentPage: movieContainer.currentPage, totalPages: movieContainer.totalPages, totalResults: movieContainer.totalResults, movies: movieContainer.movies))
                 }
+                searchParams.page += 1
+                
+                self.presenter?.moviesFetchedWithSuccess(movieContainer: self.movies[searchParams.category.rawValue]!)
+            case .failure(let error):
+                self.presenter?.moviesFetchFailed(error: error)
             }
-            
-            if movieContainer.currentPage == 1 {
-                self.movies[searchParams.category.rawValue] = movieContainer
-            } else {
-                self.movies[searchParams.category.rawValue]?.update(page: movieContainer)
-            }
-            searchParams.page += 1
-            
-            self.presenter?.moviesFetchedWithSuccess(movieContainer: self.movies[searchParams.category.rawValue]!)
         }
         
         apiConnector.getMovies(searchParams: searchParams, completion: completionHandler)
     }
     
     func requestMovieDetail(searchParams:SearchObject) {
-        let completionHandler = {[unowned self] (movie:Movie?, error:TMDBError?) -> () in
-            guard let movie = movie else {
-                self.presenter?.movieDetailFetchedWithError(error: error!)
-                return
+        let completionHandler: MovieDetailFetchCompletion = {[unowned self] (movieDetailResult) in
+            switch movieDetailResult {
+            case .success(let movie):
+                self.presenter?.movieDetailFetchedWithSuccess(movie:movie)
+                
+            case .failure(let error):
+                self.presenter?.movieDetailFetchedWithError(error: error)
             }
-            self.presenter?.movieDetailFetchedWithSuccess(movie:movie)
         }
         
         apiConnector.getMovieDetail (searchParams: searchParams, completion: completionHandler)
     }
     
     
-    func getImage(path:String, completion: @escaping (UIImage?) -> ()){
+    func getImage(from path: String, completion: @escaping (Data?) -> ()){
         
-        if let cachedImage = imageCache.object(forKey: path as NSString) {
-            completion(cachedImage)
-            return
-        }
-        
-        let apiDownloadedImageHandler = {[unowned self] (image:UIImage?) in
-            if image != nil {
-                self.imageCache.setObject(image!, forKey: path as NSString)
-            }
+     
+
+        let apiDownloadedImageHandler = {(image:Data?) in
             completion(image)
         }
         
-        self.apiConnector.loadImage(from:path, completion:apiDownloadedImageHandler)
+        self.apiConnector.loadImage(from: path, completion:apiDownloadedImageHandler)
     }
 }

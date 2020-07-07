@@ -30,12 +30,18 @@ class MovieDetailViewController: UIViewController,UITableViewDelegate, UITableVi
         self.presenter?.getMovieDetail(searchParams: searchObj)
         
         self.title = self.movie!.title
-        movie!.getImage(completion: {[weak self] (image:UIImage?) ->() in
-            self?.movieImageView.image = image != nil ? image : UIImage(named: "default")
+        self.popularityLabel.text = "\(movie!.popularity)"
+        self.voteAverageLabel.text =  "\(movie!.voteAverage)"
+        
+        movie!.getImage(completion: {[weak self] (imageData:Data?) ->() in
+            guard let someImageData = imageData else {
+                 self?.movieImageView.image =  UIImage(named: "default")
+                return
+            }
+            self?.movieImageView.image = UIImage(data:someImageData)
         })
         self.movieOverViewTextView.text = movie!.overview
-        self.popularityLabel.text = String(movie!.popularity)
-        self.voteAverageLabel.text = String(movie!.voteAverage)
+    
     }
     
     func movieDetailFetchedWithError(error:TMDBError){
@@ -72,9 +78,10 @@ class MovieDetailViewController: UIViewController,UITableViewDelegate, UITableVi
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let videos = movie?.videos else { return }
         player = YTSwiftyPlayer(
             frame: self.view.bounds,
-            playerVars: [.videoID(movie!.videos![indexPath.row].id)])
+            playerVars: [.videoID(videos[indexPath.row].id)])
         player.autoplay = true
         player.delegate = self
         player.loadPlayer()

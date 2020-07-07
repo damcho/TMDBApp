@@ -2,71 +2,36 @@
 //  Movie.swift
 //  TMDBApp
 //
-//  Created by Damian Modernell on 07/11/2018.
-//  Copyright © 2018 Damian Modernell. All rights reserved.
+//  Created by Damian Modernell on 7/7/20.
+//  Copyright © 2020 Damian Modernell. All rights reserved.
 //
 
 import Foundation
-import UIKit
 
-class Movie : Equatable{
-    
-    
+struct Movie: Equatable {
     var title:String
-    var movieId:Int
+    var movieId: UInt
     var overview:String
-    var popularity:Double
-    var voteAverage:Double
-    var imageURLPath:String
-    var videos:[Video]?
-
+    var popularity:Double? = 0
+    var voteAverage:Double? = 0
+    var imagePath: String?
+    var videos:[Video]? = []
     
-    init?(data:Dictionary<String, Any>) {
-        guard let title = data["title"] as? String else {
-            return nil
-        }
+    init(title: String, movieID: UInt, overview: String, imagePath: String?) {
+        self.movieId = movieID
         self.title = title
-        
-        guard let overview = data["overview"] as? String else {
-            return nil
-        }
         self.overview = overview
-
-        guard let nobieId = data["id"] as? Int else {
-            return nil
+        self.imagePath = imagePath
+    }
+    
+    func getImage(completion: @escaping (Data?) -> ()){
+        guard let imageURL =  self.imagePath else {
+            return
         }
-        self.movieId = nobieId
-        
-        guard let popularity = data["popularity"] as? Double else {
-            return nil
-        }
-        self.popularity = popularity
-
-        guard let voteAverage = data["vote_average"] as? Double else {
-            return nil
-        }
-        self.voteAverage = voteAverage
-        
-        guard let imageUrl = data["poster_path"] as? String else {
-            return nil
-        }
-        self.imageURLPath = imageUrl
-        
-        if let videosDictionary = data["videos"] as? Dictionary<String, Any> {
-            var videosArray:[Video] = []
-            for videoData in videosDictionary["results"]! as! Array<Dictionary<String, Any>> {
-                videosArray.append(Video(data: videoData))
-            }
-            self.videos = videosArray
-        }
-       
+        MovieManager.shared.getImage(from: imageURL, completion: completion)
     }
     
     static func == (lhs: Movie, rhs: Movie) -> Bool {
         return lhs.movieId == rhs.movieId
-    }
-    
-    func getImage(completion: @escaping (UIImage?) -> ()){
-        MovieManager.shared.getImage(path: self.imageURLPath, completion: completion)
     }
 }

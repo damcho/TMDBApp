@@ -24,7 +24,7 @@ class SearchObject {
 
     var category:MovieFilterType = .QUERY
     var page:Int = 1
-    var movie:Movie?
+    var movie: Movie?
     var movieQuery:String?
     
     func refreshSearch () {

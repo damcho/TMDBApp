@@ -8,13 +8,13 @@
 
 import Foundation
 
-class Video {
+class Video: Codable {
     
     let id:String
     let title:String
     
-    init(data:Dictionary<String, Any>) {
-        id = data["key"]! as! String
-        title = data["name"]! as! String
-    }
+    enum CodingKeys: String, CodingKey {
+         case id = "key"
+         case title = "name"
+     }
 }

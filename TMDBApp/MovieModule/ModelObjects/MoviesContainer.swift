@@ -1,43 +1,27 @@
 //
-//  MoviePage.swift
+//  MoviesContainer.swift
 //  TMDBApp
 //
-//  Created by Damian Modernell on 07/01/2019.
-//  Copyright © 2019 Damian Modernell. All rights reserved.
+//  Created by Damian Modernell on 7/7/20.
+//  Copyright © 2020 Damian Modernell. All rights reserved.
 //
 
 import Foundation
 
-struct MoviesContainer {
-    
-    var currentPage:Int = 0
-    var totalPages:Int = 0
-    var totalResults:Int = 0
+public final class MovieContainer {
+    var currentPage: Int
+    var totalPages: Int
+    var totalResults: Int
     var movies:[Movie] = []
     
-    init?(data:NSDictionary){
-        guard let currentPage = data["page"] as? Int else {
-            return nil
-        }
+    init(currentPage: Int, totalPages: Int, totalResults: Int, movies: [Movie]) {
         self.currentPage = currentPage
-        
-        guard let totalPages = data["total_pages"] as? Int else {
-            return nil
-        }
+        self.totalResults = totalResults
         self.totalPages = totalPages
-        
-        guard let total_results = data["total_results"] as? Int else {
-            return nil
-        }
-        self.totalResults = total_results
-        
-        guard let moviesArray:Array<Dictionary<String, Any>> = (data["results"] as? Array) else {
-            return nil
-        }
-        self.movies = moviesArray.compactMap(Movie.init)
+        self.movies = movies
     }
     
-    mutating func update(page:MoviesContainer) {
+    func update(page:MovieContainer) {
         self.currentPage = page.currentPage
         self.totalPages = page.totalPages
         self.totalResults = page.totalResults
@@ -51,6 +35,4 @@ struct MoviesContainer {
     func getMovies() -> [Movie] {
         return movies
     }
-    
-    
 }

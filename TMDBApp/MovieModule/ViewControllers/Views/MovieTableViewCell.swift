@@ -28,9 +28,13 @@ class MovieTableViewCell: UITableViewCell {
     func setMovie() {
         self.movieTitleLabel.text = movie?.title
         self.movieImageView.alpha = 0
-        movie?.getImage(completion: {[weak self] (image:UIImage?) ->() in
-            let cellImage = image != nil ? image : UIImage(named: "default")
-            self?.movieImageView.image = cellImage
+        movie?.getImage(completion: {[weak self] (image:Data?) ->() in
+            guard let someImage = image else {
+                self?.movieImageView.image = UIImage(named: "default")
+                return
+            }
+            
+            self?.movieImageView.image = UIImage(data: someImage)
             UIView.animate(withDuration: 1,
                            animations: {
                             self?.movieImageView.alpha = 1

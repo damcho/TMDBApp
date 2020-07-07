@@ -26,7 +26,7 @@ class MoviesPresenter {
         self.movieManager?.requestMovieDetail(searchParams: searchParams)
     }
     
-    func moviesFetchedWithSuccess(movieContainer:MoviesContainer){
+    func moviesFetchedWithSuccess(movieContainer:MovieContainer){
         self.moviesListVC!.moviesFetchedWithSuccess(movieContainer:movieContainer)
     }
     
@@ -42,7 +42,7 @@ class MoviesPresenter {
         self.movieManager?.fetchMovies(searchParams: searchParams)
     }
     
-    func movieDetailFetchedWithSuccess(movie:Movie) {
+    func movieDetailFetchedWithSuccess(movie: Movie) {
         self.movieDetailVC?.movieDetailFetchedWithSuccess(movie:movie)
     }
     
