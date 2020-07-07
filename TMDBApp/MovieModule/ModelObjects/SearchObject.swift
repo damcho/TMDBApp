@@ -13,11 +13,10 @@ enum MovieFilterType :String{
     case UPCOMING = "upcoming"
     case POPULARITY = "popular"
     case QUERY = "query"
-
 }
 
 
-class SearchObject {
+final class SearchObject {
     
     private let moviePath = "/3/movie"
     private let searchPath = "/3/search/movie"

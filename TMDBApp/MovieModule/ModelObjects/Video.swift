@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Video: Codable {
+final class Video: Codable {
     
     let id:String
     let title:String

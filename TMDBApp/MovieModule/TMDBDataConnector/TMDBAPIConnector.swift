@@ -11,6 +11,47 @@ import SystemConfiguration
 import Alamofire
 
 
+struct CodableMovie: Codable{
+    
+    var title:String
+    var movieId: UInt
+    var overview:String
+    var popularity:Double? = 0
+    var voteAverage:Double? = 0
+    var imageURLString: String
+    var videos:[Video]? = []
+  
+    enum CodingKeys: String, CodingKey {
+        case title = "title"
+        case movieId = "id"
+        case overview
+        case popularity
+        case voteAverage = "vote_average"
+        case imageURLString = "poster_path"
+        case videos = "videos"
+    }
+}
+
+class RootResult: Codable{
+    
+    var currentPage: Int
+    var totalPages: Int
+    var totalResults: Int
+    private var codableMovies:[CodableMovie]
+
+    var movies: [Movie] {
+        return self.codableMovies.map( { Movie(title: $0.title, movieID: $0.movieId, overview: $0.overview, imagePath: $0.imageURLString) })
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case currentPage = "page"
+        case totalPages = "total_pages"
+        case totalResults = "total_results"
+        case codableMovies = "results"
+    }
+}
+
+
 enum TMDBError: Error {
     case API_ERROR(reason:String)
     case NOT_FOUND
@@ -62,7 +103,10 @@ class TMDBAPIConnector: DataConnector{
                     completion(.failure(.MALFORMED_DATA))
                     return
                 }
-                completion(.success(MovieContainer(currentPage: rootResult.currentPage, totalPages: rootResult.totalPages, totalResults: rootResult.totalResults, movies: rootResult.movies)))
+                completion(.success(MovieContainer(currentPage: rootResult.currentPage,
+                                                   totalPages: rootResult.totalPages,
+                                                   totalResults: rootResult.totalResults,
+                                                   movies: rootResult.movies)))
             case .failure(let error):
                 completion(.failure(.API_ERROR(reason: error.localizedDescription)))
             }
