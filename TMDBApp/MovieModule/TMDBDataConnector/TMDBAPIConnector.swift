@@ -11,7 +11,11 @@ import SystemConfiguration
 import Alamofire
 
 public protocol HTTPClient {
-    func request(url: URL, completion: @escaping (HTTPClientResult) -> Void)
+    func request(url: URL, completion: @escaping (HTTPClientResult) -> Void) -> HTTPClientTask
+}
+
+public protocol HTTPClientTask {
+    func cancel()
 }
 
 
@@ -194,12 +198,13 @@ final class TMDBAPIConnector: DataConnector{
     }
 }
 
+
 public class AlamoFireHttpClient: HTTPClient {
     
     public init() {}
     
-    public func request(url: URL, completion: @escaping (HTTPClientResult) -> Void) {
-        AF.request(url, method: .get)
+    public func request(url: URL, completion: @escaping (HTTPClientResult) -> Void) -> HTTPClientTask{
+        return AFHTTPTask(task: AF.request(url, method: .get)
             .validate()
             .responseData{ response in
                 switch response.result {
@@ -212,7 +217,17 @@ public class AlamoFireHttpClient: HTTPClient {
                     }
                     completion(.failure(.customError(jsonError)))
                 }
-        }
+        })
+    }
+}
+
+class AFHTTPTask: HTTPClientTask {
+    let task: DataRequest
+    init(task: DataRequest) {
+        self.task = task
+    }
+    func cancel() {
+        task.cancel()
     }
 }
 
