@@ -10,6 +10,10 @@ import Foundation
 import SystemConfiguration
 import Alamofire
 
+public protocol HTTPClient {
+    func request(url: URL, completion: @escaping (HTTPClientResult) -> Void)
+}
+
 
 struct CodableMovie: Codable{
     
@@ -20,7 +24,7 @@ struct CodableMovie: Codable{
     var voteAverage:Double? = 0
     var imageURLString: String
     var videos:[Video]? = []
-  
+    
     enum CodingKeys: String, CodingKey {
         case title = "title"
         case movieId = "id"
@@ -38,7 +42,7 @@ class RootResult: Codable{
     var totalPages: Int
     var totalResults: Int
     private var codableMovies:[CodableMovie]
-
+    
     var movies: [Movie] {
         return self.codableMovies.map( { Movie(title: $0.title, movieID: $0.movieId, overview: $0.overview, imagePath: $0.imageURLString) })
     }
@@ -63,11 +67,11 @@ enum IMDBError: Error {
     case connection
 }
 
-struct AFHTTPError: Codable {
+public struct AFHTTPError: Codable {
     var status_message: String?
 }
 
-enum HTTPError: Error {
+public enum HTTPError: Error {
     case notFound
     case unknownError
     case connectionError
@@ -84,12 +88,24 @@ enum MovieDetailResult {
     case failure(TMDBError)
 }
 
-enum HTTPClientResult {
+public enum HTTPClientResult {
     case success(Data)
     case failure(HTTPError)
 }
 
-class TMDBAPIConnector: DataConnector{
+final class TMDBAPIConnector: DataConnector{
+    
+    private let host = "api.themoviedb.org"
+    private let scheme = "https"
+    
+    private let APIKey:String = "df2fffd5a0084a58bde8be99efd54ec0"
+    private let imageBaseURL:String = "https://image.tmdb.org/t/p/w300"
+    
+    let client: HTTPClient
+    
+    init(client: HTTPClient) {
+        self.client = client
+    }
     
     func getMovies(searchParams: SearchObject, completion:  @escaping (IMDBResult) -> ()) {
         guard let url = createURL(searchPath: searchParams.searchMoviesUrlPath() , queryItems:searchParams.searchMoviesQueryItems() ) else {
@@ -112,7 +128,7 @@ class TMDBAPIConnector: DataConnector{
             }
         }
         
-        self.performRequest(url: url, completion: completionHandler)
+        client.request(url: url, completion: completionHandler)
     }
     
     func getMovieDetail(searchParams: SearchObject, completion:  @escaping (MovieDetailResult) -> ()) {
@@ -136,7 +152,7 @@ class TMDBAPIConnector: DataConnector{
             }
         }
         
-        self.performRequest(url: url, completion: completionHandler)
+        client.request(url: url, completion: completionHandler)
     }
     
     func loadImage(from imagePath: String, completion:  @escaping (Data?) -> ()) {
@@ -152,32 +168,7 @@ class TMDBAPIConnector: DataConnector{
             completion(nil)
             return
         }
-        self.performRequest(url: imageURL, completion: completionHandler)
-    }
-    
-    
-    static let shared = TMDBAPIConnector()
-    private let host = "api.themoviedb.org"
-    private let scheme = "https"
-    
-    private let APIKey:String = "df2fffd5a0084a58bde8be99efd54ec0"
-    private let imageBaseURL:String = "https://image.tmdb.org/t/p/w300"
-    
-    func performRequest(url: URL, completion: @escaping (HTTPClientResult) -> ()) {
-        AF.request(url, method: .get)
-            .validate()
-            .responseData{ response in
-                switch response.result {
-                case .success:
-                    completion( .success(response.data!))
-                case.failure:
-                    guard let data = response.data, let jsonError = try? JSONDecoder().decode(AFHTTPError.self, from: data) else {
-                        completion(.failure(.unknownError))
-                        return
-                    }
-                    completion(.failure(.customError(jsonError)))
-                }
-        }
+        client.request(url: imageURL, completion: completionHandler)
     }
     
     func createURL(searchPath:String, queryItems:[URLQueryItem]?) -> URL? {
@@ -200,6 +191,28 @@ class TMDBAPIConnector: DataConnector{
             return url
         }
         return nil
+    }
+}
+
+public class AlamoFireHttpClient: HTTPClient {
+    
+    public init() {}
+    
+    public func request(url: URL, completion: @escaping (HTTPClientResult) -> Void) {
+        AF.request(url, method: .get)
+            .validate()
+            .responseData{ response in
+                switch response.result {
+                case .success:
+                    completion( .success(response.data!))
+                case.failure:
+                    guard let data = response.data, let jsonError = try? JSONDecoder().decode(AFHTTPError.self, from: data) else {
+                        completion(.failure(.unknownError))
+                        return
+                    }
+                    completion(.failure(.customError(jsonError)))
+                }
+        }
     }
 }
 
