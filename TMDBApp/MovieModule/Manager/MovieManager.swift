@@ -12,7 +12,7 @@ import UIKit
 class MovieManager {
     var presenter:MoviesPresenter?
     var movies:Dictionary<String, MovieContainer> = Dictionary()
-    let apiConnector:DataConnector = TMDBAPIConnector.shared
+    let apiConnector:DataConnector = TMDBAPIConnector(client: AlamoFireHttpClient())
     static let shared = MovieManager()
     
     func fetchMovies(searchParams:SearchObject) {
