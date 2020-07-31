@@ -14,6 +14,10 @@ enum ImageLoadingResult {
     case failure(Error)
 }
 
+protocol CancelableImageTask {
+    func cancel()
+}
+
 
 class ImageDataLoader {
     
@@ -23,20 +27,40 @@ class ImageDataLoader {
         self.client = client
     }
     
-    func loadImage(from url: URL, completion: @escaping (ImageLoadingResult) -> Void) -> HTTPClientTask{
-        let task = client.request(url: url) { (result) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let data):
-                completion(.success(data))
-            }
+    private class ImageLoaderTask: CancelableImageTask {
+        var completion: ((ImageLoadingResult) -> Void)?
+        var wrappedTask: HTTPClientTask?
+        
+        init(completion: @escaping (ImageLoadingResult) -> Void) {
+            self.completion = completion
         }
-        return task
+        
+        func completeWithResult(_ result: ImageLoadingResult){
+            completion?(result)
+        }
+        func cancel() {
+            self.completion = nil
+            self.wrappedTask?.cancel()
+        }
     }
     
-    func cancelImage() {
-        
+    func loadImage(from url: URL, completion: @escaping (ImageLoadingResult) -> Void) -> CancelableImageTask{
+        let task = ImageLoaderTask(completion: completion)
+        task.wrappedTask = client.request(url: url, completion: {[weak self] (result) in
+            guard self != nil else { return }
+            
+            switch result {
+            case .failure(let error):
+                task.completeWithResult(.failure(error))
+            case .success(let data, let httpresponse):
+                guard httpresponse.statusCode == 200 else {
+                    task.completeWithResult(.failure(NSError(domain: "response error", code: 1)))
+                    return
+                }
+                task.completeWithResult(.success(data))
+            }
+        })
+        return task
     }
 }
 
@@ -63,12 +87,29 @@ class MovieImageLoaderTests: XCTestCase {
         })
     }
     
+    func testDoesNotReturnsResultOnImageCancelled() {
+        let (sut, client) = makeSUT()
+        let url = URL(string: "www.someurl.com")!
+        let someData = "some data".data(using: .utf8)!
+        var receivedResults: [ImageLoadingResult] = []
+        
+        let task = sut.loadImage(from: url, completion: {result in
+            receivedResults.append(result)
+        })
+        
+        task.cancel()
+        
+        client.completeWithSuccess(data: someData)
+        
+        XCTAssertTrue(receivedResults.isEmpty)
+    }
+    
     
     // Helpers
     private func expect(_ expectedResult: ImageLoadingResult, for sut: ImageDataLoader, from url: URL, when action: () -> Void) {
         let expect = expectation(description: "expected result")
         
-        sut.loadImage(from: url, completion: { (result) in
+        _ = sut.loadImage(from: url, completion: { (result) in
             switch (result, expectedResult)  {
             case (.failure, .failure):
                 XCTAssertTrue(true)
@@ -112,8 +153,9 @@ class HTTPClientSpy: HTTPClient {
     }
     
     func completeWithSuccess(data: Data) {
+        let response = HTTPURLResponse(url: URL(string: "www.someurl.com")!, statusCode: 200, httpVersion: "2", headerFields: [:])
         if completions.count > 0 {
-            completions[0](.success(data))
+            completions[0](.success(data, response!))
         }
     }
     
