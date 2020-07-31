@@ -27,3 +27,7 @@ protocol MovieDetailDelegate {
     func movieDetailFetchedWithSuccess(movie: Movie)
     func movieDetailFetchedWithError(error:TMDBError)
 }
+
+protocol MoviesListRoutes {
+    func pushToMovieDetail(movie:Movie)
+}

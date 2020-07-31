@@ -15,7 +15,7 @@ class MoviesListViewController: UIViewController {
     @IBOutlet weak var moviesListTableVIew: UITableView!
     
     var interactor: MoviesViewOutput?
-    var router: MovieModuleRouter?
+    var router: MoviesListRouter?
     var searchObject:SearchObject = SearchObject()
     let activityData = ActivityData()
     var activityIndicatorView:NVActivityIndicatorPresenter = NVActivityIndicatorPresenter.sharedInstance

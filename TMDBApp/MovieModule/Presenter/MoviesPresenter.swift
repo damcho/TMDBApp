@@ -11,7 +11,7 @@ import UIKit
 
 class MoviesPresenter {
     
-    var router:MovieModuleRouter?
+    var router:MoviesListRouter?
     var movieManager:MoviesInteractor?
     var moviesListVC:MovieListDelegate?
     var movieDetailVC:MovieDetailDelegate?
@@ -26,8 +26,8 @@ class MoviesPresenter {
      //   self.movieManager?.requestMovieDetail(searchParams: searchParams)
     }
 
-    func showMoviesDetail(navController:UINavigationController, movie:Movie) {
-        self.router?.pushToMovieDetail(navController:navController, movie:movie)
+    func showMoviesDetail(movie:Movie) {
+        self.router?.pushToMovieDetail(movie:movie)
     }
     
     func filterMovies(searchParams:SearchObject){
