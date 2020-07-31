@@ -16,9 +16,10 @@ class MovieModuleRouter {
     static func createModule() -> UIViewController {
         
         let moviesListVC = mainstoryboard.instantiateViewController(withIdentifier: "MoviesListViewController") as! MoviesListViewController
-        let interactor = MoviesInteractor()
+        let interactor = MoviesInteractor(moviesLoader: RemoteMoviesLoader(client: AlamoFireHttpClient()))
         let router = MovieModuleRouter()
         moviesListVC.router = router
+        moviesListVC.interactor = interactor
         presenter.moviesListVC = moviesListVC
         interactor.presenter = presenter
         

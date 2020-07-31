@@ -24,13 +24,6 @@ struct Movie: Equatable {
         self.imagePath = imagePath
     }
     
-    func getImage(completion: @escaping (Data?) -> ()){
-        guard let imageURL =  self.imagePath else {
-            return
-        }
-        MoviesInteractor.shared.getImage(from: imageURL, completion: completion)
-    }
-    
     static func == (lhs: Movie, rhs: Movie) -> Bool {
         return lhs.movieId == rhs.movieId
     }

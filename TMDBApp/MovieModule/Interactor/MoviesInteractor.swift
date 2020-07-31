@@ -7,22 +7,14 @@
 //
 
 import Foundation
-import UIKit
 
-class MoviesInteractor {
+final class MoviesInteractor {
     var presenter: MoviesInteractorOutput?
-    var movies:Dictionary<String, MovieContainer> = Dictionary()
-    let apiConnector:MoviesLoader = RemoteMoviesLoader(client: AlamoFireHttpClient())
-    static let shared = MoviesInteractor()
+    var movies: Dictionary<String, MovieContainer> = Dictionary()
+    let moviesLoader: MoviesLoader
     
-    func fetchMovies(searchParams:SearchObject) {
-        if Reachability.isConnectedToNetwork() {
-            self.requestMoviesFromAPI(searchParams: searchParams)
-        } else if moviesAreInMemory(searchParams: searchParams){
-            self.presenter?.moviesFetchedWithSuccess(movieContainer: self.movies[searchParams.category.rawValue]!)
-        } else {
-            self.presenter?.moviesFetchFailed(error:TMDBError.NOT_FOUND)
-        }
+    init(moviesLoader: MoviesLoader) {
+        self.moviesLoader = moviesLoader
     }
     
     func moviesAreInMemory(searchParams:SearchObject) -> Bool {
@@ -48,34 +40,17 @@ class MoviesInteractor {
             }
         }
         
-        apiConnector.getMovies(searchParams: searchParams, completion: completionHandler)
+        moviesLoader.getMovies(searchParams: searchParams, completion: completionHandler)
     }
-    /*
-    func requestMovieDetail(searchParams:SearchObject) {
-        let completionHandler: MovieDetailFetchCompletion = {[unowned self] (movieDetailResult) in
-            switch movieDetailResult {
-            case .success(let movie):
-                self.presenter?.movieDetailFetchedWithSuccess(movie:movie)
-                
-            case .failure(let error):
-                self.presenter?.movieDetailFetchedWithError(error: error)
-            }
-        }
-        
-        apiConnector.getMovieDetail (searchParams: searchParams, completion: completionHandler)
-    }
- */
-    
-    
-    func getImage(from path: String, completion: @escaping (Data?) -> ()){
-        
-     
+}
 
-        let apiDownloadedImageHandler = {(image:Data?) in
-            completion(image)
-        }
+extension MoviesInteractor: MoviesViewOutput {
+    func viewDidLoad() {
         
-        self.apiConnector.loadImage(from: path, completion:apiDownloadedImageHandler)
+    }
+    
+    func fetchMovies(searchParams:SearchObject) {
+        self.requestMoviesFromAPI(searchParams: searchParams)
     }
 }
 

@@ -33,13 +33,6 @@ class MovieDetailViewController: UIViewController,UITableViewDelegate, UITableVi
         self.popularityLabel.text = "\(movie!.popularity)"
         self.voteAverageLabel.text =  "\(movie!.voteAverage)"
         
-        movie!.getImage(completion: {[weak self] (imageData:Data?) ->() in
-            guard let someImageData = imageData else {
-                 self?.movieImageView.image =  UIImage(named: "default")
-                return
-            }
-            self?.movieImageView.image = UIImage(data:someImageData)
-        })
         self.movieOverViewTextView.text = movie!.overview
     
     }
