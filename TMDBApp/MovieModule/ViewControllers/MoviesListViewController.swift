@@ -9,11 +9,13 @@
 import UIKit
 import NVActivityIndicatorView
 
-class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableViewDelegate, UISearchResultsUpdating, UISearchControllerDelegate, UITableViewDataSource, UITableViewDataSourcePrefetching, MovieListDelegate {
+class MoviesListViewController: UIViewController {
     
     @IBOutlet weak var movieCategoryFilter: UISegmentedControl!
     @IBOutlet weak var moviesListTableVIew: UITableView!
-    var presenter:MoviesPresenter?
+    
+    var interactor: MoviesViewOutput?
+    var router: MovieModuleRouter?
     var searchObject:SearchObject = SearchObject()
     let activityData = ActivityData()
     var activityIndicatorView:NVActivityIndicatorPresenter = NVActivityIndicatorPresenter.sharedInstance
@@ -28,7 +30,7 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
         self.movieCategoryFilter.selectedSegmentIndex = 0
         activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
         self.searchObject.filterValue(value:self.movieCategoryFilter.selectedSegmentIndex)
-        self.presenter?.fetchMovies(searchParams:self.searchObject)
+        self.interactor?.fetchMovies(searchParams:self.searchObject)
         
         moviesListTableVIew.refreshControl = UIRefreshControl()
         moviesListTableVIew.refreshControl?.addTarget(self, action: #selector(refreshMovies), for: .valueChanged)
@@ -45,7 +47,7 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
     }
     
     func fetchMovies() {
-        self.presenter?.fetchMovies(searchParams:self.searchObject)
+        self.interactor?.fetchMovies(searchParams:self.searchObject)
     }
     
     @objc func refreshMovies() {
@@ -63,34 +65,6 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
         self.refreshMovies()
     }
     
-    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        for index in indexPaths {
-            if index.row == self.movies.count - 1{
-                fetchMovies()
-                return
-            }
-        }
-    }
-    
-    func numberOfSectionsInTableView(tableView: UITableView?) -> Int {
-        return 0
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.movies.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell  {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "MovieTableViewCell", for: indexPath as IndexPath) as! MovieTableViewCell
-        cell.movie = self.movies[indexPath.row]
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let movie = self.movies[indexPath.row]
-        self.presenter?.showMoviesDetail(navController:navigationController!, movie:movie)
-    }
-    
     private func stopLoadingActivity() {
         activityIndicatorView.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
         if self.moviesListTableVIew.refreshControl?.isRefreshing ?? false {
@@ -98,6 +72,13 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
         }
     }
     
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        self.movieCategoryFilter.selectedSegmentIndex = 0
+        self.segmentedControlValueChanged(self.movieCategoryFilter)
+    }
+}
+
+extension MoviesListViewController: MovieListDelegate {
     func moviesFetchedWithSuccess(movieContainer: MovieContainer) {
         
         self.stopLoadingActivity()
@@ -122,20 +103,54 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
         }
     }
     
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        self.movieCategoryFilter.selectedSegmentIndex = 0
-        self.segmentedControlValueChanged(self.movieCategoryFilter)
-    }
-    
     func moviesFetchWithError(error:TMDBError) {
         self.stopLoadingActivity()
         self.showAlertView(msg:error.localizedDescription)
     }
+}
+
+extension MoviesListViewController: UITableViewDataSourcePrefetching {
     
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        for index in indexPaths {
+            if index.row == self.movies.count - 1{
+                fetchMovies()
+                return
+            }
+        }
+    }
+}
+
+extension MoviesListViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.movies.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell  {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "MovieTableViewCell", for: indexPath as IndexPath) as! MovieTableViewCell
+        cell.movie = self.movies[indexPath.row]
+        return cell
+    }
+    
+    func numberOfSectionsInTableView(tableView: UITableView?) -> Int {
+        return 0
+    }
+}
+
+extension MoviesListViewController: UISearchControllerDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        //    let movie = self.movies[indexPath.row]
+        //    self.interactor?.showMoviesDetail(navController:navigationController!, movie:movie)
+    }
+}
+
+extension MoviesListViewController: UISearchBarDelegate {
     public func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         return true
     }
-    
+}
+
+extension MoviesListViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         let whitespaceCharacterSet = CharacterSet.whitespaces
         let strippedString =
@@ -148,4 +163,3 @@ class MoviesListViewController: UIViewController, UISearchBarDelegate ,UITableVi
         }
     }
 }
-

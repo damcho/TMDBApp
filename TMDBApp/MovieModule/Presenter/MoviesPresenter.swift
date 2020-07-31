@@ -12,7 +12,7 @@ import UIKit
 class MoviesPresenter {
     
     var router:MovieModuleRouter?
-    var movieManager:MovieManager?
+    var movieManager:MoviesInteractor?
     var moviesListVC:MovieListDelegate?
     var movieDetailVC:MovieDetailDelegate?
     
@@ -23,15 +23,7 @@ class MoviesPresenter {
     }
     
     func getMovieDetail(searchParams:SearchObject) {
-        self.movieManager?.requestMovieDetail(searchParams: searchParams)
-    }
-    
-    func moviesFetchedWithSuccess(movieContainer:MovieContainer){
-        self.moviesListVC!.moviesFetchedWithSuccess(movieContainer:movieContainer)
-    }
-    
-    func moviesFetchFailed(error:TMDBError){
-        self.moviesListVC!.moviesFetchWithError(error:error)
+     //   self.movieManager?.requestMovieDetail(searchParams: searchParams)
     }
 
     func showMoviesDetail(navController:UINavigationController, movie:Movie) {
@@ -51,4 +43,14 @@ class MoviesPresenter {
 
     }
     
+}
+
+extension MoviesPresenter: MoviesInteractorOutput {
+    func moviesFetchedWithSuccess(movieContainer:MovieContainer){
+          self.moviesListVC!.moviesFetchedWithSuccess(movieContainer:movieContainer)
+      }
+      
+      func moviesFetchFailed(error:TMDBError){
+          self.moviesListVC!.moviesFetchWithError(error:error)
+      }
 }

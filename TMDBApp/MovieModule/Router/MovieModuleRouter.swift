@@ -16,15 +16,11 @@ class MovieModuleRouter {
     static func createModule() -> UIViewController {
         
         let moviesListVC = mainstoryboard.instantiateViewController(withIdentifier: "MoviesListViewController") as! MoviesListViewController
-        
-        let manager = MovieManager()
+        let interactor = MoviesInteractor()
         let router = MovieModuleRouter()
-
-        moviesListVC.presenter = presenter
+        moviesListVC.router = router
         presenter.moviesListVC = moviesListVC
-        presenter.router = router
-        presenter.movieManager = manager
-        manager.presenter = presenter
+        interactor.presenter = presenter
         
         return moviesListVC
         

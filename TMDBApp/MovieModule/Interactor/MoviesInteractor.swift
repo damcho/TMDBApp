@@ -9,11 +9,11 @@
 import Foundation
 import UIKit
 
-class MovieManager {
-    var presenter:MoviesPresenter?
+class MoviesInteractor {
+    var presenter: MoviesInteractorOutput?
     var movies:Dictionary<String, MovieContainer> = Dictionary()
-    let apiConnector:DataConnector = TMDBAPIConnector(client: AlamoFireHttpClient())
-    static let shared = MovieManager()
+    let apiConnector:MoviesLoader = RemoteMoviesLoader(client: AlamoFireHttpClient())
+    static let shared = MoviesInteractor()
     
     func fetchMovies(searchParams:SearchObject) {
         if Reachability.isConnectedToNetwork() {
@@ -50,7 +50,7 @@ class MovieManager {
         
         apiConnector.getMovies(searchParams: searchParams, completion: completionHandler)
     }
-    
+    /*
     func requestMovieDetail(searchParams:SearchObject) {
         let completionHandler: MovieDetailFetchCompletion = {[unowned self] (movieDetailResult) in
             switch movieDetailResult {
@@ -64,6 +64,7 @@ class MovieManager {
         
         apiConnector.getMovieDetail (searchParams: searchParams, completion: completionHandler)
     }
+ */
     
     
     func getImage(from path: String, completion: @escaping (Data?) -> ()){
@@ -77,3 +78,4 @@ class MovieManager {
         self.apiConnector.loadImage(from: path, completion:apiDownloadedImageHandler)
     }
 }
+

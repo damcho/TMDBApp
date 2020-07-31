@@ -10,6 +10,15 @@ import Foundation
 import SystemConfiguration
 import Alamofire
 
+typealias MoviesFetchCompletion = (IMDBResult) -> ()
+typealias MovieDetailFetchCompletion = (MovieDetailResult) -> ()
+
+protocol MoviesLoader {
+    func getMovies(searchParams: SearchObject, completion:  @escaping (IMDBResult) -> ())
+    func getMovieDetail(searchParams: SearchObject, completion:  @escaping (MovieDetailResult) -> ())
+    func loadImage(from imagePath: String, completion:  @escaping (Data?) -> ())
+}
+
 public protocol HTTPClient {
     @discardableResult
     func request(url: URL, completion: @escaping (HTTPClientResult) -> Void) -> HTTPClientTask
