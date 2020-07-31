@@ -11,6 +11,7 @@ import SystemConfiguration
 import Alamofire
 
 public protocol HTTPClient {
+    @discardableResult
     func request(url: URL, completion: @escaping (HTTPClientResult) -> Void) -> HTTPClientTask
 }
 
@@ -93,7 +94,7 @@ enum MovieDetailResult {
 }
 
 public enum HTTPClientResult {
-    case success(Data)
+    case success(Data, HTTPURLResponse)
     case failure(HTTPError)
 }
 
@@ -118,8 +119,9 @@ final class TMDBAPIConnector: DataConnector{
         
         let completionHandler: (HTTPClientResult) -> Void = { (result) in
             switch result {
-            case .success(let data):
-                guard let rootResult = try? JSONDecoder().decode(RootResult.self, from: data) else {
+            case .success(let data, let response):
+                guard response.statusCode == 200,
+                    let rootResult = try? JSONDecoder().decode(RootResult.self, from: data) else {
                     completion(.failure(.MALFORMED_DATA))
                     return
                 }
@@ -142,8 +144,9 @@ final class TMDBAPIConnector: DataConnector{
         
         let completionHandler = { (result: HTTPClientResult) in
             switch result {
-            case .success(let data):
-                guard let codableMovie = try? JSONDecoder().decode(CodableMovie.self, from: data) else {
+            case .success(let data, let response):
+                guard response.statusCode == 200,
+                    let codableMovie = try? JSONDecoder().decode(CodableMovie.self, from: data) else {
                     completion(.failure(.MALFORMED_DATA))
                     return
                 }
@@ -162,7 +165,7 @@ final class TMDBAPIConnector: DataConnector{
     func loadImage(from imagePath: String, completion:  @escaping (Data?) -> ()) {
         let completionHandler = { (result: HTTPClientResult ) in
             switch result {
-            case .success(let data):
+            case .success(let data, let response):
                 completion(data)
             default:
                 completion(nil)
@@ -206,12 +209,16 @@ public class AlamoFireHttpClient: HTTPClient {
     public func request(url: URL, completion: @escaping (HTTPClientResult) -> Void) -> HTTPClientTask{
         return AFHTTPTask(task: AF.request(url, method: .get)
             .validate()
-            .responseData{ response in
-                switch response.result {
+            .responseData{ AFResult in
+                switch AFResult.result {
                 case .success:
-                    completion( .success(response.data!))
+                    guard AFResult.response?.statusCode == 200 else {
+                        completion(.failure(.unknownError))
+                        return
+                    }
+                    completion( .success(AFResult.data!, AFResult.response!))
                 case.failure:
-                    guard let data = response.data, let jsonError = try? JSONDecoder().decode(AFHTTPError.self, from: data) else {
+                    guard let data = AFResult.data, let jsonError = try? JSONDecoder().decode(AFHTTPError.self, from: data) else {
                         completion(.failure(.unknownError))
                         return
                     }
