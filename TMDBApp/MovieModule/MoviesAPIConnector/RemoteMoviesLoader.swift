@@ -7,8 +7,6 @@
 //
 
 import Foundation
-import SystemConfiguration
-import Alamofire
 
 typealias MoviesFetchCompletion = (IMDBResult) -> ()
 typealias MovieDetailFetchCompletion = (MovieDetailResult) -> ()
@@ -16,7 +14,6 @@ typealias MovieDetailFetchCompletion = (MovieDetailResult) -> ()
 protocol MoviesLoader {
     func getMovies(searchParams: SearchObject, completion:  @escaping (IMDBResult) -> ())
     func getMovieDetail(searchParams: SearchObject, completion:  @escaping (MovieDetailResult) -> ())
-    func loadImage(from imagePath: String, completion:  @escaping (Data?) -> ())
 }
 
 public protocol HTTPClient {
@@ -171,22 +168,6 @@ final class RemoteMoviesLoader: MoviesLoader{
         client.request(url: url, completion: completionHandler)
     }
     
-    func loadImage(from imagePath: String, completion:  @escaping (Data?) -> ()) {
-        let completionHandler = { (result: HTTPClientResult ) in
-            switch result {
-            case .success(let data, let response):
-                completion(data)
-            default:
-                completion(nil)
-            }
-        }
-        guard let imageURL = URL(string: imageBaseURL + imagePath) else {
-            completion(nil)
-            return
-        }
-        client.request(url: imageURL, completion: completionHandler)
-    }
-    
     func createURL(searchPath:String, queryItems:[URLQueryItem]?) -> URL? {
         var urlComponents = URLComponents()
         urlComponents.scheme = scheme
@@ -199,67 +180,6 @@ final class RemoteMoviesLoader: MoviesLoader{
         
         guard let url = urlComponents.url else { return nil }
         return url
-    }
-    
-    func createImageURL(urlString:String) -> URL? {
-        if let urlComponents = URLComponents(string: imageBaseURL + urlString) {
-            guard let url = urlComponents.url else { return nil }
-            return url
-        }
-        return nil
-    }
-}
-
-
-public class AlamoFireHttpClient: HTTPClient {
-    
-    public init() {}
-    
-    public func request(url: URL, completion: @escaping (HTTPClientResult) -> Void) -> HTTPClientTask{
-        return AFHTTPTask(task: AF.request(url, method: .get)
-            .validate()
-            .responseData{ AFResult in
-                switch AFResult.result {
-                case .success:
-                    guard AFResult.response?.statusCode == 200 else {
-                        completion(.failure(.unknownError))
-                        return
-                    }
-                    completion( .success(AFResult.data!, AFResult.response!))
-                case.failure:
-                    guard let data = AFResult.data, let jsonError = try? JSONDecoder().decode(AFHTTPError.self, from: data) else {
-                        completion(.failure(.unknownError))
-                        return
-                    }
-                    completion(.failure(.customError(jsonError)))
-                }
-        })
-    }
-}
-
-class AFHTTPTask: HTTPClientTask {
-    let task: DataRequest
-    init(task: DataRequest) {
-        self.task = task
-    }
-    func cancel() {
-        task.cancel()
-    }
-}
-
-
-
-public class Reachability {
-    
-    static let reachabilityManager = Alamofire.NetworkReachabilityManager (host: "www.apple.com")
-    static func listenForReachability() {
-        reachabilityManager!.startListening { (listener: NetworkReachabilityManager.NetworkReachabilityStatus) in
-            // do something on status change
-        }
-    }
-    
-    static func isConnectedToNetwork() -> Bool{
-        return reachabilityManager!.isReachable
     }
 }
 
