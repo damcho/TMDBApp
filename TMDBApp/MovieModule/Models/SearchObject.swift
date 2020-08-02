@@ -21,7 +21,7 @@ final class SearchObject {
     private let moviePath = "/3/movie"
     private let searchPath = "/3/search/movie"
 
-    var category:MovieFilterType = .QUERY
+    var category:MovieFilterType = .TOP_RATED
     var page:Int = 1
     var movie: Movie?
     var movieQuery:String?
@@ -60,18 +60,5 @@ final class SearchObject {
     
     func movieDetailQueryItems() -> [URLQueryItem] {
         return [URLQueryItem(name: "append_to_response", value: "videos")]
-    }
-    
-    func filterValue(value:Int) {
-        switch value {
-        case 0:
-            self.category = .TOP_RATED
-        case 1:
-            self.category = .UPCOMING
-        case 2:
-            self.category = .POPULARITY
-        default:
-            self.category = .QUERY
-        }        
     }
 }

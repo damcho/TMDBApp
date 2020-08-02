@@ -112,7 +112,7 @@ final class RemoteMoviesLoader: MoviesLoader{
     private let APIKey:String = "df2fffd5a0084a58bde8be99efd54ec0"
     private let imageBaseURL:String = "https://image.tmdb.org/t/p/w300"
     
-    let client: HTTPClient
+    private let client: HTTPClient
     
     init(client: HTTPClient) {
         self.client = client
@@ -168,7 +168,7 @@ final class RemoteMoviesLoader: MoviesLoader{
         client.request(url: url, completion: completionHandler)
     }
     
-    func createURL(searchPath:String, queryItems:[URLQueryItem]?) -> URL? {
+    private func createURL(searchPath:String, queryItems:[URLQueryItem]?) -> URL? {
         var urlComponents = URLComponents()
         urlComponents.scheme = scheme
         urlComponents.host = host

@@ -15,7 +15,7 @@ final class MoviesModuleComposer {
         let interactor = MoviesInteractor(moviesLoader: RemoteMoviesLoader(client: AlamoFireHttpClient()))
         let router = MoviesListRouter()
         router.viewController = moviesListVC
-        let presenter = MoviesPresenter()
+        let presenter = MoviesListPresenter()
 
         moviesListVC.router = router
         moviesListVC.interactor = interactor

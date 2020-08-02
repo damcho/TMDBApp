@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class MoviesListRouter: MoviesListRoutes{
+final class MoviesListRouter: MoviesListRoutes{
     weak var viewController: MoviesListViewController?
         
     static var mainstoryboard: UIStoryboard{

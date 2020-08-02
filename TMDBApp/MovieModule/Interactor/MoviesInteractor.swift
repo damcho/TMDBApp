@@ -12,9 +12,11 @@ final class MoviesInteractor {
     var presenter: MoviesInteractorOutput?
     var movies: Dictionary<String, MovieContainer> = Dictionary()
     let moviesLoader: MoviesLoader
+    var searchObject: SearchObject
     
     init(moviesLoader: MoviesLoader) {
         self.moviesLoader = moviesLoader
+        self.searchObject = SearchObject()
     }
     
     func moviesAreInMemory(searchParams:SearchObject) -> Bool {
@@ -45,12 +47,27 @@ final class MoviesInteractor {
 }
 
 extension MoviesInteractor: MoviesViewOutput {
-    func viewDidLoad() {
-        
+    
+    func reloadMoviesWith(filterRequest: MoviesFilterRequest) {
+        self.searchObject.refreshSearch()
+        searchObject.category = filterRequest.category
+        searchObject.movieQuery = filterRequest.queryString
+        self.fetchMovies()
     }
     
-    func fetchMovies(searchParams:SearchObject) {
-        self.requestMoviesFromAPI(searchParams: searchParams)
+    func reloadMovies() {
+        searchObject = SearchObject()
+        self.fetchMovies()
+    }
+    
+    func viewDidLoad() {
+        self.presenter?.presentInitialState()
+        self.fetchMovies()
+    }
+    
+    func fetchMovies() {
+        self.requestMoviesFromAPI(searchParams: searchObject)
+        self.presenter?.didRequestMovies()
     }
 }
 

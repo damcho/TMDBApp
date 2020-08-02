@@ -11,19 +11,27 @@ import Foundation
 protocol MoviesInteractorOutput {
     func moviesFetchedWithSuccess(movieContainer:MovieContainer)
     func moviesFetchFailed(error:TMDBError)
+    func presentInitialState()
+    func didRequestMovies()
 }
 
 protocol MoviesViewOutput {
     func viewDidLoad()
-    func fetchMovies(searchParams: SearchObject)
+    func fetchMovies()
+    func reloadMovies()
+    func reloadMoviesWith(filterRequest: MoviesFilterRequest)
 }
 
-protocol MovieListDelegate {
-    func moviesFetchedWithSuccess(movieContainer: MovieContainer)
-    func moviesFetchWithError(error:TMDBError)
+protocol MoviesListPresenterOutput: class {
+    func didReceiveMovies(moviesViewModel: MoviesViewModel)
+    func didRetrieveMoviesWithError(error:TMDBError)
+    func presentInitialState(screenTitle: String)
+    func didRequestMovies()
 }
 
-protocol MovieDetailDelegate {
+
+
+protocol MovieDetailDelegate: class {
     func movieDetailFetchedWithSuccess(movie: Movie)
     func movieDetailFetchedWithError(error:TMDBError)
 }

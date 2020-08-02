@@ -18,7 +18,7 @@ class MovieDetailViewController: UIViewController,UITableViewDelegate, UITableVi
     @IBOutlet weak var voteAverageLabel: UILabel!
     
     var movie:Movie?
-    var presenter:MoviesPresenter?
+    var presenter: MoviesListPresenter?
     private var player: YTSwiftyPlayer!
 
 
@@ -27,7 +27,7 @@ class MovieDetailViewController: UIViewController,UITableViewDelegate, UITableVi
         
         let searchObj = SearchObject()
         searchObj.movie = movie
-        self.presenter?.getMovieDetail(searchParams: searchObj)
+    //    self.presenter?.getMovieDetail(searchParams: searchObj)
         
         self.title = self.movie!.title
         self.popularityLabel.text = "\(movie!.popularity)"

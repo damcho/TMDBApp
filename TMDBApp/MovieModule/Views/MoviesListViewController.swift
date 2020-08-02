@@ -15,23 +15,20 @@ class MoviesListViewController: UIViewController {
     @IBOutlet weak var moviesListTableVIew: UITableView!
     
     var interactor: MoviesViewOutput?
-    var router: MoviesListRouter?
-    var searchObject:SearchObject = SearchObject()
+    var router: MoviesListRoutes?
     let activityData = ActivityData()
     var activityIndicatorView:NVActivityIndicatorPresenter = NVActivityIndicatorPresenter.sharedInstance
     var movies:[Movie] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.setupSearchController()
-        
-        self.title = "TMDB"
-        self.movieCategoryFilter.selectedSegmentIndex = 0
-        activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
-        self.searchObject.filterValue(value:self.movieCategoryFilter.selectedSegmentIndex)
-        self.interactor?.fetchMovies(searchParams:self.searchObject)
-        
+        setupSearchController()
+        setupRefreshControl()
+        movieCategoryFilter.selectedSegmentIndex = 0
+        interactor?.viewDidLoad()
+    }
+    
+    private func setupRefreshControl() {
         moviesListTableVIew.refreshControl = UIRefreshControl()
         moviesListTableVIew.refreshControl?.addTarget(self, action: #selector(refreshMovies), for: .valueChanged)
     }
@@ -47,22 +44,19 @@ class MoviesListViewController: UIViewController {
     }
     
     func fetchMovies() {
-        self.interactor?.fetchMovies(searchParams:self.searchObject)
+        self.interactor?.fetchMovies()
     }
     
     @objc func refreshMovies() {
-        self.movies = []
-        self.moviesListTableVIew.reloadData()
-        self.moviesListTableVIew.refreshControl?.endRefreshing()
-        self.searchObject.refreshSearch()
-        self.fetchMovies()
+        movies = []
+        moviesListTableVIew.reloadData()
+        moviesListTableVIew.refreshControl?.endRefreshing()
+        interactor?.reloadMovies()
     }
     
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
         self.navigationItem.searchController!.isActive = false
-        self.searchObject.filterValue(value: sender.selectedSegmentIndex)
-        activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
-        self.refreshMovies()
+        self.interactor?.reloadMoviesWith(filterRequest: MoviesFilterRequest(filterCategory: sender.selectedSegmentIndex))
     }
     
     private func stopLoadingActivity() {
@@ -78,11 +72,20 @@ class MoviesListViewController: UIViewController {
     }
 }
 
-extension MoviesListViewController: MovieListDelegate {
-    func moviesFetchedWithSuccess(movieContainer: MovieContainer) {
+extension MoviesListViewController: MoviesListPresenterOutput {
+    
+    func presentInitialState(screenTitle: String ) {
+          self.title = screenTitle
+      }
+      
+    func didRequestMovies() {
+        activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
+    }
+    
+    func didReceiveMovies(moviesViewModel: MoviesViewModel) {
         
         self.stopLoadingActivity()
-        let retrievedMovies = movieContainer.getMovies()
+        guard let retrievedMovies = moviesViewModel.movies else { return }
         if retrievedMovies.isEmpty {
             self.showAlertView(msg:"No results")
             self.moviesListTableVIew.isHidden = self.movies.count == 0
@@ -103,7 +106,7 @@ extension MoviesListViewController: MovieListDelegate {
         }
     }
     
-    func moviesFetchWithError(error:TMDBError) {
+    func didRetrieveMoviesWithError(error:TMDBError) {
         self.stopLoadingActivity()
         self.showAlertView(msg:error.localizedDescription)
     }
@@ -156,10 +159,9 @@ extension MoviesListViewController: UISearchResultsUpdating {
         let strippedString =
             searchController.searchBar.text!.trimmingCharacters(in: whitespaceCharacterSet)
         if strippedString.count >= 3 {
-            self.searchObject.category = .QUERY
+            let filterRequest = MoviesFilterRequest(queryString: strippedString)
             self.movieCategoryFilter.selectedSegmentIndex = UISegmentedControl.noSegment
-            self.searchObject.movieQuery = strippedString
-            self.refreshMovies()
+            interactor?.reloadMoviesWith(filterRequest: filterRequest)
         }
     }
 }
