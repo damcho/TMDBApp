@@ -90,7 +90,7 @@ public enum HTTPError: Error {
 }
 
 enum IMDBResult {
-    case success(MovieContainer)
+    case success(MoviesContainer)
     case failure(TMDBError)
 }
 
@@ -105,12 +105,6 @@ public enum HTTPClientResult {
 }
 
 final class RemoteMoviesLoader: MoviesLoader{
-    
-    private let host = "api.themoviedb.org"
-    private let scheme = "https"
-    
-    private let APIKey:String = "df2fffd5a0084a58bde8be99efd54ec0"
-    private let imageBaseURL:String = "https://image.tmdb.org/t/p/w300"
     
     private let client: HTTPClient
     
@@ -131,7 +125,7 @@ final class RemoteMoviesLoader: MoviesLoader{
                     completion(.failure(.MALFORMED_DATA))
                     return
                 }
-                completion(.success(MovieContainer(currentPage: rootResult.currentPage,
+                completion(.success(MoviesContainer(currentPage: rootResult.currentPage,
                                                    totalPages: rootResult.totalPages,
                                                    totalResults: rootResult.totalResults,
                                                    movies: rootResult.movies)))
@@ -170,10 +164,10 @@ final class RemoteMoviesLoader: MoviesLoader{
     
     private func createURL(searchPath:String, queryItems:[URLQueryItem]?) -> URL? {
         var urlComponents = URLComponents()
-        urlComponents.scheme = scheme
-        urlComponents.host = host
+        urlComponents.scheme = Constants.scheme
+        urlComponents.host = Constants.host
         urlComponents.path = searchPath
-        urlComponents.queryItems = [URLQueryItem(name: "api_key", value: APIKey)]
+        urlComponents.queryItems = [URLQueryItem(name: "api_key", value: Constants.APIKey)]
         if queryItems != nil {
             urlComponents.queryItems!.append(contentsOf: queryItems!)
         }

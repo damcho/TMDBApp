@@ -10,7 +10,7 @@ import Foundation
 
 final class MoviesInteractor {
     var presenter: MoviesInteractorOutput?
-    var movies: Dictionary<String, MovieContainer> = Dictionary()
+    var movies: Dictionary<String, MoviesContainer> = Dictionary()
     let moviesLoader: MoviesLoader
     var searchObject: SearchObject
     
@@ -32,11 +32,11 @@ final class MoviesInteractor {
                 if movieContainer.currentPage == 1 {
                     self.movies[searchParams.category.rawValue] = movieContainer
                 } else {
-                    self.movies[searchParams.category.rawValue]?.update(page: MovieContainer(currentPage: movieContainer.currentPage, totalPages: movieContainer.totalPages, totalResults: movieContainer.totalResults, movies: movieContainer.movies))
+                    self.movies[searchParams.category.rawValue]?.update(page: MoviesContainer(currentPage: movieContainer.currentPage, totalPages: movieContainer.totalPages, totalResults: movieContainer.totalResults, movies: movieContainer.movies))
                 }
                 searchParams.page += 1
                 
-                self.presenter?.moviesFetchedWithSuccess(movieContainer: self.movies[searchParams.category.rawValue]!)
+                self.presenter?.moviesFetchedWithSuccess(moviesContainer: self.movies[searchParams.category.rawValue]!)
             case .failure(let error):
                 self.presenter?.moviesFetchFailed(error: error)
             }

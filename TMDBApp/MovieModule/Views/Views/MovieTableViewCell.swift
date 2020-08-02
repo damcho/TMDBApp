@@ -13,20 +13,8 @@ class MovieTableViewCell: UITableViewCell {
     @IBOutlet weak var movieImageView: UIImageView!
     @IBOutlet weak var movieTitleLabel: UILabel!
     
-    var movie: Movie? {
-        didSet {
-            self.setMovie()
-        }
-    }
-    
     override func prepareForReuse() {
         super.prepareForReuse()
-        movieImageView.image = UIImage(named: "default")
         movieTitleLabel.text = nil
-    }
-    
-    func setMovie() {
-        self.movieTitleLabel.text = movie?.title
-        self.movieImageView.alpha = 0
     }
 }

@@ -9,13 +9,15 @@
 import Foundation
 
 final class MoviesListPresenter {
-    
     weak var moviesListVC: MoviesListPresenterOutput?
 }
 
 extension MoviesListPresenter: MoviesInteractorOutput {
-    func moviesFetchedWithSuccess(movieContainer:MovieContainer){
-        let viewModel = MoviesViewModel(movies: movieContainer.movies)
+    func moviesFetchedWithSuccess(moviesContainer: MoviesContainer){
+        let movieViewModels: [MovieViewModel] = moviesContainer.movies.map { (movie) in
+            return MovieViewModel(model: movie)
+        }
+        let viewModel = MoviesListViewModel(movies: movieViewModels)
         self.moviesListVC?.didReceiveMovies(moviesViewModel: viewModel)
     }
     

@@ -8,11 +8,11 @@
 
 import Foundation
 
-public final class MovieContainer {
+public final class MoviesContainer {
     var currentPage: Int
     var totalPages: Int
     var totalResults: Int
-    var movies:[Movie] = []
+    var movies: [Movie] = []
     
     init(currentPage: Int, totalPages: Int, totalResults: Int, movies: [Movie]) {
         self.currentPage = currentPage
@@ -21,7 +21,7 @@ public final class MovieContainer {
         self.movies = movies
     }
     
-    func update(page:MovieContainer) {
+    func update(page: MoviesContainer) {
         self.currentPage = page.currentPage
         self.totalPages = page.totalPages
         self.totalResults = page.totalResults

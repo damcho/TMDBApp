@@ -11,11 +11,14 @@ import Foundation
 struct Movie: Equatable {
     var title:String
     var movieId: UInt
-    var overview:String
-    var popularity:Double? = 0
-    var voteAverage:Double? = 0
+    var overview: String
+    var popularity: Double?
+    var voteAverage: Double?
     var imagePath: String?
-    var videos:[Video]? = []
+    var videos: [Video]? = []
+    var imageURL: URL? {
+        return URL(string: Constants.baseImageURL + (self.imagePath ?? ""))
+    }
     
     init(title: String, movieID: UInt, overview: String, imagePath: String?) {
         self.movieId = movieID

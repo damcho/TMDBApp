@@ -9,7 +9,7 @@
 import Foundation
 
 protocol MoviesInteractorOutput {
-    func moviesFetchedWithSuccess(movieContainer:MovieContainer)
+    func moviesFetchedWithSuccess(moviesContainer: MoviesContainer)
     func moviesFetchFailed(error:TMDBError)
     func presentInitialState()
     func didRequestMovies()
@@ -23,7 +23,7 @@ protocol MoviesViewOutput {
 }
 
 protocol MoviesListPresenterOutput: class {
-    func didReceiveMovies(moviesViewModel: MoviesViewModel)
+    func didReceiveMovies(moviesViewModel: MoviesListViewModel)
     func didRetrieveMoviesWithError(error:TMDBError)
     func presentInitialState(screenTitle: String)
     func didRequestMovies()
