@@ -83,23 +83,22 @@ extension MoviesListViewController: MoviesListPresenterOutput {
     func didReceiveMovies(moviesViewModel: MoviesListViewModel) {
         
         self.stopLoadingActivity()
-        guard let retrievedMovies = moviesViewModel.movies else { return }
-        if retrievedMovies.isEmpty {
+        if moviesViewModel.movies.isEmpty {
             self.showAlertView(msg:"No results")
             self.moviesListTableVIew.isHidden = self.movieViewModels.count == 0
             return
         }
         var IndexPathsArray:[IndexPath] = []
-        if self.movieViewModels.count < retrievedMovies.count {
-            for index in self.movieViewModels.count..<retrievedMovies.count {
+        if self.movieViewModels.count < moviesViewModel.movies.count {
+            for index in self.movieViewModels.count..<moviesViewModel.movies.count {
                 IndexPathsArray.append(IndexPath(row: index, section: 0))
             }
-            self.movieViewModels = retrievedMovies
+            self.movieViewModels = moviesViewModel.movies
             self.moviesListTableVIew.beginUpdates()
             self.moviesListTableVIew.insertRows(at: IndexPathsArray, with: .none)
             self.moviesListTableVIew.endUpdates()
         } else {
-            self.movieViewModels = retrievedMovies
+            self.movieViewModels = moviesViewModel.movies
             self.moviesListTableVIew.reloadData()
         }
     }

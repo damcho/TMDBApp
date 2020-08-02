@@ -11,7 +11,11 @@ import UIKit
 
 struct MoviesListViewModel {
     let title = "TMDB"
-    let movies: [MovieViewModel]?
+    let movies: [MovieViewModel]
+    
+    init(movies: [MovieViewModel]) {
+        self.movies = movies
+    }
 }
 
 class MovieViewModel {
