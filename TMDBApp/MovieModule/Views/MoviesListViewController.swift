@@ -17,8 +17,8 @@ class MoviesListViewController: UIViewController {
     var interactor: MoviesViewOutput?
     var router: MoviesListRoutes?
     let activityData = ActivityData()
-    var activityIndicatorView:NVActivityIndicatorPresenter = NVActivityIndicatorPresenter.sharedInstance
-    var movies:[Movie] = []
+    var activityIndicatorView: NVActivityIndicatorPresenter = NVActivityIndicatorPresenter.sharedInstance
+    var movies: [Movie] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,13 +27,27 @@ class MoviesListViewController: UIViewController {
         movieCategoryFilter.selectedSegmentIndex = 0
         interactor?.viewDidLoad()
     }
+}
+
+// Private functions
+private extension MoviesListViewController {
+    func stopLoadingActivity() {
+        activityIndicatorView.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
+        if self.moviesListTableVIew.refreshControl?.isRefreshing ?? false {
+            self.moviesListTableVIew.refreshControl?.endRefreshing()
+        }
+    }
     
-    private func setupRefreshControl() {
+    func fetchMovies() {
+        self.interactor?.fetchMovies()
+    }
+    
+    func setupRefreshControl() {
         moviesListTableVIew.refreshControl = UIRefreshControl()
         moviesListTableVIew.refreshControl?.addTarget(self, action: #selector(refreshMovies), for: .valueChanged)
     }
     
-    private func setupSearchController() {
+    func setupSearchController() {
         let searchController =  UISearchController(searchResultsController: nil)
         self.navigationItem.searchController = searchController
         searchController.delegate = self
@@ -41,10 +55,6 @@ class MoviesListViewController: UIViewController {
         searchController.searchResultsUpdater = self
         searchController.searchBar.autocapitalizationType = .none
         searchController.searchBar.delegate = self
-    }
-    
-    func fetchMovies() {
-        self.interactor?.fetchMovies()
     }
     
     @objc func refreshMovies() {
@@ -58,26 +68,14 @@ class MoviesListViewController: UIViewController {
         self.navigationItem.searchController!.isActive = false
         self.interactor?.reloadMoviesWith(filterRequest: MoviesFilterRequest(filterCategory: sender.selectedSegmentIndex))
     }
-    
-    private func stopLoadingActivity() {
-        activityIndicatorView.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
-        if self.moviesListTableVIew.refreshControl?.isRefreshing ?? false {
-            self.moviesListTableVIew.refreshControl?.endRefreshing()
-        }
-    }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        self.movieCategoryFilter.selectedSegmentIndex = 0
-        self.segmentedControlValueChanged(self.movieCategoryFilter)
-    }
 }
 
 extension MoviesListViewController: MoviesListPresenterOutput {
     
     func presentInitialState(screenTitle: String ) {
-          self.title = screenTitle
-      }
-      
+        self.title = screenTitle
+    }
+    
     func didRequestMovies() {
         activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
     }
@@ -122,6 +120,10 @@ extension MoviesListViewController: UITableViewDataSourcePrefetching {
             }
         }
     }
+    
+    func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
+        
+    }
 }
 
 extension MoviesListViewController: UITableViewDataSource {
@@ -148,8 +150,13 @@ extension MoviesListViewController: UISearchControllerDelegate {
 }
 
 extension MoviesListViewController: UISearchBarDelegate {
-    public func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         return true
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        self.movieCategoryFilter.selectedSegmentIndex = 0
+        self.segmentedControlValueChanged(self.movieCategoryFilter)
     }
 }
 
