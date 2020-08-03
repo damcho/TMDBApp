@@ -9,6 +9,15 @@
 import Foundation
 import Alamofire
 
+public protocol HTTPClient {
+    @discardableResult
+    func request(url: URL, completion: @escaping (HTTPClientResult) -> Void) -> HTTPClientTask
+}
+
+public protocol HTTPClientTask {
+    func cancel()
+}
+
 class AFHTTPTask: HTTPClientTask {
     let task: DataRequest
     init(task: DataRequest) {
@@ -29,10 +38,6 @@ public class AlamoFireHttpClient: HTTPClient {
             .responseData{ AFResult in
                 switch AFResult.result {
                 case .success:
-                    guard AFResult.response?.statusCode == 200 else {
-                        completion(.failure(.unknownError))
-                        return
-                    }
                     completion( .success(AFResult.data!, AFResult.response!))
                 case.failure:
                     guard let data = AFResult.data, let jsonError = try? JSONDecoder().decode(AFHTTPError.self, from: data) else {

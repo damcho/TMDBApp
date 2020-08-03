@@ -8,6 +8,28 @@
 
 import Foundation
 
+public struct AFHTTPError: Codable {
+    var status_message: String?
+}
+
+public enum HTTPError: Error {
+    case notFound
+    case unknownError
+    case connectionError
+    case customError(AFHTTPError)
+}
+
+enum TMDBError: Error {
+    case API_ERROR(reason:String)
+    case NOT_FOUND
+    case MALFORMED_DATA
+}
+
+public enum HTTPClientResult {
+    case success(Data, HTTPURLResponse)
+    case failure(HTTPError)
+}
+
 struct MoviesFilterRequest {
     let category: MovieFilterType
     let queryString: String
