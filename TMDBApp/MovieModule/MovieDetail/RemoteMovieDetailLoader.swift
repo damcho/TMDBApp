@@ -9,7 +9,7 @@
 import Foundation
 
 protocol MovieDetailLoader {
-    func getMovieDetail(searchParams: SearchObject, completion:  @escaping (MovieDetailResult) -> ())
+    func getMovieDetail(searchParams: FilterDataObject, completion:  @escaping (MovieDetailResult) -> ())
 }
 
 typealias MovieDetailFetchCompletion = (MovieDetailResult) -> ()
@@ -19,15 +19,15 @@ enum MovieDetailResult {
     case failure(TMDBError)
 }
 
-final class RemoteMovieDetailLoader: MovieDetailLoader {
+final class RemoteMovieDetailLoader {
     
     private let client: HTTPClient
     
     init(client: HTTPClient) {
         self.client = client
     }
-    
-    func getMovieDetail(searchParams: SearchObject, completion:  @escaping (MovieDetailResult) -> ()) {
+    /*
+    func getMovieDetail(searchParams: FilterDataObject, completion:  @escaping (MovieDetailResult) -> ()) {
         guard let url = APIHelper.createURL(searchPath: searchParams.movieDetailUrlPath(), queryItems:searchParams.movieDetailQueryItems() ) else {
             completion(.failure(.MALFORMED_URL))
             return
@@ -50,4 +50,5 @@ final class RemoteMovieDetailLoader: MovieDetailLoader {
             }
         })
     }
+ */
 }

@@ -11,7 +11,7 @@ import Foundation
 typealias MoviesFetchCompletion = (IMDBResult) -> ()
 
 protocol MoviesLoader {
-    func getMovies(searchParams: SearchObject, completion:  @escaping MoviesFetchCompletion)
+    func getMovies(searchParams: FilterDataObject, completion:  @escaping MoviesFetchCompletion)
 }
 
 struct CodableMovie: Codable{
@@ -55,20 +55,25 @@ private struct RootResult: Codable{
 }
 
 enum IMDBResult {
-    case success(MoviesContainer)
+    case success([Movie])
     case failure(TMDBError)
 }
 
 final class RemoteMoviesLoader: MoviesLoader{
     
     private let client: HTTPClient
+    private var moviesContainer = MoviesContainer()
     
     init(client: HTTPClient) {
         self.client = client
     }
     
-    func getMovies(searchParams: SearchObject, completion:  @escaping MoviesFetchCompletion) {
-        guard let url = APIHelper.createURL(searchPath: searchParams.searchMoviesUrlPath(), queryItems:searchParams.searchMoviesQueryItems() ) else {
+    func getMovies(searchParams: FilterDataObject, completion:  @escaping MoviesFetchCompletion) {
+        let searchPath = searchMoviesUrlPathFor(filter: searchParams.category)
+        let queryItems = searchMoviesQueryItemsFor(queryString: searchParams.movieNameQueryString)
+        
+        guard let url = URLFactory.createURL(searchPath: searchPath,
+                                             queryItems: queryItems) else {
             completion(.failure(.MALFORMED_URL))
             return
         }
@@ -89,10 +94,49 @@ final class RemoteMoviesLoader: MoviesLoader{
         }
         do {
             let moviesContainer = try MoviesListMapper.map(data)
-            return .success(moviesContainer)
+            
+            self.moviesContainer.update(page: MoviesContainer(currentPage: moviesContainer.currentPage,
+                                                              totalPages: moviesContainer.totalPages,
+                                                              totalResults: moviesContainer.totalResults,
+                                                              movies: moviesContainer.movies))
+            
+            return .success(self.moviesContainer.movies)
         } catch {
             return .failure(TMDBError.MALFORMED_DATA)
         }
+    }
+    
+    private func searchMoviesUrlPathFor(filter: MovieFilterType) -> String {
+        switch filter {
+        case .POPULARITY, .UPCOMING, .TOP_RATED:
+            return Constants.moviePath + "/\(filter.rawValue)"
+        case .QUERY:
+            return Constants.searchPath
+        }
+    }
+    
+    private func searchMoviesQueryItemsFor(queryString: String?) -> [URLQueryItem] {
+        var queryItems =  [URLQueryItem(name: "page", value: "\(self.moviesContainer.currentPage + 1)")]
+        guard let string = queryString else { return queryItems }
+        
+        queryItems.append( URLQueryItem(name: "query", value: string))
+        return queryItems
+    }
+}
+
+private class URLFactory {
+    static func createURL(searchPath:String, queryItems:[URLQueryItem]?) -> URL? {
+        var urlComponents = URLComponents()
+        urlComponents.scheme = Constants.scheme
+        urlComponents.host = Constants.host
+        urlComponents.path = searchPath
+        urlComponents.queryItems = [URLQueryItem(name: "api_key", value: Constants.APIKey)]
+        if queryItems != nil {
+            urlComponents.queryItems!.append(contentsOf: queryItems!)
+        }
+        
+        guard let url = urlComponents.url else { return nil }
+        return url
     }
 }
 

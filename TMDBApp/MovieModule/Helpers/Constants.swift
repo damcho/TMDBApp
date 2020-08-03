@@ -13,4 +13,6 @@ struct Constants {
     static let host = "api.themoviedb.org"
     static let scheme = "https"
     static let APIKey = "df2fffd5a0084a58bde8be99efd54ec0"
+    static let moviePath = "/3/movie"
+    static let searchPath = "/3/search/movie"
 }

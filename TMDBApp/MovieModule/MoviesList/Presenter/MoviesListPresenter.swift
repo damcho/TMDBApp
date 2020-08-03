@@ -13,8 +13,8 @@ final class MoviesListPresenter {
 }
 
 extension MoviesListPresenter: MoviesInteractorOutput {
-    func moviesFetchedWithSuccess(moviesContainer: MoviesContainer){
-        let movieViewModels: [MovieViewModel] = moviesContainer.movies.map { (movie) in
+    func moviesFetchedWithSuccess(movies: [Movie]){
+        let movieViewModels: [MovieViewModel] = movies.map { (movie) in
             return MovieViewModel(model: movie)
         }
         let viewModel = MoviesListViewModel(movies: movieViewModels)

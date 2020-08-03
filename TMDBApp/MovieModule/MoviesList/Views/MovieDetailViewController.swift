@@ -25,8 +25,7 @@ class MovieDetailViewController: UIViewController,UITableViewDelegate, UITableVi
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let searchObj = SearchObject()
-        searchObj.movie = movie
+        let searchObj = FilterDataObject()
     //    self.presenter?.getMovieDetail(searchParams: searchObj)
         
         self.title = self.movie!.title

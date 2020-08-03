@@ -9,7 +9,7 @@
 import Foundation
 
 protocol MoviesInteractorOutput {
-    func moviesFetchedWithSuccess(moviesContainer: MoviesContainer)
+    func moviesFetchedWithSuccess(movies: [Movie])
     func moviesFetchFailed(error:TMDBError)
     func presentInitialState()
     func didRequestMovies()

@@ -10,33 +10,20 @@ import Foundation
 
 final class MoviesInteractor {
     var presenter: MoviesInteractorOutput?
-    var movies: Dictionary<String, MoviesContainer> = Dictionary()
     let moviesLoader: MoviesLoader
-    var searchObject: SearchObject
+    var searchObject: FilterDataObject
     
     init(moviesLoader: MoviesLoader) {
         self.moviesLoader = moviesLoader
-        self.searchObject = SearchObject()
+        self.searchObject = FilterDataObject()
     }
     
-    func moviesAreInMemory(searchParams:SearchObject) -> Bool {
-        return self.movies.index(forKey: searchParams.category.rawValue) != nil
-    }
-    
-    
-    func requestMoviesFromAPI(searchParams: SearchObject) {
+    func requestMoviesFromAPI(searchParams: FilterDataObject) {
         let completionHandler: MoviesFetchCompletion = {[unowned self] (result) in
             
             switch result {
-            case .success(let movieContainer):
-                if movieContainer.currentPage == 1 {
-                    self.movies[searchParams.category.rawValue] = movieContainer
-                } else {
-                    self.movies[searchParams.category.rawValue]?.update(page: MoviesContainer(currentPage: movieContainer.currentPage, totalPages: movieContainer.totalPages, totalResults: movieContainer.totalResults, movies: movieContainer.movies))
-                }
-                searchParams.page += 1
-                
-                self.presenter?.moviesFetchedWithSuccess(moviesContainer: self.movies[searchParams.category.rawValue]!)
+            case .success(let movies):
+                self.presenter?.moviesFetchedWithSuccess(movies: movies)
             case .failure(let error):
                 self.presenter?.moviesFetchFailed(error: error)
             }
@@ -49,25 +36,24 @@ final class MoviesInteractor {
 extension MoviesInteractor: MoviesViewOutput {
     
     func reloadMoviesWith(filterRequest: MoviesFilterRequest) {
-        self.searchObject.refreshSearch()
         searchObject.category = filterRequest.category
-        searchObject.movieQuery = filterRequest.queryString
+        searchObject.movieNameQueryString = filterRequest.queryString
         self.fetchMovies()
     }
     
     func reloadMovies() {
-        searchObject = SearchObject()
+        searchObject = FilterDataObject()
         self.fetchMovies()
     }
     
     func viewDidLoad() {
         self.presenter?.presentInitialState()
         self.fetchMovies()
+        self.presenter?.didRequestMovies()
     }
     
     func fetchMovies() {
         self.requestMoviesFromAPI(searchParams: searchObject)
-        self.presenter?.didRequestMovies()
     }
 }
 

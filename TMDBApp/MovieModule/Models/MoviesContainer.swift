@@ -12,9 +12,9 @@ public final class MoviesContainer {
     var currentPage: Int
     var totalPages: Int
     var totalResults: Int
-    var movies: [Movie] = []
+    var movies: [Movie]
     
-    init(currentPage: Int, totalPages: Int, totalResults: Int, movies: [Movie]) {
+    init(currentPage: Int = 0, totalPages: Int = 0, totalResults: Int = 0, movies: [Movie] = []) {
         self.currentPage = currentPage
         self.totalResults = totalResults
         self.totalPages = totalPages
@@ -30,9 +30,5 @@ public final class MoviesContainer {
                 movies.append(movie)
             }
         }
-    }
-    
-    func getMovies() -> [Movie] {
-        return movies
     }
 }
