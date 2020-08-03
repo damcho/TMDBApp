@@ -68,8 +68,8 @@ final class RemoteMoviesLoader: MoviesLoader{
     }
     
     func getMovies(searchParams: SearchObject, completion:  @escaping MoviesFetchCompletion) {
-        guard let url = APIHelper.createURL(searchPath: searchParams.searchMoviesUrlPath() , queryItems:searchParams.searchMoviesQueryItems() ) else {
-            completion(.failure(.MALFORMED_DATA))
+        guard let url = APIHelper.createURL(searchPath: searchParams.searchMoviesUrlPath(), queryItems:searchParams.searchMoviesQueryItems() ) else {
+            completion(.failure(.MALFORMED_URL))
             return
         }
         

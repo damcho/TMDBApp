@@ -29,7 +29,7 @@ final class RemoteMovieDetailLoader: MovieDetailLoader {
     
     func getMovieDetail(searchParams: SearchObject, completion:  @escaping (MovieDetailResult) -> ()) {
         guard let url = APIHelper.createURL(searchPath: searchParams.movieDetailUrlPath(), queryItems:searchParams.movieDetailQueryItems() ) else {
-            completion(.failure(.MALFORMED_DATA))
+            completion(.failure(.MALFORMED_URL))
             return
         }
         

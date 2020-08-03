@@ -23,6 +23,7 @@ enum TMDBError: Error {
     case API_ERROR(reason:String)
     case NOT_FOUND
     case MALFORMED_DATA
+    case MALFORMED_URL
 }
 
 public enum HTTPClientResult {
