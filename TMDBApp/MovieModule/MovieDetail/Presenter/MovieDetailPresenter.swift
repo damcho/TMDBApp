@@ -9,18 +9,17 @@
 import Foundation
 
 final class MovieDetailPresenter {
-    var view: MovieDetailPresenterOutput?
+    weak var view: MovieDetailPresenterOutput?
 }
 
 extension MovieDetailPresenter: MovieDetailInteractorOutput {
     func presentFullMovieDetail(movie: Movie) {
         let viewModel = MovieViewModel(model: movie)
-
+        view?.movieDetailFetchedWithSuccess(movie: viewModel)
     }
     
     func presentInitialMovieInfo(movie: Movie) {
         let viewModel = MovieViewModel(model: movie)
         view?.displayInitialMovieInfo(viewModel: viewModel)
     }
-
 }

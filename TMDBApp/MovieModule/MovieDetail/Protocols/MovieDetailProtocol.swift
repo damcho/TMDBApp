@@ -20,5 +20,5 @@ protocol MovieDetailInteractorOutput {
 }
 
 protocol MovieDetailViewOutput {
-    
+    func viewDidLoad()
 }

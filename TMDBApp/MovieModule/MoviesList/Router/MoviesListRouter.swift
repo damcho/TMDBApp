@@ -11,23 +11,9 @@ import UIKit
 
 final class MoviesListRouter: MoviesListRoutes{
     weak var viewController: MoviesListViewController?
-        
-    static var mainstoryboard: UIStoryboard{
-        return UIStoryboard(name:"Main",bundle: Bundle.main)
-    }
     
     func pushToMovieDetail(movie: MovieViewModel) {
-        let movieDetailViewController = MoviesListRouter.mainstoryboard.instantiateViewController(withIdentifier: "MovieDetailViewController") as! MovieDetailViewController
-        movieDetailViewController.movie = movie
-        
-        let movieDetailInteractor = MovieDetailInteractor(
-            movieDetailLoader: RemoteMovieDetailLoader(
-                client: AlamoFireHttpClient()))
-        let movieDetailPresenter = MovieDetailPresenter()
-        movieDetailInteractor.presenter = movieDetailPresenter
-        movieDetailInteractor.movie = movie.model
-        movieDetailViewController.interactor = movieDetailInteractor
-        
+        let movieDetailViewController = MovieDetailComposer.compose(movie: movie)
         viewController?.navigationController?.pushViewController(movieDetailViewController, animated: true)
     }
 }

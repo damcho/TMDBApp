@@ -17,9 +17,8 @@ final class MovieDetailInteractor {
         self.movieDetailLoader = movieDetailLoader
     }
     
-    func fetchMovieDetailFor(_ movieID: String) {
-        
-        movieDetailLoader.getMovieDetail(movieID: movieID, completion: { result in
+    private func fetchMovieDetailFor(_ movieID: UInt) {
+        movieDetailLoader.getMovieDetail(movieID: "\(movieID)", completion: { result in
             switch result {
             case .success(let movie):
                 self.presenter.presentFullMovieDetail(movie: movie)
@@ -28,9 +27,11 @@ final class MovieDetailInteractor {
             }
         })
     }
-    
+}
+
+extension MovieDetailInteractor: MovieDetailViewOutput {
     func viewDidLoad() {
         presenter.presentInitialMovieInfo(movie: movie)
+        fetchMovieDetailFor(movie.movieId)
     }
-    
 }
