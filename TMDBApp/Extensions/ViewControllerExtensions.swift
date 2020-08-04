@@ -16,4 +16,11 @@ extension UIViewController {
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
+    
+    static func loadFromStoryboard<T: UIViewController>() -> T{
+        let bundle = Bundle(for: self)
+        let storyboard = UIStoryboard(name: "Main", bundle: bundle)
+        let vc = storyboard.instantiateViewController(withIdentifier: String(describing: self)) as! T
+        return vc
+    }
 }
