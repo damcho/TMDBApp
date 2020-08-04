@@ -9,6 +9,22 @@
 import Foundation
 import Alamofire
 
+public enum HTTPClientResult {
+    case success(Data, HTTPURLResponse)
+    case failure(HTTPError)
+}
+
+public struct AFHTTPError: Codable {
+    var status_message: String?
+}
+
+public enum HTTPError: Error {
+    case notFound
+    case unknownError
+    case connectionError
+    case customError(AFHTTPError)
+}
+
 public protocol HTTPClient {
     @discardableResult
     func request(url: URL, completion: @escaping (HTTPClientResult) -> Void) -> HTTPClientTask
@@ -18,11 +34,13 @@ public protocol HTTPClientTask {
     func cancel()
 }
 
-class AFHTTPTask: HTTPClientTask {
-    let task: DataRequest
+private class AFHTTPTask: HTTPClientTask {
+    private let task: DataRequest
+    
     init(task: DataRequest) {
         self.task = task
     }
+    
     func cancel() {
         task.cancel()
     }

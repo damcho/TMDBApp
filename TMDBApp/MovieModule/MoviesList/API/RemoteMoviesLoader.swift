@@ -59,33 +59,21 @@ enum IMDBResult {
     case failure(TMDBError)
 }
 
-final class RemoteMoviesLoader: MoviesLoader{
+enum TMDBError: Error {
+    case API_ERROR(reason: String)
+    case NOT_FOUND
+    case MALFORMED_DATA
+    case MALFORMED_URL
+    case SERVER_ERROR
+}
+
+final class RemoteMoviesLoader{
     
     private let client: HTTPClient
     private var moviesContainer = MoviesContainer()
     
     init(client: HTTPClient) {
         self.client = client
-    }
-    
-    func getMovies(searchParams: FilterDataObject, completion:  @escaping MoviesFetchCompletion) {
-        let searchPath = searchMoviesUrlPathFor(filter: searchParams.category)
-        let queryItems = searchMoviesQueryItemsFor(queryString: searchParams.movieNameQueryString)
-        
-        guard let url = URLFactory.createURL(searchPath: searchPath,
-                                             queryItems: queryItems) else {
-            completion(.failure(.MALFORMED_URL))
-            return
-        }
-        
-        client.request(url: url, completion: { result in
-            switch result {
-            case .success(let data, let response):
-                completion(self.mapMovies(data: data, response: response))
-            case .failure(let error):
-                completion(.failure(.API_ERROR(reason: error.localizedDescription)))
-            }
-        })
     }
     
     private func mapMovies(data: Data, response: HTTPURLResponse) -> IMDBResult {
@@ -124,28 +112,59 @@ final class RemoteMoviesLoader: MoviesLoader{
     }
 }
 
-private class URLFactory {
-    static func createURL(searchPath:String, queryItems:[URLQueryItem]?) -> URL? {
-        var urlComponents = URLComponents()
-        urlComponents.scheme = Constants.scheme
-        urlComponents.host = Constants.host
-        urlComponents.path = searchPath
-        urlComponents.queryItems = [URLQueryItem(name: "api_key", value: Constants.APIKey)]
-        if queryItems != nil {
-            urlComponents.queryItems!.append(contentsOf: queryItems!)
+extension RemoteMoviesLoader: MoviesLoader {
+    func getMovies(searchParams: FilterDataObject, completion:  @escaping MoviesFetchCompletion) {
+        let searchPath = searchMoviesUrlPathFor(filter: searchParams.category)
+        let queryItems = searchMoviesQueryItemsFor(queryString: searchParams.movieNameQueryString)
+        
+        guard let url = URLFactory.createURL(searchPath: searchPath,
+                                             queryItems: queryItems) else {
+                                                completion(.failure(.MALFORMED_URL))
+                                                return
         }
         
-        guard let url = urlComponents.url else { return nil }
-        return url
+        client.request(url: url, completion: { result in
+            switch result {
+            case .success(let data, let response):
+                completion(self.mapMovies(data: data, response: response))
+            case .failure(let error):
+                completion(.failure(.API_ERROR(reason: error.localizedDescription)))
+            }
+        })
     }
 }
 
-private class MoviesListMapper {
+private final class MoviesListMapper {
     static func map(_ data: Data) throws -> MoviesContainer{
         let rootResult = try JSONDecoder().decode(RootResult.self, from: data)
         return MoviesContainer(currentPage: rootResult.currentPage,
                                totalPages: rootResult.totalPages,
                                totalResults: rootResult.totalResults,
                                movies: rootResult.movies)
+    }
+}
+
+private final class MoviesContainer {
+    var currentPage: Int
+    var totalPages: Int
+    var totalResults: Int
+    var movies: [Movie]
+    
+    init(currentPage: Int = 0, totalPages: Int = 0, totalResults: Int = 0, movies: [Movie] = []) {
+        self.currentPage = currentPage
+        self.totalResults = totalResults
+        self.totalPages = totalPages
+        self.movies = movies
+    }
+    
+    func update(page: MoviesContainer) {
+        self.currentPage = page.currentPage
+        self.totalPages = page.totalPages
+        self.totalResults = page.totalResults
+        for movie in page.movies {
+            if !self.movies.contains(movie) {
+                movies.append(movie)
+            }
+        }
     }
 }
