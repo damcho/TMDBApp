@@ -9,8 +9,8 @@
 import UIKit
 import YoutubeKit
 
-class MovieDetailViewController: UIViewController,UITableViewDelegate, UITableViewDataSource, YTSwiftyPlayerDelegate, MovieDetailDelegate {
-
+final class MovieDetailViewController: UIViewController {
+    
     @IBOutlet weak var movieOverViewTextView: UILabel!
     @IBOutlet weak var videosTableView: UITableView!
     @IBOutlet weak var movieImageView: UIImageView!
@@ -20,65 +20,43 @@ class MovieDetailViewController: UIViewController,UITableViewDelegate, UITableVi
     var movie:Movie?
     var presenter: MoviesListPresenter?
     private var player: YTSwiftyPlayer!
-
-
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         let searchObj = FilterDataObject()
-    //    self.presenter?.getMovieDetail(searchParams: searchObj)
+        //    self.presenter?.getMovieDetail(searchParams: searchObj)
         
         self.title = self.movie!.title
         self.popularityLabel.text = "\(movie!.popularity)"
         self.voteAverageLabel.text =  "\(movie!.voteAverage)"
         
         self.movieOverViewTextView.text = movie!.overview
-    
+        
     }
     
     func movieDetailFetchedWithError(error:TMDBError){
         self.showAlertView(msg:"There was an error obtaining the videos")
         self.videosTableView.isHidden = true
     }
-    
-    func numberOfSectionsInTableView(tableView: UITableView?) -> Int {
-        return 1
-    }
-    
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return "Videos"
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.movie?.videos?.count ?? 0
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell  {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "videoCell", for: indexPath as IndexPath) as! VideoTableViewCell
-        cell.videoTitleLabel.text = movie?.videos![indexPath.row].title
-        return cell
-    }
-    
+
     func movieDetailFetchedWithSuccess(movie:Movie) {
         self.movie = movie
         self.videosTableView.isHidden = self.movie!.videos?.count == 0
         self.videosTableView.reloadData()
     }
+}
+
+extension MovieDetailViewController: MovieDetailDelegate {
     
+}
+
+extension MovieDetailViewController: YTSwiftyPlayerDelegate {
     func player(_ player: YTSwiftyPlayer, didReceiveError error: YTSwiftyPlayerError) {
         self.showAlertView(msg:"There was an error loading the video")
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let videos = movie?.videos else { return }
-        player = YTSwiftyPlayer(
-            frame: self.view.bounds,
-            playerVars: [.videoID(videos[indexPath.row].id)])
-        player.autoplay = true
-        player.delegate = self
-        player.loadPlayer()
-    }
-
     func player(_ player: YTSwiftyPlayer, didChangeState state: YTSwiftyPlayerState) {
         switch state {
         case .paused:
@@ -89,6 +67,36 @@ class MovieDetailViewController: UIViewController,UITableViewDelegate, UITableVi
             return
         }
     }
+}
 
+extension MovieDetailViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let videos = movie?.videos else { return }
+        player = YTSwiftyPlayer(
+            frame: self.view.bounds,
+            playerVars: [.videoID(videos[indexPath.row].id)])
+        player.autoplay = true
+        player.delegate = self
+        player.loadPlayer()
+    }
+}
 
+extension MovieDetailViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return "Videos"
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell  {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "videoCell", for: indexPath as IndexPath) as! VideoTableViewCell
+        cell.videoTitleLabel.text = movie?.videos![indexPath.row].title
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.movie?.videos?.count ?? 0
+    }
+    
+    func numberOfSectionsInTableView(tableView: UITableView?) -> Int {
+        return 1
+    }
 }
