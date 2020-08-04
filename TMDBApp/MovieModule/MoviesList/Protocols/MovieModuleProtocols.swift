@@ -30,5 +30,5 @@ protocol MoviesListPresenterOutput: class {
 }
 
 protocol MoviesListRoutes {
-    func pushToMovieDetail(movie:Movie)
+    func pushToMovieDetail(movie: MovieViewModel)
 }

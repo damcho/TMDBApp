@@ -17,39 +17,32 @@ final class MovieDetailViewController: UIViewController {
     @IBOutlet weak var popularityLabel: UILabel!
     @IBOutlet weak var voteAverageLabel: UILabel!
     
-    var movie:Movie?
-    var presenter: MoviesListPresenter?
+    var movie: MovieViewModel?
+    var interactor: MovieDetailInteractor?
     private var player: YTSwiftyPlayer!
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let searchObj = FilterDataObject()
-        //    self.presenter?.getMovieDetail(searchParams: searchObj)
-        
-        self.title = self.movie!.title
-        self.popularityLabel.text = "\(movie!.popularity)"
-        self.voteAverageLabel.text =  "\(movie!.voteAverage)"
-        
-        self.movieOverViewTextView.text = movie!.overview
-        
+        interactor?.viewDidLoad()
+    }
+}
+
+extension MovieDetailViewController: MovieDetailPresenterOutput {
+    func displayInitialMovieInfo(viewModel: MovieViewModel) {
+        self.movieOverViewTextView.text = viewModel.model.overview
+        self.title = viewModel.model.title
     }
     
     func movieDetailFetchedWithError(error:TMDBError){
         self.showAlertView(msg:"There was an error obtaining the videos")
         self.videosTableView.isHidden = true
     }
-
-    func movieDetailFetchedWithSuccess(movie:Movie) {
+    
+    func movieDetailFetchedWithSuccess(movie: MovieViewModel) {
         self.movie = movie
-        self.videosTableView.isHidden = self.movie!.videos?.count == 0
+        self.videosTableView.isHidden = self.movie!.model.videos?.count == 0
         self.videosTableView.reloadData()
     }
-}
-
-extension MovieDetailViewController: MovieDetailDelegate {
-    
 }
 
 extension MovieDetailViewController: YTSwiftyPlayerDelegate {
@@ -71,7 +64,7 @@ extension MovieDetailViewController: YTSwiftyPlayerDelegate {
 
 extension MovieDetailViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let videos = movie?.videos else { return }
+        guard let videos = movie?.model.videos else { return }
         player = YTSwiftyPlayer(
             frame: self.view.bounds,
             playerVars: [.videoID(videos[indexPath.row].id)])
@@ -88,12 +81,12 @@ extension MovieDetailViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell  {
         let cell = tableView.dequeueReusableCell(withIdentifier: "videoCell", for: indexPath as IndexPath) as! VideoTableViewCell
-        cell.videoTitleLabel.text = movie?.videos![indexPath.row].title
+        cell.videoTitleLabel.text = movie?.model.videos![indexPath.row].title
         return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.movie?.videos?.count ?? 0
+        return self.movie?.model.videos?.count ?? 0
     }
     
     func numberOfSectionsInTableView(tableView: UITableView?) -> Int {

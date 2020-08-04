@@ -7,3 +7,20 @@
 //
 
 import Foundation
+
+final class MovieDetailPresenter {
+    var view: MovieDetailPresenterOutput?
+}
+
+extension MovieDetailPresenter: MovieDetailInteractorOutput {
+    func presentFullMovieDetail(movie: Movie) {
+        let viewModel = MovieViewModel(model: movie)
+
+    }
+    
+    func presentInitialMovieInfo(movie: Movie) {
+        let viewModel = MovieViewModel(model: movie)
+        view?.displayInitialMovieInfo(viewModel: viewModel)
+    }
+
+}

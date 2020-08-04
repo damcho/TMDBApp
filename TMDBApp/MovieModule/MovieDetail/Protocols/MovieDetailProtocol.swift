@@ -8,7 +8,17 @@
 
 import Foundation
 
-protocol MovieDetailDelegate: class {
-    func movieDetailFetchedWithSuccess(movie: Movie)
+protocol MovieDetailPresenterOutput: class {
+    func displayInitialMovieInfo(viewModel: MovieViewModel)
+    func movieDetailFetchedWithSuccess(movie: MovieViewModel)
     func movieDetailFetchedWithError(error: TMDBError)
+}
+
+protocol MovieDetailInteractorOutput {
+    func presentInitialMovieInfo(movie: Movie)
+    func presentFullMovieDetail(movie: Movie)
+}
+
+protocol MovieDetailViewOutput {
+    
 }

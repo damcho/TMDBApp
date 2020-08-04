@@ -50,7 +50,6 @@ private extension MoviesListViewController {
     func setupSearchController() {
         let searchController =  UISearchController(searchResultsController: nil)
         self.navigationItem.searchController = searchController
-        searchController.delegate = self
         definesPresentationContext = true
         searchController.searchResultsUpdater = self
         searchController.searchBar.autocapitalizationType = .none
@@ -144,10 +143,10 @@ extension MoviesListViewController: UITableViewDataSource {
     }
 }
 
-extension MoviesListViewController: UISearchControllerDelegate {
+extension MoviesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //    let movie = self.movies[indexPath.row]
-        //    self.interactor?.showMoviesDetail(navController:navigationController!, movie:movie)
+        let movie = self.movieViewModels[indexPath.row]
+        router?.pushToMovieDetail(movie: movie)
     }
 }
 
