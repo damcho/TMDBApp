@@ -29,13 +29,6 @@ protocol MoviesListPresenterOutput: class {
     func didRequestMovies()
 }
 
-
-
-protocol MovieDetailDelegate: class {
-    func movieDetailFetchedWithSuccess(movie: Movie)
-    func movieDetailFetchedWithError(error:TMDBError)
-}
-
 protocol MoviesListRoutes {
     func pushToMovieDetail(movie:Movie)
 }

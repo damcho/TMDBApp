@@ -21,17 +21,4 @@ struct FilterDataObject {
     var movieID: String?
     var movieNameQueryString: String?
     var shouldRefresh: Bool?
-
-    /*
-    func movieDetailUrlPath() -> String {
-        guard let movie = self.movie else {
-            return ""
-        }
-        return moviePath+"/\( movie.movieId )"
-    }
-    func movieDetailQueryItems() -> [URLQueryItem] {
-        return [URLQueryItem(name: "append_to_response", value: "videos")]
-    }
- */
-
 }
