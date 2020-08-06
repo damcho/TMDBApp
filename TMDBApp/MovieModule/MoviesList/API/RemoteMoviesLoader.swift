@@ -43,7 +43,7 @@ private struct RootResult: Codable{
     private var codableMovies:[CodableMovie]
     
     var movies: [Movie] {
-        return self.codableMovies.map( { Movie(title: $0.title, movieID: $0.movieId, overview: $0.overview, imagePath: $0.imageURLString) })
+        return self.codableMovies.map( { Movie(title: $0.title, movieID: $0.movieId, overview: $0.overview, imageURL: URL(string: Constants.baseImageURL + $0.imageURLString)) })
     }
     
     enum CodingKeys: String, CodingKey {

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 final class MoviesListPresenter {
     weak var moviesListVC: MoviesListPresenterOutput?
@@ -14,11 +15,20 @@ final class MoviesListPresenter {
 
 extension MoviesListPresenter: MoviesInteractorOutput {
     func moviesFetchedWithSuccess(movies: [Movie]){
-        let movieViewModels: [MovieViewModel] = movies.map { (movie) in
-            return MovieViewModel(model: movie)
+        let cellControllers: [MovieListCellController] = movies.map { (movie) in
+            let cellController = MovieListCellController()
+            let cellInteractor = MovieListCellInteractor(imageLoader: ImageDataLoader(client: AlamoFireHttpClient()))
+            let cellPresenter = MovieListCellPresenter<MovieListCellController, UIImage>(cellController: cellController, imageTransformer: UIImage.init)
+            cellPresenter.cellController = cellController
+            
+            cellInteractor.movieCellPresenter = cellPresenter
+            cellInteractor.movie = movie
+            
+            cellController.movieCellInteractor = cellInteractor
+            
+            return cellController
         }
-        let viewModel = MoviesListViewModel(movies: movieViewModels)
-        self.moviesListVC?.didReceiveMovies(moviesViewModel: viewModel)
+        self.moviesListVC?.didReceiveMovies(movieCellControllers: cellControllers)
     }
     
     func moviesFetchFailed(error:TMDBError){

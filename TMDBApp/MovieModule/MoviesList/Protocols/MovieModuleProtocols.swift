@@ -23,12 +23,10 @@ protocol MoviesViewOutput {
 }
 
 protocol MoviesListPresenterOutput: class {
-    func didReceiveMovies(moviesViewModel: MoviesListViewModel)
+    func didReceiveMovies(movieCellControllers: [MovieListCellController])
     func didRetrieveMoviesWithError(error:TMDBError)
     func presentInitialState(screenTitle: String)
     func didRequestMovies()
 }
 
-protocol MoviesListRoutes {
-    func pushToMovieDetail(movie: MovieViewModel)
-}
+

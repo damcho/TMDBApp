@@ -9,22 +9,20 @@
 import Foundation
 
 struct Movie: Equatable {
-    var title:String
+    var title: String
     var movieId: UInt
     var overview: String
     var popularity: Double?
     var voteAverage: Double?
-    var imagePath: String?
+    var imageURL: URL?
     var videos: [Video]? = []
-    var imageURL: URL? {
-        return URL(string: Constants.baseImageURL + (self.imagePath ?? ""))
-    }
+    var imageData: Data?
     
-    init(title: String, movieID: UInt, overview: String, imagePath: String?) {
+    init(title: String, movieID: UInt, overview: String, imageURL: URL? = nil) {
         self.movieId = movieID
         self.title = title
         self.overview = overview
-        self.imagePath = imagePath
+        self.imageURL = imageURL
     }
     
     static func == (lhs: Movie, rhs: Movie) -> Bool {

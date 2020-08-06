@@ -18,7 +18,7 @@ class MoviesListViewController: UIViewController {
     var router: MoviesListRoutes?
     let activityData = ActivityData()
     var activityIndicatorView: NVActivityIndicatorPresenter = NVActivityIndicatorPresenter.sharedInstance
-    var movieViewModels: [MovieViewModel] = []
+    var movieControllers: [MovieListCellController] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,7 +57,7 @@ private extension MoviesListViewController {
     }
     
     @objc func refreshMovies() {
-        movieViewModels = []
+        movieControllers = []
         moviesListTableVIew.reloadData()
         moviesListTableVIew.refreshControl?.endRefreshing()
         interactor?.reloadMovies()
@@ -70,7 +70,7 @@ private extension MoviesListViewController {
 }
 
 extension MoviesListViewController: MoviesListPresenterOutput {
-    
+
     func presentInitialState(screenTitle: String ) {
         self.title = screenTitle
     }
@@ -79,25 +79,26 @@ extension MoviesListViewController: MoviesListPresenterOutput {
         activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
     }
     
-    func didReceiveMovies(moviesViewModel: MoviesListViewModel) {
-        
+    func didReceiveMovies(movieCellControllers: [MovieListCellController]) {
+
         self.stopLoadingActivity()
-        if moviesViewModel.movies.isEmpty {
+        if movieCellControllers.isEmpty {
             self.showAlertView(msg:"No results")
-            self.moviesListTableVIew.isHidden = self.movieViewModels.count == 0
+            self.moviesListTableVIew.isHidden = self.movieControllers.count == 0
             return
         }
         var IndexPathsArray:[IndexPath] = []
-        if self.movieViewModels.count < moviesViewModel.movies.count {
-            for index in self.movieViewModels.count..<moviesViewModel.movies.count {
+
+        if self.movieControllers.count < movieCellControllers.count {
+            for index in self.movieControllers.count..<movieCellControllers.count {
                 IndexPathsArray.append(IndexPath(row: index, section: 0))
             }
-            self.movieViewModels = moviesViewModel.movies
+            self.movieControllers = movieCellControllers
             self.moviesListTableVIew.beginUpdates()
             self.moviesListTableVIew.insertRows(at: IndexPathsArray, with: .none)
             self.moviesListTableVIew.endUpdates()
         } else {
-            self.movieViewModels = moviesViewModel.movies
+            self.movieControllers = movieCellControllers
             self.moviesListTableVIew.reloadData()
         }
     }
@@ -112,8 +113,8 @@ extension MoviesListViewController: UITableViewDataSourcePrefetching {
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         indexPaths.forEach({ (IndexPath) in
-            movieViewModels[IndexPath.row].preload()
-            if IndexPath.row == movieViewModels.count - 1{
+            movieControllers[IndexPath.row].preload()
+            if IndexPath.row == movieControllers.count - 1{
                 fetchMovies()
                 return
             }
@@ -122,19 +123,19 @@ extension MoviesListViewController: UITableViewDataSourcePrefetching {
     
     func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
         indexPaths.forEach { (indexPath) in
-            movieViewModels[indexPath.row].cancelTask()
+            movieControllers[indexPath.row].cancelTask()
         }
     }
 }
 
 extension MoviesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.movieViewModels.count
+        return self.movieControllers.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell  {
         let cellView = tableView.dequeueReusableCell(withIdentifier: "MovieTableViewCell", for: indexPath as IndexPath) as! MovieTableViewCell
-        self.movieViewModels[indexPath.row].view = cellView
+        self.movieControllers[indexPath.row].cellView = cellView
         return cellView
     }
     
@@ -145,8 +146,8 @@ extension MoviesListViewController: UITableViewDataSource {
 
 extension MoviesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let movie = self.movieViewModels[indexPath.row]
-        router?.pushToMovieDetail(movie: movie)
+        guard let movieViewModel = movieControllers[indexPath.row].viewModel else { return }
+        router?.pushToMovieDetail(viewModel: movieViewModel)
     }
 }
 

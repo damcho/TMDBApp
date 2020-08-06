@@ -34,7 +34,7 @@ final class MoviesInteractor {
 }
 
 extension MoviesInteractor: MoviesViewOutput {
-    
+
     func reloadMoviesWith(filterRequest: MoviesFilterRequest) {
         searchObject.category = filterRequest.category
         searchObject.movieNameQueryString = filterRequest.queryString

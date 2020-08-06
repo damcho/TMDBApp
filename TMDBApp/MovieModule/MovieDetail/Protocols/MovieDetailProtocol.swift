@@ -9,13 +9,14 @@
 import Foundation
 
 protocol MovieDetailPresenterOutput: class {
-    func displayInitialMovieInfo(viewModel: MovieViewModel)
-    func movieDetailFetchedWithSuccess(movie: MovieViewModel)
+    associatedtype Image
+    func displayInitialMovieInfo()
+    func movieDetailFetchedWithSuccess(movie: MovieViewModel<Image>)
     func movieDetailFetchedWithError(error: TMDBError)
 }
 
-protocol MovieDetailInteractorOutput {
-    func presentInitialMovieInfo(movie: Movie)
+protocol MovieDetailInteractorOutput: class {
+    func presentInitialMovieInfo()
     func presentFullMovieDetail(movie: Movie)
 }
 

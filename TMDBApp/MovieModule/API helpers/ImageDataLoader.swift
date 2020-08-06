@@ -17,8 +17,12 @@ public protocol CancelableImageTask {
     func cancel()
 }
 
+protocol ImageLoader {
+    func loadImage(from url: URL, completion: @escaping (ImageLoadingResult) -> Void) -> CancelableImageTask
+}
 
-public final class ImageDataLoader {
+
+public final class ImageDataLoader: ImageLoader {
     
     let client: HTTPClient
     

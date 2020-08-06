@@ -9,11 +9,15 @@
 import Foundation
 import UIKit
 
+protocol MoviesListRoutes {
+    func pushToMovieDetail(viewModel: MovieViewModel<UIImage>)
+}
+
 final class MoviesListRouter: MoviesListRoutes{
     weak var viewController: MoviesListViewController?
     
-    func pushToMovieDetail(movie: MovieViewModel) {
-        let movieDetailViewController = MovieDetailComposer.compose(movie: movie)
+    func pushToMovieDetail(viewModel: MovieViewModel<UIImage>) {
+        let movieDetailViewController = MovieDetailComposer.compose(viewModel: viewModel)
         viewController?.navigationController?.pushViewController(movieDetailViewController, animated: true)
     }
 }

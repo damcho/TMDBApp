@@ -9,57 +9,32 @@
 import Foundation
 import UIKit
 
-struct MoviesListViewModel {
+struct MoviesListViewModel<Image> {
     let title = "TMDB"
-    let movies: [MovieViewModel]
+    let movies: [MovieViewModel<Image>]
     
-    init(movies: [MovieViewModel]) {
+    init(movies: [MovieViewModel<Image>]) {
         self.movies = movies
     }
 }
 
-class MovieViewModel {
-    var title: String {
-        return self.model.title
-    }
-    let imageLoader: ImageDataLoader
-    let model: Movie
-    var imageTask: CancelableImageTask?
-    var view: MovieTableViewCell? {
-        didSet {
-            view?.movieTitleLabel.text = model.title
-            requestImage()
+struct MovieViewModel<Image> {
+    let title: String
+    let overview: String
+    var popularoty: String?
+    var voteAverage: String?
+    var movieThumbImage: Image?
+    var videos: [Video]?
+
+    init(title: String, overview: String, popularity: String? = nil, voteAverage: String? = nil, movieThumbImage: Image? = nil, videos: [Video] = [] ) {
+        self.title = title
+        self.overview = overview
+        self.movieThumbImage = movieThumbImage
+        if let somePopularity = popularity {
+            self.popularoty = "\(somePopularity)"
         }
-    }
-    
-    init(model: Movie) {
-        self.model = model
-        self.imageLoader = ImageDataLoader(client: AlamoFireHttpClient())
-    }
-    
-    func preload() {
-        view?.movieImageView.image = UIImage(named: "default")
-        requestImage()
-    }
-    
-    func requestImage() {
-        guard let url = model.imageURL else { return }
-        self.imageTask = imageLoader.loadImage(from: url) {[weak self] (result) in
-            switch result {
-            case .success(let data):
-                self?.view?.movieImageView.image = UIImage(data: data)
-            default:
-                break
-            }
+        if let someVoteAverage = voteAverage {
+            self.voteAverage = "\(someVoteAverage)"
         }
-    }
-    
-    func releaseCellForReuse() {
-        view = nil
-    }
-    
-    func cancelTask() {
-        releaseCellForReuse()
-        imageTask?.cancel()
     }
 }

@@ -22,7 +22,7 @@ final class MovieDetailInteractor {
             switch result {
             case .success(let movie):
                 self.presenter.presentFullMovieDetail(movie: movie)
-            case .failure(let error):
+            case .failure:
                 break
             }
         })
@@ -31,7 +31,7 @@ final class MovieDetailInteractor {
 
 extension MovieDetailInteractor: MovieDetailViewOutput {
     func viewDidLoad() {
-        presenter.presentInitialMovieInfo(movie: movie)
-        fetchMovieDetailFor(movie.movieId)
+        presenter.presentInitialMovieInfo()
+   //     fetchMovieDetailFor(movie.movieId)
     }
 }

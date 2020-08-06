@@ -7,19 +7,25 @@
 //
 
 import Foundation
-
-final class MovieDetailPresenter {
-    weak var view: MovieDetailPresenterOutput?
+import UIKit
+final class MovieDetailPresenter<PresenterOutput: MovieDetailPresenterOutput, Image> where PresenterOutput.Image == Image {
+    weak var view: PresenterOutput?
+    var imageTransformer: ((Data) -> Image)?
 }
 
 extension MovieDetailPresenter: MovieDetailInteractorOutput {
     func presentFullMovieDetail(movie: Movie) {
-        let viewModel = MovieViewModel(model: movie)
+        let movieImage = imageTransformer?(movie.imageData!)
+        let viewModel = MovieViewModel<Image>(title: movie.title,
+                                                              overview: movie.overview,
+                                                              popularity: "\(movie.popularity)",
+                                                              voteAverage: "\(movie.voteAverage)",
+                                                                movieThumbImage: movieImage,
+                                                              videos: movie.videos ?? [])
         view?.movieDetailFetchedWithSuccess(movie: viewModel)
     }
     
-    func presentInitialMovieInfo(movie: Movie) {
-        let viewModel = MovieViewModel(model: movie)
-        view?.displayInitialMovieInfo(viewModel: viewModel)
+    func presentInitialMovieInfo() {
+        view?.displayInitialMovieInfo()
     }
 }
