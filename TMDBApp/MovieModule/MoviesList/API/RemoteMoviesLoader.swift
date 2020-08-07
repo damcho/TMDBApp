@@ -14,15 +14,19 @@ protocol MoviesLoader {
     func getMovies(searchParams: FilterDataObject, completion:  @escaping MoviesFetchCompletion)
 }
 
+struct CodableVideoResults: Codable {
+    var results: Int?
+}
+
 struct CodableMovie: Codable{
     
     var title:String
     var movieId: UInt
     var overview:String
-    var popularity:Double? = 0
-    var voteAverage:Double? = 0
+    var popularity:Double?
+    var voteAverage:Double?
     var imageURLString: String
-    var videos:[Video]? = []
+    var videos: [String: [Video]]?
     
     enum CodingKeys: String, CodingKey {
         case title = "title"
@@ -31,7 +35,7 @@ struct CodableMovie: Codable{
         case popularity
         case voteAverage = "vote_average"
         case imageURLString = "poster_path"
-        case videos = "videos"
+        case videos
     }
 }
 

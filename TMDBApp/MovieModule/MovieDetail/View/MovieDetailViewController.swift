@@ -17,11 +17,7 @@ final class MovieDetailViewController: UIViewController {
     @IBOutlet weak var popularityLabel: UILabel!
     @IBOutlet weak var voteAverageLabel: UILabel!
     
-    var movieViewModel: MovieViewModel<UIImage>? {
-        didSet {
-            
-        }
-    }
+    var movieViewModel: MovieViewModel<UIImage>? 
     var interactor: MovieDetailInteractor?
     private var player: YTSwiftyPlayer!
     
@@ -32,18 +28,19 @@ final class MovieDetailViewController: UIViewController {
 }
 
 extension MovieDetailViewController: MovieDetailPresenterOutput {
-    func displayInitialMovieInfo() {
-        self.movieOverViewTextView.text = movieViewModel?.overview
-        self.title = movieViewModel?.title
-    }
     
     func movieDetailFetchedWithError(error:TMDBError){
         self.showAlertView(msg:"There was an error obtaining the videos")
         self.videosTableView.isHidden = true
     }
     
-    func movieDetailFetchedWithSuccess(movie: MovieViewModel<UIImage>) {
-        self.movieViewModel = movie
+    func displayMovieInfo(viewModel: MovieViewModel<UIImage>? = nil) {
+        self.movieViewModel = viewModel
+        self.title = movieViewModel?.title
+        self.movieOverViewTextView.text = movieViewModel?.overview
+        self.movieImageView.image = viewModel?.movieThumbImage
+        self.popularityLabel.text = viewModel?.popularoty
+        self.voteAverageLabel.text = viewModel?.voteAverage
         self.videosTableView.isHidden = self.movieViewModel?.videos?.count == 0
         self.videosTableView.reloadData()
     }

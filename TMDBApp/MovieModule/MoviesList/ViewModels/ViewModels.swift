@@ -19,6 +19,7 @@ struct MoviesListViewModel<Image> {
 }
 
 struct MovieViewModel<Image> {
+    let movieID: UInt
     let title: String
     let overview: String
     var popularoty: String?
@@ -26,8 +27,9 @@ struct MovieViewModel<Image> {
     var movieThumbImage: Image?
     var videos: [Video]?
 
-    init(title: String, overview: String, popularity: String? = nil, voteAverage: String? = nil, movieThumbImage: Image? = nil, videos: [Video] = [] ) {
+    init(movieID: UInt, title: String, overview: String, popularity: String? = nil, voteAverage: String? = nil, movieThumbImage: Image? = nil, videos: [Video] = [] ) {
         self.title = title
+        self.movieID = movieID
         self.overview = overview
         self.movieThumbImage = movieThumbImage
         if let somePopularity = popularity {

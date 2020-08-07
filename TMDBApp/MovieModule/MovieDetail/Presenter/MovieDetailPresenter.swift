@@ -7,25 +7,29 @@
 //
 
 import Foundation
-import UIKit
+
 final class MovieDetailPresenter<PresenterOutput: MovieDetailPresenterOutput, Image> where PresenterOutput.Image == Image {
     weak var view: PresenterOutput?
-    var imageTransformer: ((Data) -> Image)?
+    var imageTransformer: (Data) -> Image?
+    
+    init(view: PresenterOutput, imageTransformer: @escaping (Data) -> Image?) {
+        self.view = view
+        self.imageTransformer = imageTransformer
+    }
 }
 
 extension MovieDetailPresenter: MovieDetailInteractorOutput {
-    func presentFullMovieDetail(movie: Movie) {
-        let movieImage = imageTransformer?(movie.imageData!)
-        let viewModel = MovieViewModel<Image>(title: movie.title,
-                                                              overview: movie.overview,
-                                                              popularity: "\(movie.popularity)",
-                                                              voteAverage: "\(movie.voteAverage)",
-                                                                movieThumbImage: movieImage,
-                                                              videos: movie.videos ?? [])
-        view?.movieDetailFetchedWithSuccess(movie: viewModel)
-    }
-    
-    func presentInitialMovieInfo() {
-        view?.displayInitialMovieInfo()
+    func presentDataFor(_ movie: Movie) {
+        var movieImage: Image?
+        if let imageData = movie.imageData {
+            movieImage = imageTransformer(imageData)
+        }
+        let viewModel = MovieViewModel<Image>(movieID: movie.movieId, title: movie.title,
+                                              overview: movie.overview,
+                                              popularity: String(describing: movie.popularity),
+                                              voteAverage: String(describing: movie.voteAverage),
+                                              movieThumbImage: movieImage,
+                                              videos: movie.videos ?? [])
+        view?.displayMovieInfo(viewModel: viewModel)
     }
 }

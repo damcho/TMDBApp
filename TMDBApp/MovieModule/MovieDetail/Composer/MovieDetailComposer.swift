@@ -12,15 +12,17 @@ import UIKit
 final class MovieDetailComposer {
     static func compose(viewModel: MovieViewModel<UIImage>) -> MovieDetailViewController {
         let movieDetailViewController: MovieDetailViewController = MovieDetailViewController.loadFromStoryboard()
-        movieDetailViewController.movieViewModel = viewModel
+        let httpClient = AlamoFireHttpClient()
+        
         let movieDetailInteractor = MovieDetailInteractor(
             movieDetailLoader: RemoteMovieDetailLoader(
-                client: AlamoFireHttpClient()))
-        let movieDetailPresenter = MovieDetailPresenter<MovieDetailViewController, UIImage>()
+                client: httpClient ),
+            imageLoader: ImageDataLoader(client: httpClient))
         
-        movieDetailPresenter.view = movieDetailViewController
+        let movieDetailPresenter = MovieDetailPresenter<MovieDetailViewController, UIImage>(view: movieDetailViewController, imageTransformer: UIImage.init)
+        
         movieDetailInteractor.presenter = movieDetailPresenter
-        
+        movieDetailInteractor.movie = Movie(title: viewModel.title, movieID: viewModel.movieID, overview: viewModel.overview)
         movieDetailViewController.interactor = movieDetailInteractor
         return movieDetailViewController
     }

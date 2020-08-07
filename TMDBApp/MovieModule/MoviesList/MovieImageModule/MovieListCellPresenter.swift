@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 final class MovieListCellPresenter<CellController: MovieCellPresenterOutput, Image> where CellController.Image == Image {
     
     weak var cellController: CellController?
@@ -23,7 +22,7 @@ final class MovieListCellPresenter<CellController: MovieCellPresenterOutput, Ima
 extension MovieListCellPresenter: MovieImageInteractorOutput {
     func didRequestImageforMovie(_ movie: Movie) {
         let movieCellViewModel = MovieViewModel<CellController.Image>(
-            title: movie.title,
+            movieID: movie.movieId, title: movie.title,
             overview: movie.overview)
         
         cellController?.display(viewModel: movieCellViewModel)
@@ -32,7 +31,7 @@ extension MovieListCellPresenter: MovieImageInteractorOutput {
     func didFinishLoadingImage(imageData: Data, for movie: Movie) {
         let movieImage =  imageTransformer(imageData)
         let movieCellViewModel = MovieViewModel<CellController.Image>(
-            title: movie.title,
+            movieID: movie.movieId, title: movie.title,
             overview: movie.overview,
             movieThumbImage: movieImage)
             
@@ -42,6 +41,4 @@ extension MovieListCellPresenter: MovieImageInteractorOutput {
     func didFailToLoadImage(error: Error) {
         
     }
-    
-    
 }
