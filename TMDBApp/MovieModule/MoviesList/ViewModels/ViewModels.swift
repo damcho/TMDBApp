@@ -37,5 +37,6 @@ struct MovieViewModel<Image> {
         if let someVoteAverage = voteAverage {
             self.voteAverage = "\(someVoteAverage)"
         }
+        self.videos = videos
     }
 }

@@ -24,7 +24,7 @@ struct CodableVideo: Codable {
 }
 
 struct CodableVideosResult: Codable {
-    var videos: [CodableVideo]
+    var results: [CodableVideo]
 }
 
 
@@ -39,7 +39,7 @@ struct CodableMovie: Codable{
     private var codableVideosResult: CodableVideosResult?
     
     var videos: [Video]? {
-        return codableVideosResult?.videos.map { codableVideo in
+        return codableVideosResult?.results.map { codableVideo in
             return Video(id: codableVideo.id, title: codableVideo.title)
         }
     }
