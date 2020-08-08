@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import UIKit
 
 struct MoviesListViewModel<Image> {
     let title = "TMDB"

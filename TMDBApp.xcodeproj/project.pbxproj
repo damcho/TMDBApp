@@ -216,10 +216,10 @@
 				8B1A90FB24DBC61A00A62CC6 /* MovieImageModule */,
 				8B3171BD24D7F16000F873B2 /* API */,
 				8BAB98BA219388B6006B310C /* Protocols */,
-				8BAB98B021938647006B310C /* Views */,
+				8BAB98B021938647006B310C /* View */,
 				8BAB98B22193866B006B310C /* Router */,
-				8BAB98B32193868F006B310C /* Interactor */,
 				8BAB98C4219474B4006B310C /* Presenter */,
+				8BAB98B32193868F006B310C /* Interactor */,
 				8B3171AF24D42C0600F873B2 /* ViewModels */,
 			);
 			path = MoviesList;
@@ -229,11 +229,11 @@
 			isa = PBXGroup;
 			children = (
 				8B1A90F824D99EB100A62CC6 /* Composer */,
+				8B3171BE24D945C200F873B2 /* API */,
 				8B3171C824D94DA300F873B2 /* Protocols */,
 				8B3171C524D9460500F873B2 /* View */,
 				8B3171C224D945ED00F873B2 /* Presenter */,
 				8B3171BF24D945D300F873B2 /* Interactor */,
-				8B3171BE24D945C200F873B2 /* API */,
 			);
 			path = MovieDetail;
 			sourceTree = "<group>";
@@ -345,13 +345,13 @@
 			path = MovieModule;
 			sourceTree = "<group>";
 		};
-		8BAB98B021938647006B310C /* Views */ = {
+		8BAB98B021938647006B310C /* View */ = {
 			isa = PBXGroup;
 			children = (
 				8BAB98BF21938BB8006B310C /* Views */,
 				8B3D78CC219318A3006BD797 /* MoviesListViewController.swift */,
 			);
-			path = Views;
+			path = View;
 			sourceTree = "<group>";
 		};
 		8BAB98B121938657006B310C /* Models */ = {
