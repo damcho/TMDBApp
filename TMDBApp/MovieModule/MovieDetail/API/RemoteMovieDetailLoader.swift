@@ -75,7 +75,6 @@ private class MovieDetailMapper {
                      imageURL: URL(string: Constants.baseImageURL + codableMovie.imageURLString),
                      voteAverage: codableMovie.voteAverage,
                      popularity: codableMovie.popularity,
-                     videos: codableMovie.videos?["results"])
-                     
+                     videos: codableMovie.videos)
     }
 }

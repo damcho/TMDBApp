@@ -8,13 +8,7 @@
 
 import Foundation
 
-final class Video: Codable {
-    
+struct Video {
     let id:String
     let title:String
-    
-    enum CodingKeys: String, CodingKey {
-         case id = "key"
-         case title = "name"
-     }
 }

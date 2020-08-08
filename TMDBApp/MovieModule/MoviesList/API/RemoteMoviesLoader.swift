@@ -8,57 +8,13 @@
 
 import Foundation
 
-typealias MoviesFetchCompletion = (IMDBResult) -> ()
+typealias MoviesFetchCompletion = (TMDBResult) -> ()
 
 protocol MoviesLoader {
     func getMovies(searchParams: FilterDataObject, completion:  @escaping MoviesFetchCompletion)
 }
 
-struct CodableVideoResults: Codable {
-    var results: Int?
-}
-
-struct CodableMovie: Codable{
-    
-    var title:String
-    var movieId: UInt
-    var overview:String
-    var popularity:Double?
-    var voteAverage:Double?
-    var imageURLString: String
-    var videos: [String: [Video]]?
-    
-    enum CodingKeys: String, CodingKey {
-        case title = "title"
-        case movieId = "id"
-        case overview
-        case popularity
-        case voteAverage = "vote_average"
-        case imageURLString = "poster_path"
-        case videos
-    }
-}
-
-private struct RootResult: Codable{
-    
-    var currentPage: Int
-    var totalPages: Int
-    var totalResults: Int
-    private var codableMovies:[CodableMovie]
-    
-    var movies: [Movie] {
-        return self.codableMovies.map( { Movie(title: $0.title, movieID: $0.movieId, overview: $0.overview, imageURL: URL(string: Constants.baseImageURL + $0.imageURLString)) })
-    }
-    
-    enum CodingKeys: String, CodingKey {
-        case currentPage = "page"
-        case totalPages = "total_pages"
-        case totalResults = "total_results"
-        case codableMovies = "results"
-    }
-}
-
-enum IMDBResult {
+enum TMDBResult {
     case success([Movie])
     case failure(TMDBError)
 }
@@ -80,7 +36,7 @@ final class RemoteMoviesLoader{
         self.client = client
     }
     
-    private func mapMovies(data: Data, response: HTTPURLResponse) -> IMDBResult {
+    private func mapMovies(data: Data, response: HTTPURLResponse) -> TMDBResult {
         guard response.statusCode == 200 else {
             return .failure(TMDBError.API_ERROR(reason: "unknown error"))
         }
