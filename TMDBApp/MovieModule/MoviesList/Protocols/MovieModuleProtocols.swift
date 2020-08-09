@@ -24,7 +24,8 @@ protocol MoviesViewOutput {
 
 protocol MoviesListPresenterOutput: class {
     func didReceiveMovies(movieCellControllers: [MovieListCellController])
-    func didRetrieveMoviesWithError(error:TMDBError)
+    func didReceiveEmptyMovieReslts()
+    func didRetrieveMoviesWithError(error: ErrorViewModel)
     func presentInitialState(screenTitle: String)
     func didRequestMovies()
 }

@@ -28,10 +28,6 @@ final class RemoteMovieDetailLoader {
     }
     
     private func map(data: Data, response: HTTPURLResponse) -> MovieDetailResult {
-        guard response.statusCode == 200 else {
-            return .failure(.SERVER_ERROR)
-        }
-        
         do {
             return .success( try MovieDetailMapper.map(data: data))
         } catch {
@@ -59,8 +55,8 @@ extension RemoteMovieDetailLoader: MovieDetailLoader {
             switch result {
             case .success(let data, let response):
                 completion(self.map(data: data, response: response))
-            case .failure(let error):
-                completion(.failure(.API_ERROR(reason: error.localizedDescription)))
+            case .failure:
+                completion(.failure(.CONNECTIVITY))
             }
         })
     }

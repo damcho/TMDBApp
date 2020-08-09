@@ -55,11 +55,7 @@ public final class ImageDataLoader: ImageLoader {
             switch result {
             case .failure(let error):
                 task.completeWithResult(.failure(error))
-            case .success(let data, let httpresponse):
-                guard httpresponse.statusCode == 200 else {
-                    task.completeWithResult(.failure(NSError(domain: "response error", code: 1)))
-                    return
-                }
+            case .success(let data, _):
                 task.completeWithResult(.success(data))
             }
         })

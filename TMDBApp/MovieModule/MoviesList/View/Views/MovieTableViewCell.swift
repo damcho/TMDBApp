@@ -12,9 +12,4 @@ class MovieTableViewCell: UITableViewCell {
     
     @IBOutlet weak var movieImageView: UIImageView!
     @IBOutlet weak var movieTitleLabel: UILabel!
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        movieTitleLabel.text = nil
-    }
 }

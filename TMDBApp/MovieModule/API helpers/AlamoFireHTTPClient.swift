@@ -14,15 +14,11 @@ public enum HTTPClientResult {
     case failure(HTTPError)
 }
 
-public struct AFHTTPError: Codable {
-    var status_message: String?
-}
-
 public enum HTTPError: Error {
     case notFound
     case unknownError
     case connectionError
-    case customError(AFHTTPError)
+    case customError(reason: String)
 }
 
 public protocol HTTPClient {
@@ -57,13 +53,20 @@ public class AlamoFireHttpClient: HTTPClient {
                 switch AFResult.result {
                 case .success:
                     completion( .success(AFResult.data!, AFResult.response!))
-                case.failure:
-                    guard let data = AFResult.data, let jsonError = try? JSONDecoder().decode(AFHTTPError.self, from: data) else {
-                        completion(.failure(.unknownError))
-                        return
-                    }
-                    completion(.failure(.customError(jsonError)))
+                case.failure(let error):
+                    completion(.failure(self.mapError(error: error)))
                 }
         })
+    }
+    
+    private func mapError(error: AFError) -> HTTPError {
+        switch error {
+        case .responseValidationFailed:
+            return HTTPError.notFound
+        case .sessionTaskFailed:
+            return HTTPError.connectionError
+        default:
+            return HTTPError.customError(reason: error.localizedDescription)
+        }
     }
 }

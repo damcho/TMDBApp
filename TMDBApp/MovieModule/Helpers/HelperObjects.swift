@@ -10,9 +10,9 @@ import Foundation
 
 struct MoviesFilterRequest {
     let category: MovieFilterType
-    let queryString: String
+    let queryString: String?
     
-    init(filterCategory: Int = 3, queryString: String = "") {
+    init(filterCategory: Int = 3, queryString: String? = nil) {
         self.queryString = queryString
         switch filterCategory {
         case 0:

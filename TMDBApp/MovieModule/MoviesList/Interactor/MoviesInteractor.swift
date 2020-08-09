@@ -19,17 +19,15 @@ final class MoviesInteractor {
     }
     
     func requestMoviesFromAPI(searchParams: FilterDataObject) {
-        let completionHandler: MoviesFetchCompletion = {[unowned self] (result) in
-            
+        moviesLoader.getMovies(searchParams: searchParams, completion: {[weak self] (result) in
+            guard self != nil else{ return }
             switch result {
             case .success(let movies):
-                self.presenter?.moviesFetchedWithSuccess(movies: movies)
+                self?.presenter?.moviesFetchedWithSuccess(movies: movies)
             case .failure(let error):
-                self.presenter?.moviesFetchFailed(error: error)
+                self?.presenter?.moviesFetchFailed(error: error)
             }
-        }
-        
-        moviesLoader.getMovies(searchParams: searchParams, completion: completionHandler)
+        })
     }
 }
 

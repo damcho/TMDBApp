@@ -20,11 +20,9 @@ enum TMDBResult {
 }
 
 enum TMDBError: Error {
-    case API_ERROR(reason: String)
-    case NOT_FOUND
+    case CONNECTIVITY
     case MALFORMED_DATA
     case MALFORMED_URL
-    case SERVER_ERROR
 }
 
 final class RemoteMoviesLoader{
@@ -37,9 +35,6 @@ final class RemoteMoviesLoader{
     }
     
     private func mapMovies(data: Data, response: HTTPURLResponse) -> TMDBResult {
-        guard response.statusCode == 200 else {
-            return .failure(TMDBError.API_ERROR(reason: "unknown error"))
-        }
         do {
             let moviesContainer = try MoviesListMapper.map(data)
             
@@ -50,7 +45,7 @@ final class RemoteMoviesLoader{
             
             return .success(self.moviesContainer.movies)
         } catch {
-            return .failure(TMDBError.MALFORMED_DATA)
+            return .failure(.MALFORMED_DATA)
         }
     }
     
@@ -87,8 +82,8 @@ extension RemoteMoviesLoader: MoviesLoader {
             switch result {
             case .success(let data, let response):
                 completion(self.mapMovies(data: data, response: response))
-            case .failure(let error):
-                completion(.failure(.API_ERROR(reason: error.localizedDescription)))
+            case .failure:
+                completion(.failure(.CONNECTIVITY))
             }
         })
     }
