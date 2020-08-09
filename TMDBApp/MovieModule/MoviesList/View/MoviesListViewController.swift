@@ -53,17 +53,19 @@ private extension MoviesListViewController {
     }
     
     @objc func refreshMovies() {
+        movieControllers = []
         interactor?.reloadMovies()
     }
     
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
         self.navigationItem.searchController!.isActive = false
-        self.interactor?.reloadMoviesWith(filterRequest: MoviesFilterRequest(filterCategory: sender.selectedSegmentIndex))
+        movieControllers = []
+        interactor?.reloadMoviesWith(filterRequest: MoviesFilterRequest(filterCategory: sender.selectedSegmentIndex))
     }
 }
 
 extension MoviesListViewController: MoviesListPresenterOutput {
-
+    
     func presentInitialState(screenTitle: String ) {
         self.title = screenTitle
     }
@@ -79,22 +81,9 @@ extension MoviesListViewController: MoviesListPresenterOutput {
     }
     
     func didReceiveMovies(movieCellControllers: [MovieListCellController]) {
-
         self.stopLoadingActivity()
-        var IndexPathsArray:[IndexPath] = []
-
-        if self.movieControllers.count < movieCellControllers.count {
-            for index in self.movieControllers.count..<movieCellControllers.count {
-                IndexPathsArray.append(IndexPath(row: index, section: 0))
-            }
-            self.movieControllers = movieCellControllers
-            self.moviesListTableVIew.beginUpdates()
-            self.moviesListTableVIew.insertRows(at: IndexPathsArray, with: .none)
-            self.moviesListTableVIew.endUpdates()
-        } else {
-            self.movieControllers = movieCellControllers
-            self.moviesListTableVIew.reloadData()
-        }
+        movieControllers = movieCellControllers
+        moviesListTableVIew.reloadData()
     }
     
     func didRetrieveMoviesWithError(error: ErrorViewModel) {
@@ -168,6 +157,7 @@ extension MoviesListViewController: UISearchResultsUpdating {
         if strippedString.count >= 3 {
             let filterRequest = MoviesFilterRequest(queryString: strippedString)
             self.movieCategoryFilter.selectedSegmentIndex = UISegmentedControl.noSegment
+            movieControllers = []
             interactor?.reloadMoviesWith(filterRequest: filterRequest)
         }
     }

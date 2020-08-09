@@ -35,7 +35,7 @@ struct CodableMovie: Codable{
     var overview:String
     var popularity:Double?
     var voteAverage:Double?
-    var imageURLString: String
+    var imageURLString: String?
     private var codableVideosResult: CodableVideosResult?
     
     var videos: [Video]? {
@@ -62,7 +62,7 @@ struct RootResult: Codable{
     private var codableMovies: [CodableMovie]
     
     var movies: [Movie] {
-        return self.codableMovies.map( { Movie(title: $0.title, movieID: $0.movieId, overview: $0.overview, imageURL: URL(string: Constants.baseImageURL + $0.imageURLString)) })
+        return self.codableMovies.map( { Movie(title: $0.title, movieID: $0.movieId, overview: $0.overview, imageURL: URL(string: Constants.baseImageURL + ($0.imageURLString ?? ""))) })
     }
     
     enum CodingKeys: String, CodingKey {

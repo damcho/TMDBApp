@@ -68,7 +68,7 @@ private class MovieDetailMapper {
         return Movie(title: codableMovie.title,
                      movieID: codableMovie.movieId,
                      overview: codableMovie.overview,
-                     imageURL: URL(string: Constants.baseImageURL + codableMovie.imageURLString),
+                     imageURL: URL(string: Constants.baseImageURL + (codableMovie.imageURLString ?? "")),
                      voteAverage: codableMovie.voteAverage,
                      popularity: codableMovie.popularity,
                      videos: codableMovie.videos)

@@ -69,6 +69,10 @@ final class RemoteMoviesLoader{
 
 extension RemoteMoviesLoader: MoviesLoader {
     func getMovies(searchParams: FilterDataObject, completion:  @escaping MoviesFetchCompletion) {
+        
+        if searchParams.shouldRefresh {
+            self.moviesContainer = MoviesContainer()
+        }
         let searchPath = searchMoviesUrlPathFor(filter: searchParams.category)
         let queryItems = searchMoviesQueryItemsFor(queryString: searchParams.movieNameQueryString)
         
@@ -77,6 +81,7 @@ extension RemoteMoviesLoader: MoviesLoader {
                                                 completion(.failure(.MALFORMED_URL))
                                                 return
         }
+        
         
         client.request(url: url, completion: { result in
             switch result {

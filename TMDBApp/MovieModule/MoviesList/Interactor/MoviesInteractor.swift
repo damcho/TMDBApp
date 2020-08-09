@@ -23,6 +23,7 @@ final class MoviesInteractor {
             guard self != nil else{ return }
             switch result {
             case .success(let movies):
+                self?.searchObject.shouldRefresh = false
                 self?.presenter?.moviesFetchedWithSuccess(movies: movies)
             case .failure(let error):
                 self?.presenter?.moviesFetchFailed(error: error)
@@ -36,11 +37,13 @@ extension MoviesInteractor: MoviesViewOutput {
     func reloadMoviesWith(filterRequest: MoviesFilterRequest) {
         searchObject.category = filterRequest.category
         searchObject.movieNameQueryString = filterRequest.queryString
+        searchObject.shouldRefresh = true
         self.fetchMovies()
     }
     
     func reloadMovies() {
         searchObject = FilterDataObject()
+        searchObject.shouldRefresh = true
         self.fetchMovies()
     }
     
