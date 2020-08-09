@@ -20,5 +20,5 @@ struct FilterDataObject {
     var category: MovieFilterType = .TOP_RATED
     var movieID: String?
     var movieNameQueryString: String?
-    var shouldRefresh: Bool?
+    var shouldRefresh: Bool? = false
 }
