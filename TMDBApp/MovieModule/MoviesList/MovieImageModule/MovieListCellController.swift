@@ -27,6 +27,7 @@ final class MovieListCellController: MovieCellPresenterOutput {
     func display(viewModel: MovieViewModel<UIImage>) {
         self.viewModel = viewModel
         cellView?.movieTitleLabel.text = viewModel.title
+        cellView?.overViewLabel.text = viewModel.overview
         cellView?.movieImageView.image = viewModel.movieThumbImage ?? UIImage(named: "default")
     }
     

@@ -38,7 +38,7 @@ extension MovieDetailViewController: MovieDetailPresenterOutput {
         self.movieViewModel = viewModel
         self.title = movieViewModel?.title
         self.movieOverViewTextView.text = movieViewModel?.overview
-        self.movieImageView.image = viewModel?.movieThumbImage
+        self.movieImageView.image = viewModel?.movieThumbImage ?? UIImage(named: "default")
         self.popularityLabel.text = viewModel?.popularoty
         self.voteAverageLabel.text = viewModel?.voteAverage
         self.videosTableView.isHidden = self.movieViewModel?.videos?.count == 0
