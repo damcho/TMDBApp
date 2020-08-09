@@ -99,7 +99,6 @@ extension MoviesListViewController: UITableViewDataSourcePrefetching {
             movieControllers[IndexPath.row].preload()
             if IndexPath.row == movieControllers.count - 1{
                 interactor?.fetchMovies()
-                return
             }
         })
     }
