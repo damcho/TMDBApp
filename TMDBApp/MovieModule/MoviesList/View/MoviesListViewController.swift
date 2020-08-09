@@ -133,7 +133,9 @@ extension MoviesListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        movieControllers[indexPath.row].cancelTask()
+        if indexPath.row < movieControllers.count {
+            movieControllers[indexPath.row].cancelTask()
+        }
     }
 }
 
