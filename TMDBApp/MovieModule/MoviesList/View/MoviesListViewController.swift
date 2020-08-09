@@ -9,7 +9,7 @@
 import UIKit
 import NVActivityIndicatorView
 
-class MoviesListViewController: UIViewController {
+final class MoviesListViewController: UIViewController {
     
     @IBOutlet weak var movieCategoryFilter: UISegmentedControl!
     @IBOutlet weak var moviesListTableVIew: UITableView!
@@ -38,10 +38,6 @@ private extension MoviesListViewController {
         }
     }
     
-    func fetchMovies() {
-        self.interactor?.fetchMovies()
-    }
-    
     func setupRefreshControl() {
         moviesListTableVIew.refreshControl = UIRefreshControl()
         moviesListTableVIew.refreshControl?.addTarget(self, action: #selector(refreshMovies), for: .valueChanged)
@@ -57,9 +53,6 @@ private extension MoviesListViewController {
     }
     
     @objc func refreshMovies() {
-        movieControllers = []
-        moviesListTableVIew.reloadData()
-        moviesListTableVIew.refreshControl?.endRefreshing()
         interactor?.reloadMovies()
     }
     
@@ -79,14 +72,15 @@ extension MoviesListViewController: MoviesListPresenterOutput {
         activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
     }
     
+    func didReceiveEmptyMovieReslts() {
+        self.stopLoadingActivity()
+        self.showAlertView(msg:"No results")
+        self.moviesListTableVIew.isHidden = self.movieControllers.count == 0
+    }
+    
     func didReceiveMovies(movieCellControllers: [MovieListCellController]) {
 
         self.stopLoadingActivity()
-        if movieCellControllers.isEmpty {
-            self.showAlertView(msg:"No results")
-            self.moviesListTableVIew.isHidden = self.movieControllers.count == 0
-            return
-        }
         var IndexPathsArray:[IndexPath] = []
 
         if self.movieControllers.count < movieCellControllers.count {
@@ -103,9 +97,9 @@ extension MoviesListViewController: MoviesListPresenterOutput {
         }
     }
     
-    func didRetrieveMoviesWithError(error:TMDBError) {
+    func didRetrieveMoviesWithError(error: ErrorViewModel) {
         self.stopLoadingActivity()
-        self.showAlertView(msg:error.localizedDescription)
+        self.showAlertView(msg:error.errorDescription)
     }
 }
 
@@ -115,7 +109,7 @@ extension MoviesListViewController: UITableViewDataSourcePrefetching {
         indexPaths.forEach({ (IndexPath) in
             movieControllers[IndexPath.row].preload()
             if IndexPath.row == movieControllers.count - 1{
-                fetchMovies()
+                interactor?.fetchMovies()
                 return
             }
         })
@@ -148,6 +142,10 @@ extension MoviesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let movieViewModel = movieControllers[indexPath.row].viewModel else { return }
         router?.pushToMovieDetail(viewModel: movieViewModel)
+    }
+    
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        movieControllers[indexPath.row].cancelTask()
     }
 }
 
