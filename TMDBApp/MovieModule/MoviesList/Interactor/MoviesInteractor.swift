@@ -12,6 +12,7 @@ final class MoviesInteractor {
     var presenter: MoviesInteractorOutput?
     let moviesLoader: MoviesLoader
     var searchObject: FilterDataObject
+    let numberOfCharactersEnteredBeforeSearch = 3
     
     init(moviesLoader: MoviesLoader) {
         self.moviesLoader = moviesLoader
@@ -35,10 +36,14 @@ final class MoviesInteractor {
 extension MoviesInteractor: MoviesViewOutput {
 
     func reloadMoviesWith(filterRequest: MoviesFilterRequest) {
+        if filterRequest.category == .QUERY {
+            guard let querystring = filterRequest.queryString, querystring.count > numberOfCharactersEnteredBeforeSearch else { return }
+        }
         searchObject.category = filterRequest.category
         searchObject.movieNameQueryString = filterRequest.queryString
         searchObject.shouldRefresh = true
         self.fetchMovies()
+        self.presenter?.didRequestMovies()
     }
     
     func reloadMovies() {

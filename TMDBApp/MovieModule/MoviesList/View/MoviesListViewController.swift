@@ -53,13 +53,10 @@ private extension MoviesListViewController {
     }
     
     @objc func refreshMovies() {
-        movieControllers = []
         interactor?.reloadMovies()
     }
     
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
-        self.navigationItem.searchController!.isActive = false
-        movieControllers = []
         interactor?.reloadMoviesWith(filterRequest: MoviesFilterRequest(filterCategory: sender.selectedSegmentIndex))
     }
 }
@@ -155,11 +152,8 @@ extension MoviesListViewController: UISearchResultsUpdating {
         let whitespaceCharacterSet = CharacterSet.whitespaces
         let strippedString =
             searchController.searchBar.text!.trimmingCharacters(in: whitespaceCharacterSet)
-        if strippedString.count >= 3 {
-            let filterRequest = MoviesFilterRequest(queryString: strippedString)
-            self.movieCategoryFilter.selectedSegmentIndex = UISegmentedControl.noSegment
-            movieControllers = []
-            interactor?.reloadMoviesWith(filterRequest: filterRequest)
-        }
+        let filterRequest = MoviesFilterRequest(queryString: strippedString)
+        self.movieCategoryFilter.selectedSegmentIndex = UISegmentedControl.noSegment
+        interactor?.reloadMoviesWith(filterRequest: filterRequest)
     }
 }
