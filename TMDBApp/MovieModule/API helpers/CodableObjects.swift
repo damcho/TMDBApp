@@ -8,10 +8,6 @@
 
 import Foundation
 
-struct CodableVideoResults: Codable {
-    var results: Int?
-}
-
 struct CodableVideo: Codable {
     
     let id:String
