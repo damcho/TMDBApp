@@ -9,7 +9,7 @@
 import Foundation
 
 final class MovieDetailPresenter<PresenterOutput: MovieDetailPresenterOutput, Image> where PresenterOutput.Image == Image {
-    weak var view: PresenterOutput?
+    var view: PresenterOutput?
     var imageTransformer: (Data) -> Image?
     
     init(view: PresenterOutput, imageTransformer: @escaping (Data) -> Image?) {

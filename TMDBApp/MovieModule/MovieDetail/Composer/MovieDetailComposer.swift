@@ -19,7 +19,7 @@ final class MovieDetailComposer {
                 client: httpClient ),
             imageLoader: ImageDataLoader(client: httpClient))
         
-        let movieDetailPresenter = MovieDetailPresenter<MovieDetailViewController, UIImage>(view: movieDetailViewController, imageTransformer: UIImage.init)
+        let movieDetailPresenter = MovieDetailPresenter(view: WeakyFyedInstance( movieDetailViewController), imageTransformer: UIImage.init)
         
         movieDetailInteractor.presenter = movieDetailPresenter
         movieDetailInteractor.movie = Movie(title: viewModel.title, movieID: viewModel.movieID, overview: viewModel.overview)

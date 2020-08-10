@@ -18,7 +18,7 @@ final class MoviesModuleComposer {
 
         moviesListViewController.router = router
         moviesListViewController.interactor = interactor
-        presenter.moviesListVC = moviesListViewController
+        presenter.moviesListVC = WeakyFyedInstance(moviesListViewController)
         interactor.presenter = presenter
         
         return moviesListViewController

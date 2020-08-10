@@ -14,13 +14,13 @@ struct ErrorViewModel {
 }
 
 final class MoviesListPresenter {
-    weak var moviesListVC: MoviesListPresenterOutput?
+    var moviesListVC: MoviesListPresenterOutput?
 }
 
 extension MoviesListPresenter: MoviesInteractorOutput {
     func moviesFetchedWithSuccess(movies: [Movie]){
         if movies.isEmpty {
-            moviesListVC?.didReceiveEmptyMovieReslts()
+            moviesListVC?.didReceiveEmptyMovieResults()
         } else {
             let cellControllers: [MovieListCellController] = movies.map { (movie) in
                 let cellController = MovieListCellController()
@@ -40,13 +40,15 @@ extension MoviesListPresenter: MoviesInteractorOutput {
     }
     
     func moviesFetchFailed(error:TMDBError){
-        var errorViewModel: ErrorViewModel?
+        var errorViewModel: ErrorViewModel!
         switch error {
         case .CONNECTIVITY:
-            moviesListVC?.didRetrieveMoviesWithError(error: ErrorViewModel(errorDescription: "The connection appears to be offline"))
+             errorViewModel = ErrorViewModel(errorDescription: "The connection appears to be offline")
         default:
+            errorViewModel = ErrorViewModel(errorDescription: "There has been an unexpected error")
             break
         }
+        moviesListVC?.didRetrieveMoviesWithError(error: errorViewModel)
     }
     
     func presentInitialState() {

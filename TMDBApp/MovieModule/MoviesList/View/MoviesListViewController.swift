@@ -71,7 +71,7 @@ extension MoviesListViewController: MoviesListPresenterOutput {
         activityIndicatorView.startAnimating(activityData, NVActivityIndicatorView.DEFAULT_FADE_IN_ANIMATION)
     }
     
-    func didReceiveEmptyMovieReslts() {
+    func didReceiveEmptyMovieResults() {
         self.stopLoadingActivity()
         self.showAlertView(msg:"No results")
         self.moviesListTableVIew.isHidden = self.movieControllers.count == 0
