@@ -10,7 +10,7 @@ import Foundation
 
 protocol MovieDetailPresenterOutput: class {
     associatedtype Image
-    func displayMovieInfo(viewModel: MovieViewModel<Image>?)
+    func displayMovieInfo(viewModel: MovieViewModel<Image>)
     func movieDetailFetchedWithError(error: TMDBError)
 }
 

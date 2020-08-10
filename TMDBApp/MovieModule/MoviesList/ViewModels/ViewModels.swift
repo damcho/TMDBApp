@@ -21,22 +21,28 @@ struct MovieViewModel<Image> {
     let movieID: UInt
     let title: String
     let overview: String
-    var popularoty: String?
-    var voteAverage: String?
+    var popularoty: String
+    var voteAverage: String
     var movieThumbImage: Image?
     var videos: [Video]?
-
-    init(movieID: UInt, title: String, overview: String, popularity: String? = nil, voteAverage: String? = nil, movieThumbImage: Image? = nil, videos: [Video] = [] ) {
+    
+    init(movieID: UInt, title: String, overview: String, popularity: Double? = 0, voteAverage: Double? = 0, movieThumbImage: Image? = nil, videos: [Video] = [] ) {
         self.title = title
         self.movieID = movieID
         self.overview = overview
         self.movieThumbImage = movieThumbImage
-        if let somePopularity = popularity {
-            self.popularoty = "\(somePopularity)"
+        if let aPopularity = popularity {
+            self.popularoty = "\(aPopularity)"
+        } else {
+            self.popularoty = "-"
         }
-        if let someVoteAverage = voteAverage {
-            self.voteAverage = "\(someVoteAverage)"
+        
+        if let aVoteaverage = voteAverage {
+            self.voteAverage = "\(aVoteaverage)"
+        } else {
+            self.voteAverage = "-"
         }
+      
         self.videos = videos
     }
 }

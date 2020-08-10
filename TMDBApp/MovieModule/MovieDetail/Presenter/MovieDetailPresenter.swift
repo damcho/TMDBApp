@@ -26,8 +26,8 @@ extension MovieDetailPresenter: MovieDetailInteractorOutput {
         }
         let viewModel = MovieViewModel<Image>(movieID: movie.movieId, title: movie.title,
                                               overview: movie.overview,
-                                              popularity: String(describing: movie.popularity),
-                                              voteAverage: String(describing: movie.voteAverage),
+                                              popularity: movie.popularity,
+                                              voteAverage: movie.voteAverage,
                                               movieThumbImage: movieImage,
                                               videos: movie.videos ?? [])
         view?.displayMovieInfo(viewModel: viewModel)
