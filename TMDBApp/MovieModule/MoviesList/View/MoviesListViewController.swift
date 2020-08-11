@@ -14,7 +14,7 @@ final class MoviesListViewController: UIViewController {
     @IBOutlet weak var movieCategoryFilter: UISegmentedControl!
     @IBOutlet weak var moviesListTableVIew: UITableView!
     
-    var interactor: MoviesViewOutput?
+    var interactor: (MoviesViewOutput & MoviesFilter)?
     var router: MoviesListRoutes?
     let activityData = ActivityData()
     var activityIndicatorView: NVActivityIndicatorPresenter = NVActivityIndicatorPresenter.sharedInstance
@@ -33,9 +33,7 @@ final class MoviesListViewController: UIViewController {
 private extension MoviesListViewController {
     func stopLoadingActivity() {
         activityIndicatorView.stopAnimating(NVActivityIndicatorView.DEFAULT_FADE_OUT_ANIMATION)
-        if self.moviesListTableVIew.refreshControl?.isRefreshing ?? false {
-            self.moviesListTableVIew.refreshControl?.endRefreshing()
-        }
+        moviesListTableVIew.refreshControl?.endRefreshing()
     }
     
     func setupRefreshControl() {
@@ -44,12 +42,11 @@ private extension MoviesListViewController {
     }
     
     func setupSearchController() {
-        let searchController =  UISearchController(searchResultsController: nil)
-        self.navigationItem.searchController = searchController
+        let searchController =  MoviesListSearchController(searchResultsController: nil)
+        searchController.setupSearchController()
+        searchController.interactor = self.interactor
+        navigationItem.searchController = searchController
         definesPresentationContext = true
-        searchController.searchResultsUpdater = self
-        searchController.searchBar.autocapitalizationType = .none
-        searchController.searchBar.delegate = self
     }
     
     @objc func refreshMovies() {
@@ -57,14 +54,14 @@ private extension MoviesListViewController {
     }
     
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
-        interactor?.reloadMoviesWith(filterRequest: MoviesFilterRequest(filterCategory: sender.selectedSegmentIndex))
+        interactor?.filterMoviesWith(filterRequest: MoviesFilterRequest(filterCategory: sender.selectedSegmentIndex))
     }
 }
 
 extension MoviesListViewController: MoviesListPresenterOutput {
     
     func presentInitialState(screenTitle: String ) {
-        self.title = screenTitle
+        title = screenTitle
     }
     
     func didRequestMovies() {
@@ -72,20 +69,20 @@ extension MoviesListViewController: MoviesListPresenterOutput {
     }
     
     func didReceiveEmptyMovieResults() {
-        self.stopLoadingActivity()
-        self.showAlertView(msg:"No results")
-        self.moviesListTableVIew.isHidden = self.movieControllers.count == 0
+        stopLoadingActivity()
+        showAlertView(msg:"No results")
+        moviesListTableVIew.isHidden = movieControllers.count == 0
     }
     
     func didReceiveMovies(movieCellControllers: [MovieListCellController]) {
-        self.stopLoadingActivity()
+        stopLoadingActivity()
         movieControllers = movieCellControllers
         moviesListTableVIew.reloadData()
     }
     
-    func didRetrieveMoviesWithError(error: ErrorViewModel) {
-        self.stopLoadingActivity()
-        self.showAlertView(msg:error.errorDescription)
+    func didReceiveError(error: ErrorViewModel) {
+        stopLoadingActivity()
+        showAlertView(msg:error.errorDescription)
     }
 }
 
@@ -109,12 +106,12 @@ extension MoviesListViewController: UITableViewDataSourcePrefetching {
 
 extension MoviesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.movieControllers.count
+        return movieControllers.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell  {
         let cellView = tableView.dequeueReusableCell(withIdentifier: "MovieTableViewCell", for: indexPath as IndexPath) as! MovieTableViewCell
-        self.movieControllers[indexPath.row].cellView = cellView
+        movieControllers[indexPath.row].cellView = cellView
         return cellView
     }
     
@@ -133,27 +130,5 @@ extension MoviesListViewController: UITableViewDelegate {
         if indexPath.row < movieControllers.count {
             movieControllers[indexPath.row].cancelTask()
         }
-    }
-}
-
-extension MoviesListViewController: UISearchBarDelegate {
-    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
-        return true
-    }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        self.movieCategoryFilter.selectedSegmentIndex = 0
-        self.segmentedControlValueChanged(self.movieCategoryFilter)
-    }
-}
-
-extension MoviesListViewController: UISearchResultsUpdating {
-    func updateSearchResults(for searchController: UISearchController) {
-        let whitespaceCharacterSet = CharacterSet.whitespaces
-        let strippedString =
-            searchController.searchBar.text!.trimmingCharacters(in: whitespaceCharacterSet)
-        let filterRequest = MoviesFilterRequest(queryString: strippedString)
-        self.movieCategoryFilter.selectedSegmentIndex = UISegmentedControl.noSegment
-        interactor?.reloadMoviesWith(filterRequest: filterRequest)
     }
 }

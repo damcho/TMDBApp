@@ -19,13 +19,16 @@ protocol MoviesViewOutput {
     func viewDidLoad()
     func fetchMovies()
     func reloadMovies()
-    func reloadMoviesWith(filterRequest: MoviesFilterRequest)
+}
+
+protocol MoviesFilter {
+    func filterMoviesWith(filterRequest: MoviesFilterRequest)
 }
 
 protocol MoviesListPresenterOutput: class {
     func didReceiveMovies(movieCellControllers: [MovieListCellController])
     func didReceiveEmptyMovieResults()
-    func didRetrieveMoviesWithError(error: ErrorViewModel)
+    func didReceiveError(error: ErrorViewModel)
     func presentInitialState(screenTitle: String)
     func didRequestMovies()
 }

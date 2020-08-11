@@ -33,9 +33,8 @@ final class MoviesInteractor {
     }
 }
 
-extension MoviesInteractor: MoviesViewOutput {
-
-    func reloadMoviesWith(filterRequest: MoviesFilterRequest) {
+extension MoviesInteractor: MoviesFilter {
+    func filterMoviesWith(filterRequest: MoviesFilterRequest) {
         if filterRequest.category == .QUERY {
             guard let querystring = filterRequest.queryString, querystring.count > numberOfCharactersEnteredBeforeSearch else { return }
         }
@@ -45,9 +44,11 @@ extension MoviesInteractor: MoviesViewOutput {
         self.fetchMovies()
         self.presenter?.didRequestMovies()
     }
+}
+
+extension MoviesInteractor: MoviesViewOutput {
     
     func reloadMovies() {
-        searchObject = FilterDataObject()
         searchObject.shouldRefresh = true
         self.fetchMovies()
     }

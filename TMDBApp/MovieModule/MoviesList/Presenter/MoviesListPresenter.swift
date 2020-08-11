@@ -48,7 +48,7 @@ extension MoviesListPresenter: MoviesInteractorOutput {
             errorViewModel = ErrorViewModel(errorDescription: "There has been an unexpected error")
             break
         }
-        moviesListVC?.didRetrieveMoviesWithError(error: errorViewModel)
+        moviesListVC?.didReceiveError(error: errorViewModel)
     }
     
     func presentInitialState() {

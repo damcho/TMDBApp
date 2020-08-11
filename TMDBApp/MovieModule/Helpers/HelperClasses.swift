@@ -35,8 +35,8 @@ extension WeakyFyedInstance: MoviesListPresenterOutput where T: MoviesListPresen
         instance?.didReceiveEmptyMovieResults()
     }
     
-    func didRetrieveMoviesWithError(error: ErrorViewModel) {
-        instance?.didRetrieveMoviesWithError(error: error)
+    func didReceiveError(error: ErrorViewModel) {
+        instance?.didReceiveError(error: error)
     }
     
     func presentInitialState(screenTitle: String) {
