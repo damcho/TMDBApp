@@ -13,6 +13,7 @@ final class MoviesListViewController: UIViewController {
     
     @IBOutlet weak var movieCategoryFilter: UISegmentedControl!
     @IBOutlet weak var moviesListTableVIew: UITableView!
+    @IBOutlet weak var NoResultsView: UIView!
     
     var interactor: (MoviesViewOutput & MoviesFilter)?
     var router: MoviesListRoutes?
@@ -50,6 +51,7 @@ private extension MoviesListViewController {
     }
     
     @objc func refreshMovies() {
+        moviesListTableVIew.refreshControl?.beginRefreshing()
         interactor?.reloadMovies()
     }
     
@@ -70,13 +72,13 @@ extension MoviesListViewController: MoviesListPresenterOutput {
     
     func didReceiveEmptyMovieResults() {
         stopLoadingActivity()
-        showAlertView(msg:"No results")
-        moviesListTableVIew.isHidden = movieControllers.count == 0
+        moviesListTableVIew.isHidden = true
     }
     
     func didReceiveMovies(movieCellControllers: [MovieListCellController]) {
         stopLoadingActivity()
         movieControllers = movieCellControllers
+        moviesListTableVIew.isHidden = false
         moviesListTableVIew.reloadData()
     }
     
