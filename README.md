@@ -5,6 +5,8 @@
 
 ## Arquitecture 
 ### VIPER
+![arq](TMDBDiagram.png)
+
 
 ## Dependencies
 - Alamofire
