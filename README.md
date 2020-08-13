@@ -1,5 +1,5 @@
 # TheMovieDatabaseSearch
-
+![Build](https://github.com/damcho/TheMovieDatabaseSearch/workflows/Build/badge.svg)
 ## Description
 ### Movie database searcher. Displays list of movies obtained from [The Movie Database](https://www.themoviedb.org/?language=en-US). movies can be filtered by inserting text, or tapping on default filters. Tapping on a movie navigates to its detail where info is displayed and trailer videos can be streamed.
 
