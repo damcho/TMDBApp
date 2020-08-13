@@ -11,7 +11,7 @@ import Foundation
 final class MoviesModuleComposer {
     static func create() -> MoviesListViewController {
         let moviesListViewController: MoviesListViewController = MoviesListViewController.loadFromStoryboard()
-        let interactor = MoviesInteractor(moviesLoader: RemoteMoviesLoader(client: AlamoFireHttpClient()))
+        let interactor = MoviesListInteractor(moviesLoader: RemoteMoviesLoader(client: AlamoFireHttpClient()))
         let router = MoviesListRouter()
         router.viewController = moviesListViewController
         let presenter = MoviesListPresenter()

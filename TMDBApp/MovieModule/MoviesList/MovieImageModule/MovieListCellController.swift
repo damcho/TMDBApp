@@ -11,7 +11,7 @@ import UIKit
 
 final class MovieListCellController: MovieCellPresenterOutput {
     
-    var movieCellInteractor: MovieListCellInteractor?
+    var movieCellInteractor: MovieImageViewOutput?
     private var imageLoadingTask: CancelableImageTask?
     var viewModel: MovieViewModel<UIImage>?
     

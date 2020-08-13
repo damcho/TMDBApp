@@ -19,3 +19,7 @@ protocol MovieCellPresenterOutput: class {
     func display(viewModel: MovieViewModel<Image>)
 }
 
+protocol MovieImageViewOutput: class {
+    func requestImage() -> CancelableImageTask?
+}
+

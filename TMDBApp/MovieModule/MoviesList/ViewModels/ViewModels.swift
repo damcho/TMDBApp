@@ -8,15 +8,6 @@
 
 import Foundation
 
-struct MoviesListViewModel<Image> {
-    let title = "TMDB"
-    let movies: [MovieViewModel<Image>]
-    
-    init(movies: [MovieViewModel<Image>]) {
-        self.movies = movies
-    }
-}
-
 struct MovieViewModel<Image> {
     let movieID: UInt
     let title: String
