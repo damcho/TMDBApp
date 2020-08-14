@@ -12,6 +12,12 @@ import UIKit
 final class MoviesListSearchController: UISearchController {
     
     var interactor: MoviesFilter?
+    
+    convenience init(interactor: MoviesFilter) {
+        self.init(searchResultsController: nil)
+        self.interactor = interactor
+        self.setupSearchController()
+    }
 
     func setupSearchController() {
         searchResultsUpdater = self

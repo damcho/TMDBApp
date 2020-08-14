@@ -43,10 +43,7 @@ private extension MoviesListViewController {
     }
     
     func setupSearchController() {
-        let searchController =  MoviesListSearchController(searchResultsController: nil)
-        searchController.setupSearchController()
-        searchController.interactor = self.interactor
-        navigationItem.searchController = searchController
+        navigationItem.searchController = MoviesListSearchController(interactor: self.interactor!)
         definesPresentationContext = true
     }
     
@@ -79,7 +76,8 @@ extension MoviesListViewController: MoviesListPresenterOutput {
     func didReceiveMovies(movieCellControllers: [MovieListCellController]) {
         stopLoadingActivity()
         moviesListTableVIew.isHidden = false
-        if !movieControllers.isEmpty {
+        if !movieControllers.isEmpty,
+            movieCellControllers.count > movieControllers.count{
             var indexpaths: [IndexPath] = []
             for index in self.movieControllers.count ..< movieCellControllers.count {
                 indexpaths.append(IndexPath(item: index, section: 0))
