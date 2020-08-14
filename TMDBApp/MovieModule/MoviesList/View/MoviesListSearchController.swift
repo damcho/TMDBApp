@@ -17,6 +17,8 @@ final class MoviesListSearchController: UISearchController {
         searchResultsUpdater = self
         searchBar.autocapitalizationType = .none
         searchBar.delegate = self
+        hidesNavigationBarDuringPresentation = true
+        searchBar.sizeToFit()
     }
 }
 

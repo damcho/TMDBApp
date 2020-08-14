@@ -33,11 +33,34 @@
                                 </constraints>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="70" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="3df-pU-mPk">
-                                <rect key="frame" x="0.0" y="51" width="320" height="517"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <view key="tableHeaderView" contentMode="scaleToFill" id="XcG-cv-d7j">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="IQ3-Q7-C7e">
+                                            <rect key="frame" x="45" y="6" width="230" height="32"/>
+                                            <segments>
+                                                <segment title="Top Rated"/>
+                                                <segment title="Upcoming"/>
+                                                <segment title="Popular"/>
+                                            </segments>
+                                            <connections>
+                                                <action selector="segmentedControlValueChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="b2l-Nv-lI4"/>
+                                            </connections>
+                                        </segmentedControl>
+                                    </subviews>
+                                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                    <constraints>
+                                        <constraint firstItem="IQ3-Q7-C7e" firstAttribute="leading" secondItem="XcG-cv-d7j" secondAttribute="leading" constant="45" id="AV0-c3-amU"/>
+                                        <constraint firstItem="IQ3-Q7-C7e" firstAttribute="top" secondItem="XcG-cv-d7j" secondAttribute="top" constant="6" id="iTC-ys-bcB"/>
+                                        <constraint firstAttribute="trailing" secondItem="IQ3-Q7-C7e" secondAttribute="trailing" constant="45" id="kk5-GQ-Pf3"/>
+                                    </constraints>
+                                </view>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MovieTableViewCell" id="jb7-ed-cFB" customClass="MovieTableViewCell" customModule="TMDBApp" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="320" height="64.5"/>
+                                        <rect key="frame" x="0.0" y="72" width="320" height="64.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jb7-ed-cFB" id="ZiV-Qm-sqo">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="64.5"/>
@@ -92,7 +115,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="loadingCell" rowHeight="70" id="nDF-nk-H1N" userLabel="LoadingCell">
-                                        <rect key="frame" x="0.0" y="92.5" width="320" height="70"/>
+                                        <rect key="frame" x="0.0" y="136.5" width="320" height="70"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="nDF-nk-H1N" id="qyR-tc-yoY">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="70"/>
@@ -115,30 +138,16 @@
                                     <outlet property="prefetchDataSource" destination="BYZ-38-t0r" id="aNp-sv-qkZ"/>
                                 </connections>
                             </tableView>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="IQ3-Q7-C7e">
-                                <rect key="frame" x="45" y="10" width="230" height="32"/>
-                                <segments>
-                                    <segment title="Top Rated"/>
-                                    <segment title="Upcoming"/>
-                                    <segment title="Popular"/>
-                                </segments>
-                                <connections>
-                                    <action selector="segmentedControlValueChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="b2l-Nv-lI4"/>
-                                </connections>
-                            </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="3df-pU-mPk" secondAttribute="trailing" id="6a5-h8-Sri"/>
-                            <constraint firstItem="IQ3-Q7-C7e" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="45" id="9bq-1R-Vej"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="def-Br-eL9" secondAttribute="bottom" id="CSJ-V2-fga"/>
                             <constraint firstItem="def-Br-eL9" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="DCR-qa-ioU"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="3df-pU-mPk" secondAttribute="bottom" id="FAe-VM-PK1"/>
-                            <constraint firstItem="IQ3-Q7-C7e" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="Ph8-be-2dN"/>
+                            <constraint firstItem="3df-pU-mPk" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="VAo-HK-kpf"/>
                             <constraint firstItem="def-Br-eL9" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="eO3-vt-BR9"/>
-                            <constraint firstItem="3df-pU-mPk" firstAttribute="top" secondItem="IQ3-Q7-C7e" secondAttribute="bottom" constant="10" id="pAW-s1-Pyh"/>
                             <constraint firstItem="3df-pU-mPk" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="vql-nZ-V8r"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="IQ3-Q7-C7e" secondAttribute="trailing" constant="45" id="zPh-Bk-ATi"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="def-Br-eL9" secondAttribute="trailing" id="zUC-d2-hCf"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
