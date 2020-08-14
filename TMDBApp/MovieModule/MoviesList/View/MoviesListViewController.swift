@@ -52,6 +52,7 @@ private extension MoviesListViewController {
     
     @objc func refreshMovies() {
         moviesListTableVIew.refreshControl?.beginRefreshing()
+        movieControllers = []
         interactor?.reloadMovies()
     }
     
@@ -77,9 +78,21 @@ extension MoviesListViewController: MoviesListPresenterOutput {
     
     func didReceiveMovies(movieCellControllers: [MovieListCellController]) {
         stopLoadingActivity()
-        movieControllers = movieCellControllers
         moviesListTableVIew.isHidden = false
-        moviesListTableVIew.reloadData()
+        if !movieControllers.isEmpty {
+            var indexpaths: [IndexPath] = []
+            for index in self.movieControllers.count ..< movieCellControllers.count {
+                indexpaths.append(IndexPath(item: index, section: 0))
+            }
+            moviesListTableVIew.performBatchUpdates({
+                movieControllers = movieCellControllers
+                moviesListTableVIew.insertRows(at: indexpaths, with: .none)
+            }, completion: nil)
+
+        } else {
+            movieControllers = movieCellControllers
+            moviesListTableVIew.reloadData()
+        }
     }
     
     func didReceiveError(error: ErrorViewModel) {
