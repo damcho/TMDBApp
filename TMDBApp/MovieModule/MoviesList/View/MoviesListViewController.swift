@@ -56,6 +56,25 @@ private extension MoviesListViewController {
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
         interactor?.filterMoviesWith(filterRequest: MoviesFilterRequest(filterCategory: sender.selectedSegmentIndex))
     }
+    
+    func loadNewMovieCells(cellControllers: [MovieListCellController]) {
+        movieControllers = cellControllers
+        moviesListTableVIew.reloadData()
+        moviesListTableVIew.scrollToRow(at: IndexPath(item: 0, section: 0), at: .top, animated: false)
+    }
+    
+    func addNewCellsToCurrentList(cellControllers: [MovieListCellController]) {
+        var indexpaths: [IndexPath] = []
+        let startIndex = movieControllers.count
+        let endIndex = cellControllers.count
+        for index in startIndex ..< endIndex {
+            indexpaths.append(IndexPath(item: index, section: 0))
+        }
+        moviesListTableVIew.performBatchUpdates({
+            movieControllers = cellControllers
+            moviesListTableVIew.insertRows(at: indexpaths, with: .none)
+        }, completion: nil)
+    }
 }
 
 extension MoviesListViewController: MoviesListPresenterOutput {
@@ -78,18 +97,9 @@ extension MoviesListViewController: MoviesListPresenterOutput {
         moviesListTableVIew.isHidden = false
         if !movieControllers.isEmpty,
             movieCellControllers.count > movieControllers.count{
-            var indexpaths: [IndexPath] = []
-            for index in self.movieControllers.count ..< movieCellControllers.count {
-                indexpaths.append(IndexPath(item: index, section: 0))
-            }
-            moviesListTableVIew.performBatchUpdates({
-                movieControllers = movieCellControllers
-                moviesListTableVIew.insertRows(at: indexpaths, with: .none)
-            }, completion: nil)
-
+            addNewCellsToCurrentList(cellControllers: movieCellControllers)
         } else {
-            movieControllers = movieCellControllers
-            moviesListTableVIew.reloadData()
+            loadNewMovieCells(cellControllers: movieCellControllers)
         }
     }
     
