@@ -14,18 +14,20 @@ struct Movie: Equatable {
     var overview: String
     var popularity: Double?
     var voteAverage: Double?
-    var imageURL: URL?
+    var posterImageUrl: URL?
+    var backImageUrl: URL?
     var videos: [Video]?
     var imageData: Data?
     
-    init(title: String, movieID: UInt, overview: String, imageURL: URL? = nil, voteAverage: Double? = nil, popularity: Double? = nil, videos: [Video]? = nil) {
+    init(title: String, movieID: UInt, overview: String, posterImageUrl: URL? = nil, backImageUrl: URL? = nil, voteAverage: Double? = nil, popularity: Double? = nil, videos: [Video]? = nil) {
         self.movieId = movieID
         self.title = title
         self.overview = overview
-        self.imageURL = imageURL
+        self.posterImageUrl = posterImageUrl
         self.voteAverage = voteAverage
         self.popularity = popularity
         self.videos = videos
+        self.backImageUrl = backImageUrl
     }
     
     static func == (lhs: Movie, rhs: Movie) -> Bool {

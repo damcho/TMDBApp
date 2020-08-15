@@ -34,7 +34,7 @@ final class MovieDetailInteractor {
     }
     
     private func fetchMovieImageForMovie(_ movie: Movie) {
-        _ = self.imageLoader.loadImage(from: movie.imageURL!) {[weak self] (result) in
+        _ = self.imageLoader.loadImage(from: movie.backImageUrl!) {[weak self] (result) in
             guard self != nil else { return }
 
             switch result {

@@ -21,7 +21,7 @@ final class MovieListCellInteractor {
 
 extension MovieListCellInteractor: MovieImageViewOutput {
     func requestImage() -> CancelableImageTask? {
-        guard let url = movie.imageURL else { return nil }
+        guard let url = movie.posterImageUrl else { return nil }
         self.movieCellPresenter.didRequestImageforMovie(movie)
         return imageloader.loadImage(from: url) {[weak self] (result) in
             guard self != nil else { return }
